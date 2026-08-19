@@ -1,0 +1,60 @@
+name: infographic-lab
+
+services:
+  app:
+    build:
+      context: .
+    image: infographic-lab/app:1.0.0
+    container_name: infographic-lab
+    environment:
+      PORT: 3091
+      VIBE_RUNNER_URL: http://vibe-runner:7020
+      RUNNER_SHARED_TOKEN: ${RUNNER_SHARED_TOKEN:-infographic-local-change-me}
+    ports:
+      - "127.0.0.1:3091:3091"
+    depends_on:
+      vibe-runner:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3091/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    restart: unless-stopped
+
+  vibe-runner:
+    build:
+      context: ./runners/vibe
+      args:
+        VIBE_VERSION: ${VIBE_VERSION:-2.21.0}
+    image: infographic-lab/vibe-runner:1.0.0
+    container_name: infographic-vibe-runner
+    environment:
+      RUNNER_SHARED_TOKEN: ${RUNNER_SHARED_TOKEN:-infographic-local-change-me}
+      MISTRAL_API_KEY: ${MISTRAL_API_KEY:-}
+      VIBE_HOME: /home/vibe/.vibe
+      RUNNER_PORT: 7020
+    volumes:
+      - vibe_home:/home/vibe/.vibe
+    expose:
+      - "7020"
+    tmpfs:
+      - /tmp:size=256m,mode=1777
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:7020/health', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    restart: unless-stopped
+
+volumes:
+  vibe_home:
+    name: ${VIBE_HOME_VOLUME:-infographic-lab_vibe_home}
