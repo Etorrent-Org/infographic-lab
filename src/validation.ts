@@ -1,0 +1,199 @@
+import type {
+  CanonicalInfographic,
+  InfographicAppearance,
+  InfographicIcon,
+  InfographicItem,
+  InfographicKind,
+  InfographicProject,
+  InfographicStyle,
+  VisualDensity,
+} from "./types";
+
+const layouts = new Set(["process", "comparison", "timeline", "list"]);
+const projectTypes = new Set<InfographicKind>(["auto", "process", "comparison", "timeline", "list"]);
+const projectStyles = new Set<InfographicStyle>([
+  "clean",
+  "soft",
+  "dark",
+  "sketch",
+  "chalk",
+  "zen",
+  "pro",
+  "minimal",
+  "tech",
+]);
+const styleAliases: Partial<Record<InfographicStyle, InfographicStyle>> = {
+  zen: "soft",
+  pro: "clean",
+  minimal: "clean",
+  tech: "dark",
+};
+const projectIcons = new Set<InfographicIcon>([
+  "idea",
+  "search",
+  "target",
+  "process",
+  "team",
+  "data",
+  "security",
+  "automation",
+  "growth",
+  "money",
+  "customer",
+  "check",
+  "warning",
+  "calendar",
+  "tools",
+  "spark",
+]);
+const densities = new Set<VisualDensity>(["compact", "balanced", "airy"]);
+const hexColor = /^#[0-9a-fA-F]{6}$/;
+
+function isText(value: unknown, min: number, max: number): value is string {
+  return typeof value === "string" && value.trim().length >= min && value.trim().length <= max;
+}
+
+function validateAppearance(value: unknown): InfographicAppearance {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    throw new Error("Réponse Vibe invalide : apparence incorrecte.");
+  }
+  const data = value as Record<string, unknown>;
+  if (Object.keys(data).some((key) => !["accent", "background", "density"].includes(key))) {
+    throw new Error("Réponse Vibe invalide : propriété d'apparence inattendue.");
+  }
+  if (data.accent !== undefined && (typeof data.accent !== "string" || !hexColor.test(data.accent))) {
+    throw new Error("Réponse Vibe invalide : couleur d'accent incorrecte.");
+  }
+  if (
+    data.background !== undefined &&
+    (typeof data.background !== "string" || !hexColor.test(data.background))
+  ) {
+    throw new Error("Réponse Vibe invalide : couleur de fond incorrecte.");
+  }
+  if (
+    data.density !== undefined &&
+    (typeof data.density !== "string" || !densities.has(data.density as VisualDensity))
+  ) {
+    throw new Error("Réponse Vibe invalide : densité incorrecte.");
+  }
+  return data as InfographicAppearance;
+}
+
+export function validateInfographicItem(value: unknown): InfographicItem {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    throw new Error("Réponse Vibe invalide : élément attendu.");
+  }
+  const record = value as Record<string, unknown>;
+  if (Object.keys(record).some((key) => !["title", "description", "icon"].includes(key))) {
+    throw new Error("Réponse Vibe invalide : propriété d'élément inattendue.");
+  }
+  if (!isText(record.title, 1, 60) || !isText(record.description, 1, 180)) {
+    throw new Error("Réponse Vibe invalide : contenu d'élément incorrect.");
+  }
+  if (
+    record.icon !== undefined &&
+    (typeof record.icon !== "string" || !projectIcons.has(record.icon as InfographicIcon))
+  ) {
+    throw new Error("Réponse Vibe invalide : pictogramme incorrect.");
+  }
+  return record as InfographicItem;
+}
+
+export function validateCanonicalInfographic(value: unknown): CanonicalInfographic {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    throw new Error("Réponse Vibe invalide : objet attendu.");
+  }
+  const data = value as Record<string, unknown>;
+  const keys = Object.keys(data);
+  if (keys.some((key) => !["title", "subtitle", "layout", "items", "appearance"].includes(key))) {
+    throw new Error("Réponse Vibe invalide : propriété inattendue.");
+  }
+  if (!isText(data.title, 1, 120)) throw new Error("Réponse Vibe invalide : titre.");
+  if (data.subtitle !== undefined && !isText(data.subtitle, 0, 180)) {
+    throw new Error("Réponse Vibe invalide : sous-titre.");
+  }
+  if (typeof data.layout !== "string" || !layouts.has(data.layout)) {
+    throw new Error("Réponse Vibe invalide : layout.");
+  }
+  if (!Array.isArray(data.items) || data.items.length < 2 || data.items.length > 8) {
+    throw new Error("Réponse Vibe invalide : 2 à 8 éléments sont requis.");
+  }
+  if (data.layout === "comparison" && data.items.length !== 2) {
+    throw new Error("Réponse Vibe invalide : une comparaison doit contenir deux options.");
+  }
+  data.items.forEach((item) => validateInfographicItem(item));
+  if (data.appearance !== undefined) validateAppearance(data.appearance);
+  return data as CanonicalInfographic;
+}
+
+export function validateInfographicProject(value: unknown): InfographicProject {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    throw new Error("Projet JSON invalide : objet attendu.");
+  }
+  const data = value as Record<string, unknown>;
+  const allowedKeys = [
+    "format",
+    "version",
+    "savedAt",
+    "sourceText",
+    "type",
+    "style",
+    "variantIndex",
+    "infographic",
+  ];
+  if (Object.keys(data).some((key) => !allowedKeys.includes(key))) {
+    throw new Error("Projet JSON invalide : propriété inattendue.");
+  }
+  if (data.format !== "infographic-lab") {
+    throw new Error("Projet JSON invalide : format non reconnu.");
+  }
+  if (data.version !== 1 && data.version !== 2) {
+    throw new Error("Projet JSON invalide : version non prise en charge.");
+  }
+  if (
+    typeof data.savedAt !== "string" ||
+    data.savedAt.length > 64 ||
+    Number.isNaN(Date.parse(data.savedAt))
+  ) {
+    throw new Error("Projet JSON invalide : date de sauvegarde incorrecte.");
+  }
+  if (typeof data.sourceText !== "string" || data.sourceText.length > 12000) {
+    throw new Error("Projet JSON invalide : texte source incorrect.");
+  }
+  if (typeof data.type !== "string" || !projectTypes.has(data.type as InfographicKind)) {
+    throw new Error("Projet JSON invalide : type incorrect.");
+  }
+  if (typeof data.style !== "string" || !projectStyles.has(data.style as InfographicStyle)) {
+    throw new Error("Projet JSON invalide : style incorrect.");
+  }
+  if (
+    typeof data.variantIndex !== "number" ||
+    !Number.isInteger(data.variantIndex) ||
+    data.variantIndex < 0 ||
+    data.variantIndex > 99
+  ) {
+    throw new Error("Projet JSON invalide : variante incorrecte.");
+  }
+
+  let infographic: CanonicalInfographic;
+  try {
+    infographic = validateCanonicalInfographic(data.infographic);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "infographie incorrecte.";
+    throw new Error(`Projet JSON invalide : ${message.replace("Réponse Vibe invalide : ", "")}`);
+  }
+
+  const originalStyle = data.style as InfographicStyle;
+  const normalizedStyle = styleAliases[originalStyle] ?? originalStyle;
+
+  return {
+    format: "infographic-lab",
+    version: data.version as 1 | 2,
+    savedAt: data.savedAt,
+    sourceText: data.sourceText,
+    type: data.type as InfographicKind,
+    style: normalizedStyle,
+    variantIndex: data.variantIndex,
+    infographic,
+  };
+}
