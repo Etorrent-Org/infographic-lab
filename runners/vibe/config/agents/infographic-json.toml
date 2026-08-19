@@ -1,0 +1,6 @@
+agent_type = "agent"
+display_name = "Infographic JSON"
+description = "Transformation structurée de texte en données d'infographie, sans accès aux outils."
+safety = "safe"
+system_prompt_id = "infographic-json"
+disabled_tools = ["*"]
