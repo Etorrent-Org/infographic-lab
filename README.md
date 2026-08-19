@@ -1,7 +1,131 @@
-# Infographic Lab
+# Infographic Lab 1.0.0
 
-Dépôt public de distribution et de test d'Infographic Lab.
+Infographic Lab transforme un texte en infographie éditable dans une application locale. Mistral Vibe structure le contenu en JSON canonique ; AntV Infographic et un moteur SVG local produisent les visuels. L'utilisateur peut ensuite modifier le contenu, le style, les pictogrammes, la structure et les exports sans relancer l'IA.
 
-La version 1.0.0 transforme un texte en infographie éditable avec Mistral Vibe, AntV Infographic et un moteur SVG local.
+[Voir la vitrine](https://etorrent-org.github.io/infographic-lab/) · [Télécharger la V1 en ZIP](https://github.com/Etorrent-Org/infographic-lab/archive/refs/heads/main.zip)
 
-Documentation complète et fichiers de la V1 en cours de publication depuis la source interne validée.
+## Fonctionnalités
+
+- génération depuis un texte avec les types `Auto`, `Processus`, `Comparaison`, `Timeline` et `Liste` ;
+- styles `Clean`, `Soft`, `Dark`, `Sketch` et `Chalk` ;
+- variantes AntV avec garde-fous pour les contenus trop longs ;
+- rendus SVG locaux `Iceberg`, `Cycle` et `Sankey simple` ;
+- templates prêts à l'emploi et 16 pictogrammes locaux ;
+- édition du titre, du sous-titre et de chaque bloc ;
+- ajout, suppression et réordonnancement des blocs ;
+- retouche Vibe ciblée d'un seul bloc avec avant/après et annulation locale ;
+- sauvegarde de projets JSON v2 ;
+- exports SVG, PNG et HTML autonome.
+
+## Prérequis
+
+- Windows 10/11 avec PowerShell ;
+- Docker Desktop avec `docker compose` ;
+- une clé API compatible Mistral Vibe pour la génération et les retouches IA.
+
+Infographic Lab 1.0.0 utilise Mistral Vibe `2.21.0`, version validée avec cette V1.
+
+## Installation rapide
+
+1. Téléchargez le dépôt avec le bouton **Code > Download ZIP**, ou directement via le lien ZIP ci-dessus.
+2. Extrayez l'archive et ouvrez PowerShell dans le dossier extrait.
+3. Créez votre configuration locale :
+
+```powershell
+Copy-Item .env.example .env
+notepad .env
+```
+
+4. Renseignez votre clé :
+
+```text
+MISTRAL_API_KEY=votre_cle
+```
+
+5. Construisez et démarrez l'application :
+
+```powershell
+.\START-INFOGRAPHIC-LAB.ps1 -Build
+```
+
+6. Ouvrez `http://127.0.0.1:3091`.
+
+Pour les lancements suivants :
+
+```powershell
+.\START-INFOGRAPHIC-LAB.ps1
+```
+
+## Architecture
+
+```mermaid
+flowchart LR
+    U[Utilisateur] --> UI[React + Vite]
+    UI --> APP[Passerelle Node locale]
+    APP --> VR[Vibe runner Docker]
+    VR --> M[Mistral API]
+    M --> VR
+    VR --> APP
+    APP --> UI
+    UI --> R{Moteur de rendu}
+    R --> A[AntV Infographic]
+    R --> S[SVG local]
+```
+
+Le navigateur ne connaît pas le token interne du runner. Le port Vibe `7020` n'est pas publié sur l'hôte, aucun Docker socket n'est monté et aucune base de données n'est nécessaire.
+
+## Configuration
+
+`.env.example` contient uniquement des valeurs d'exemple. Le fichier `.env` est ignoré par Git.
+
+Variables principales :
+
+```text
+MISTRAL_API_KEY=
+VIBE_HOME_VOLUME=infographic-lab_vibe_home
+VIBE_VERSION=2.21.0
+RUNNER_SHARED_TOKEN=
+```
+
+Si `RUNNER_SHARED_TOKEN` n'est pas fourni, le script PowerShell génère un token interne au lancement.
+
+## Développement
+
+```powershell
+npm install
+npm run build
+```
+
+Pour arrêter la stack :
+
+```powershell
+docker compose down
+```
+
+N'utilisez pas `docker compose down -v` si vous souhaitez conserver le profil Vibe stocké dans le volume Docker.
+
+## Sécurité
+
+- publication réseau limitée à `127.0.0.1:3091` ;
+- runner Vibe sur le réseau Docker interne ;
+- token interne entre l'application et le runner ;
+- agent Vibe sans outils ;
+- réponses IA validées avant rendu ;
+- pas de Docker socket ;
+- pas de base de données ;
+- pas de secret versionné.
+
+## Limites de la V1
+
+- le Sankey est narratif : l'épaisseur des flux n'encode pas une mesure quantitative ;
+- pas de collaboration temps réel ni de bibliothèque serveur de projets ;
+- la qualité factuelle dépend du texte source ;
+- l'utilisation de Mistral Vibe nécessite un accès Mistral valide et peut être facturée selon le compte.
+
+## Documentation
+
+- [CHANGELOG.md](CHANGELOG.md)
+- [RELEASE_NOTES_1.0.0.md](RELEASE_NOTES_1.0.0.md)
+- [THIRD_PARTY.md](THIRD_PARTY.md)
+
+Le dépôt `Etorrent-Org/infographic-lab` est la distribution publique destinée au téléchargement et aux tests de la V1.
