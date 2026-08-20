@@ -4,6 +4,14 @@ Infographic Lab transforme un texte en infographie éditable dans une applicatio
 
 [Voir la vitrine](https://etorrent-org.github.io/infographic-lab/) · [Télécharger la dernière Release](https://github.com/Etorrent-Org/infographic-lab/releases/latest)
 
+<p align="center">
+  <img src="docs/images/infographic-lab-overview.svg" alt="Infographie du workflow Infographic Lab" width="860">
+</p>
+
+## Vue d'ensemble
+
+Le workflow garde une séparation claire entre IA et rendu : Vibe structure le texte en JSON contrôlé, la passerelle locale valide cette structure, puis AntV ou le moteur SVG local construit le visuel. L'utilisateur peut ensuite éditer, sauvegarder et exporter sans nouvel appel IA, sauf s'il demande explicitement une retouche Vibe ciblée.
+
 ## Fonctionnalités
 
 - génération depuis un texte avec les types `Auto`, `Processus`, `Comparaison`, `Timeline` et `Liste` ;
