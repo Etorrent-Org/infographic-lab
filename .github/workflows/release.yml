@@ -37,8 +37,10 @@ jobs:
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
           ARCHIVE="infographic-lab-${VERSION}.zip"
-          zip -r "$ARCHIVE" . \
+          TEMP_ARCHIVE="$RUNNER_TEMP/$ARCHIVE"
+          zip -r "$TEMP_ARCHIVE" . \
             -x '.git/*' 'node_modules/*' 'dist/*' '.env' '*.log'
+          mv "$TEMP_ARCHIVE" "$ARCHIVE"
           sha256sum "$ARCHIVE" > SHA256SUMS.txt
 
       - name: Upload release artifact
