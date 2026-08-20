@@ -1,0 +1,62 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build frontend
+        run: npm run build
+
+      - name: Check Vibe runner syntax
+        run: python -m py_compile runners/vibe/server.py
+
+      - name: Validate Docker Compose
+        run: docker compose config --quiet
+
+      - name: Build distribution archive
+        shell: bash
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          ARCHIVE="infographic-lab-${VERSION}.zip"
+          TEMP_ARCHIVE="$RUNNER_TEMP/$ARCHIVE"
+          zip -r "$TEMP_ARCHIVE" . \
+            -x '.git/*' 'node_modules/*' 'dist/*' '.env' '*.log'
+          mv "$TEMP_ARCHIVE" "$ARCHIVE"
+          sha256sum "$ARCHIVE" > SHA256SUMS.txt
+
+      - name: Upload release artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: infographic-lab-release
+          path: |
+            infographic-lab-*.zip
+            SHA256SUMS.txt
+          if-no-files-found: error
+
+      - name: Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          body_path: RELEASE_NOTES_1.0.0.md
+          files: |
+            infographic-lab-*.zip
+            SHA256SUMS.txt
