@@ -2,7 +2,7 @@
 
 Infographic Lab transforme un texte en infographie éditable dans une application locale. Mistral Vibe structure le contenu en JSON canonique ; AntV Infographic et un moteur SVG local produisent les visuels. L'utilisateur peut ensuite modifier le contenu, le style, les pictogrammes, la structure et les exports sans relancer l'IA.
 
-[Voir la vitrine](https://etorrent-org.github.io/infographic-lab/) · [Télécharger la V1 en ZIP](https://github.com/Etorrent-Org/infographic-lab/archive/refs/heads/main.zip)
+[Voir la vitrine](https://etorrent-org.github.io/infographic-lab/) · [Télécharger la dernière Release](https://github.com/Etorrent-Org/infographic-lab/releases/latest)
 
 ## Fonctionnalités
 
@@ -27,7 +27,7 @@ Infographic Lab 1.0.0 utilise Mistral Vibe `2.21.0`, version validée avec cette
 
 ## Installation rapide
 
-1. Téléchargez le dépôt avec le bouton **Code > Download ZIP**, ou directement via le lien ZIP ci-dessus.
+1. Téléchargez `infographic-lab-1.0.0.zip` depuis la [GitHub Release](https://github.com/Etorrent-Org/infographic-lab/releases/latest).
 2. Extrayez l'archive et ouvrez PowerShell dans le dossier extrait.
 3. Créez votre configuration locale :
 
@@ -127,5 +127,9 @@ N'utilisez pas `docker compose down -v` si vous souhaitez conserver le profil Vi
 - [CHANGELOG.md](CHANGELOG.md)
 - [RELEASE_NOTES_1.0.0.md](RELEASE_NOTES_1.0.0.md)
 - [THIRD_PARTY.md](THIRD_PARTY.md)
+
+## Licence
+
+Infographic Lab est distribué sous licence MIT. Consultez [LICENSE](LICENSE).
 
 Le dépôt `Etorrent-Org/infographic-lab` est la distribution publique destinée au téléchargement et aux tests de la V1.
