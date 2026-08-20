@@ -1,0 +1,43 @@
+name: Patch infographic README
+
+on:
+  push:
+    branches:
+      - docs/infographic-lab-overview
+    paths:
+      - '.github/workflows/patch-readme-infographic.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: docs/infographic-lab-overview
+      - name: Insert infographic in README
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('README.md')
+          s = p.read_text(encoding='utf-8')
+          marker = '[Voir la vitrine](https://etorrent-org.github.io/infographic-lab/) · [Télécharger la dernière Release](https://github.com/Etorrent-Org/infographic-lab/releases/latest)\n'
+          if 'docs/images/infographic-lab-overview.svg' not in s:
+              addition = marker + '''\n<p align="center">\n  <img src="docs/images/infographic-lab-overview.svg" alt="Infographie du workflow Infographic Lab" width="860">\n</p>\n\n## Vue d'ensemble\n\nLe workflow garde une séparation claire entre IA et rendu : Vibe structure le texte en JSON contrôlé, la passerelle locale valide cette structure, puis AntV ou le moteur SVG local construit le visuel. L'utilisateur peut ensuite éditer, sauvegarder et exporter sans nouvel appel IA, sauf s'il demande explicitement une retouche Vibe ciblée.\n'''
+              if marker not in s:
+                  raise SystemExit('README marker not found')
+              s = s.replace(marker, addition, 1)
+              p.write_text(s, encoding='utf-8')
+          PY
+      - name: Remove temporary workflow and commit
+        shell: bash
+        run: |
+          rm -f .github/workflows/patch-readme-infographic.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- README.md .github/workflows/patch-readme-infographic.yml
+          git commit -m "Wish You Were Here - intègre l'infographie dans le README"
+          git push origin HEAD:docs/infographic-lab-overview
