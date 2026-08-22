@@ -20,6 +20,27 @@ jobs:
         with:
           node-version: 22
 
+      - name: Resolve and validate version
+        id: meta
+        shell: bash
+        run: |
+          VERSION="$(node -p "require('./package.json').version")"
+          if [ -z "$VERSION" ]; then
+            echo "Unable to resolve version from package.json" >&2
+            exit 1
+          fi
+
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Project version: $VERSION"
+
+          if [ "${GITHUB_REF_TYPE:-}" = "tag" ]; then
+            EXPECTED_TAG="v$VERSION"
+            if [ "$GITHUB_REF_NAME" != "$EXPECTED_TAG" ]; then
+              echo "Tag $GITHUB_REF_NAME does not match project version $EXPECTED_TAG" >&2
+              exit 1
+            fi
+          fi
+
       - name: Install dependencies
         run: npm install
 
@@ -34,14 +55,32 @@ jobs:
 
       - name: Build distribution archive
         shell: bash
+        env:
+          VERSION: ${{ steps.meta.outputs.version }}
         run: |
-          VERSION="${GITHUB_REF_NAME#v}"
           ARCHIVE="infographic-lab-${VERSION}.zip"
           TEMP_ARCHIVE="$RUNNER_TEMP/$ARCHIVE"
           zip -r "$TEMP_ARCHIVE" . \
             -x '.git/*' 'node_modules/*' 'dist/*' '.env' '*.log'
           mv "$TEMP_ARCHIVE" "$ARCHIVE"
           sha256sum "$ARCHIVE" > SHA256SUMS.txt
+
+      - name: Build release notes from changelog
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          VERSION: ${{ steps.meta.outputs.version }}
+        run: |
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const version = process.env.VERSION;
+          const changelog = fs.readFileSync('CHANGELOG.md', 'utf8');
+          const marker = `## [${version}]`;
+          const start = changelog.indexOf(marker);
+          if (start < 0) throw new Error(`Missing CHANGELOG section for ${version}`);
+          const next = changelog.indexOf('\n## [', start + marker.length);
+          const section = changelog.slice(start, next < 0 ? changelog.length : next).trim();
+          fs.writeFileSync('RELEASE_NOTES.md', `${section}\n`);
+          NODE
 
       - name: Upload release artifact
         uses: actions/upload-artifact@v4
@@ -56,7 +95,7 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
-          body_path: RELEASE_NOTES_1.0.0.md
+          body_path: RELEASE_NOTES.md
           files: |
             infographic-lab-*.zip
             SHA256SUMS.txt
