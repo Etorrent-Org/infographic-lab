@@ -2,9 +2,7 @@ name: infographic-lab
 
 services:
   app:
-    build:
-      context: .
-    image: infographic-lab/app:1.0.0
+    image: erwanntorrent/infographic-lab:${INFOGRAPHIC_LAB_IMAGE_TAG:-1.0.0}
     container_name: infographic-lab
     environment:
       PORT: 3091
@@ -27,11 +25,7 @@ services:
     restart: unless-stopped
 
   vibe-runner:
-    build:
-      context: ./runners/vibe
-      args:
-        VIBE_VERSION: ${VIBE_VERSION:-2.21.0}
-    image: infographic-lab/vibe-runner:1.0.0
+    image: erwanntorrent/infographic-vibe-runner:${INFOGRAPHIC_LAB_IMAGE_TAG:-1.0.0}
     container_name: infographic-vibe-runner
     environment:
       RUNNER_SHARED_TOKEN: ${RUNNER_SHARED_TOKEN:-infographic-local-change-me}
