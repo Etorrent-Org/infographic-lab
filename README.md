@@ -42,32 +42,37 @@ erwanntorrent/infographic-lab:1.0.0
 erwanntorrent/infographic-vibe-runner:1.0.0
 ```
 
-Le `docker-compose.yml` utilise ces images publiées directement. Aucun build local n'est nécessaire pour une installation standard.
+Le `docker-compose.yml` de la branche `main` utilise ces images publiées directement. Aucun build local n'est nécessaire pour cette installation.
 
-## Installation rapide
+## Installation rapide avec Docker Hub
 
-1. Téléchargez `infographic-lab-1.0.0.zip` depuis la [GitHub Release](https://github.com/Etorrent-Org/infographic-lab/releases/latest).
-2. Extrayez l'archive et ouvrez PowerShell dans le dossier extrait.
-3. Créez votre configuration locale :
+1. Récupérez la branche `main` du dépôt, soit avec **Code → Download ZIP** sur GitHub, soit avec Git :
+
+```powershell
+git clone https://github.com/Etorrent-Org/infographic-lab.git
+cd infographic-lab
+```
+
+2. Créez votre configuration locale :
 
 ```powershell
 Copy-Item .env.example .env
 notepad .env
 ```
 
-4. Renseignez votre clé :
+3. Renseignez votre clé :
 
 ```text
 MISTRAL_API_KEY=votre_cle
 ```
 
-5. Téléchargez les images Docker Hub et démarrez l'application :
+4. Téléchargez les images Docker Hub et démarrez l'application :
 
 ```powershell
 .\START-INFOGRAPHIC-LAB.ps1
 ```
 
-6. Ouvrez `http://127.0.0.1:3091`.
+5. Ouvrez `http://127.0.0.1:3091`.
 
 Pour les lancements suivants, utilisez la même commande :
 
@@ -76,6 +81,8 @@ Pour les lancements suivants, utilisez la même commande :
 ```
 
 Le paramètre historique `-Build` reste accepté pour compatibilité mais n'est plus nécessaire : le script utilise les images publiées sur Docker Hub.
+
+> La Release GitHub `v1.0.0` a été publiée avant cette bascule et conserve son ancien parcours de build local. Le parcours Docker Hub décrit ici correspond à la branche `main` et sera intégré à la prochaine Release.
 
 ### Docker Compose direct
 
