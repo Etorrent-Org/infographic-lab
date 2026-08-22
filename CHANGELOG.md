@@ -2,6 +2,17 @@
 
 Toutes les évolutions notables d'Infographic Lab sont documentées ici.
 
+## [Unreleased]
+
+### Modifié
+- installation standard basée sur les images publiées sur Docker Hub ;
+- publication multi-architecture `linux/amd64` et `linux/arm64` ;
+- récupération automatique des images par `START-INFOGRAPHIC-LAB.ps1` ;
+- possibilité de sélectionner un autre tag publié avec `INFOGRAPHIC_LAB_IMAGE_TAG`.
+
+### Documentation
+- clarification de la configuration Mistral Vibe : clé API pour une première installation ou réutilisation d'un profil Vibe existant.
+
 ## [1.0.0] - 2026-08-19
 
 ### Ajouté

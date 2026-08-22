@@ -29,7 +29,7 @@ Le workflow garde une séparation claire entre IA et rendu : Vibe structure le t
 
 - Windows 10/11 avec PowerShell pour le script d'installation fourni ;
 - Docker Desktop avec `docker compose`, ou un autre hôte Docker Compose compatible ;
-- une clé API compatible Mistral Vibe pour la génération et les retouches IA.
+- un accès Mistral Vibe configuré : soit une clé API Mistral pour une première installation, soit un profil Vibe existant dans le volume Docker utilisé.
 
 Infographic Lab 1.0.0 utilise Mistral Vibe `2.21.0`, version validée avec cette V1.
 
@@ -53,18 +53,20 @@ git clone https://github.com/Etorrent-Org/infographic-lab.git
 cd infographic-lab
 ```
 
-2. Créez votre configuration locale :
+2. Pour une première installation sans profil Vibe existant, créez votre configuration locale :
 
 ```powershell
 Copy-Item .env.example .env
 notepad .env
 ```
 
-3. Renseignez votre clé :
+3. Dans ce cas, renseignez votre clé :
 
 ```text
 MISTRAL_API_KEY=votre_cle
 ```
+
+Si vous réutilisez un volume `VIBE_HOME_VOLUME` contenant déjà un profil Vibe configuré, `MISTRAL_API_KEY` peut rester vide.
 
 4. Téléchargez les images Docker Hub et démarrez l'application :
 
