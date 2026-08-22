@@ -27,42 +27,73 @@ Le workflow garde une séparation claire entre IA et rendu : Vibe structure le t
 
 ## Prérequis
 
-- Windows 10/11 avec PowerShell ;
-- Docker Desktop avec `docker compose` ;
+- Windows 10/11 avec PowerShell pour le script d'installation fourni ;
+- Docker Desktop avec `docker compose`, ou un autre hôte Docker Compose compatible ;
 - une clé API compatible Mistral Vibe pour la génération et les retouches IA.
 
 Infographic Lab 1.0.0 utilise Mistral Vibe `2.21.0`, version validée avec cette V1.
 
-## Installation rapide
+## Images Docker Hub
 
-1. Téléchargez `infographic-lab-1.0.0.zip` depuis la [GitHub Release](https://github.com/Etorrent-Org/infographic-lab/releases/latest).
-2. Extrayez l'archive et ouvrez PowerShell dans le dossier extrait.
-3. Créez votre configuration locale :
+Les images officielles de la V1 sont publiées sur Docker Hub en `linux/amd64` et `linux/arm64` :
+
+```text
+erwanntorrent/infographic-lab:1.0.0
+erwanntorrent/infographic-vibe-runner:1.0.0
+```
+
+Le `docker-compose.yml` de la branche `main` utilise ces images publiées directement. Aucun build local n'est nécessaire pour cette installation.
+
+## Installation rapide avec Docker Hub
+
+1. Récupérez la branche `main` du dépôt, soit avec **Code → Download ZIP** sur GitHub, soit avec Git :
+
+```powershell
+git clone https://github.com/Etorrent-Org/infographic-lab.git
+cd infographic-lab
+```
+
+2. Créez votre configuration locale :
 
 ```powershell
 Copy-Item .env.example .env
 notepad .env
 ```
 
-4. Renseignez votre clé :
+3. Renseignez votre clé :
 
 ```text
 MISTRAL_API_KEY=votre_cle
 ```
 
-5. Construisez et démarrez l'application :
-
-```powershell
-.\START-INFOGRAPHIC-LAB.ps1 -Build
-```
-
-6. Ouvrez `http://127.0.0.1:3091`.
-
-Pour les lancements suivants :
+4. Téléchargez les images Docker Hub et démarrez l'application :
 
 ```powershell
 .\START-INFOGRAPHIC-LAB.ps1
 ```
+
+5. Ouvrez `http://127.0.0.1:3091`.
+
+Pour les lancements suivants, utilisez la même commande :
+
+```powershell
+.\START-INFOGRAPHIC-LAB.ps1
+```
+
+Le paramètre historique `-Build` reste accepté pour compatibilité mais n'est plus nécessaire : le script utilise les images publiées sur Docker Hub.
+
+> La Release GitHub `v1.0.0` a été publiée avant cette bascule et conserve son ancien parcours de build local. Le parcours Docker Hub décrit ici correspond à la branche `main` et sera intégré à la prochaine Release.
+
+### Docker Compose direct
+
+Sur tout hôte Docker Compose compatible :
+
+```bash
+docker compose pull
+docker compose up -d
+```
+
+Par défaut, le Compose utilise le tag `1.0.0`. Vous pouvez sélectionner explicitement un autre tag publié avec `INFOGRAPHIC_LAB_IMAGE_TAG`.
 
 ## Architecture
 
@@ -90,14 +121,16 @@ Variables principales :
 
 ```text
 MISTRAL_API_KEY=
+INFOGRAPHIC_LAB_IMAGE_TAG=1.0.0
 VIBE_HOME_VOLUME=infographic-lab_vibe_home
-VIBE_VERSION=2.21.0
 RUNNER_SHARED_TOKEN=
 ```
 
 Si `RUNNER_SHARED_TOKEN` n'est pas fourni, le script PowerShell génère un token interne au lancement.
 
 ## Développement
+
+Le dépôt conserve les Dockerfiles pour les builds de développement et la publication CI. Pour le frontend :
 
 ```powershell
 npm install

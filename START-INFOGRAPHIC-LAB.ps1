@@ -14,6 +14,12 @@ $ErrorActionPreference = "Stop"
     else {
         "infographic-lab_vibe_home"
     }
+    $ImageTag = if ($env:INFOGRAPHIC_LAB_IMAGE_TAG) {
+        $env:INFOGRAPHIC_LAB_IMAGE_TAG
+    }
+    else {
+        "1.0.0"
+    }
 
     Write-Host "`n=== INFOGRAPHIC LAB 1.0.0 ===" -ForegroundColor Cyan
     Write-Host "Dossier : $AppRoot"
@@ -68,28 +74,33 @@ $ErrorActionPreference = "Stop"
         throw "docker compose config a échoué."
     }
 
-    $AppImage = "infographic-lab/app:1.0.0"
-    $RunnerImage = "infographic-lab/vibe-runner:1.0.0"
-    $NeedBuild = $Build.IsPresent
+    if ($Build.IsPresent) {
+        Write-Host "L'option -Build n'est plus nécessaire : les images publiées sur Docker Hub sont utilisées." -ForegroundColor Yellow
+    }
 
-    if (-not $NeedBuild) {
+    $AppImage = "erwanntorrent/infographic-lab:$ImageTag"
+    $RunnerImage = "erwanntorrent/infographic-vibe-runner:$ImageTag"
+
+    Write-Host "`n=== IMAGES DOCKER HUB ===" -ForegroundColor Cyan
+    Write-Host "Application : $AppImage"
+    Write-Host "Vibe runner : $RunnerImage"
+    docker compose pull
+    if ($LASTEXITCODE -ne 0) {
+        $AppCached = $true
+        $RunnerCached = $true
         docker image inspect $AppImage *> $null
-        if ($LASTEXITCODE -ne 0) { $NeedBuild = $true }
-    }
-    if (-not $NeedBuild) {
+        if ($LASTEXITCODE -ne 0) { $AppCached = $false }
         docker image inspect $RunnerImage *> $null
-        if ($LASTEXITCODE -ne 0) { $NeedBuild = $true }
-    }
+        if ($LASTEXITCODE -ne 0) { $RunnerCached = $false }
 
-    if ($NeedBuild) {
-        Write-Host "`n=== BUILD ===" -ForegroundColor Cyan
-        docker compose build
-        if ($LASTEXITCODE -ne 0) {
-            throw "Le build Docker a échoué."
+        if (-not $AppCached -or -not $RunnerCached) {
+            throw "Impossible de télécharger les images Docker Hub et aucune copie locale complète n'est disponible."
         }
+
+        Write-Host "Docker Hub indisponible : utilisation des images déjà présentes localement." -ForegroundColor Yellow
     }
     else {
-        Write-Host "Images Docker 1.0.0 déjà disponibles." -ForegroundColor Green
+        Write-Host "Images Docker Hub : OK" -ForegroundColor Green
     }
 
     Write-Host "`n=== DEMARRAGE ===" -ForegroundColor Cyan
@@ -141,5 +152,5 @@ $ErrorActionPreference = "Stop"
     docker compose ps
 
     Write-Host "`nInfographic Lab : http://127.0.0.1:3091" -ForegroundColor Green
-    Write-Host "Pour forcer un rebuild : .\START-INFOGRAPHIC-LAB.ps1 -Build" -ForegroundColor DarkGray
+    Write-Host "Les prochains lancements réutilisent les images Docker Hub de la version $ImageTag." -ForegroundColor DarkGray
 }
