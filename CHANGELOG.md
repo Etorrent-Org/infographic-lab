@@ -10,6 +10,10 @@ Toutes les évolutions notables d'Infographic Lab sont documentées ici.
 - récupération automatique des images par `START-INFOGRAPHIC-LAB.ps1` ;
 - possibilité de sélectionner un autre tag publié avec `INFOGRAPHIC_LAB_IMAGE_TAG`.
 
+### Maintenance
+- la chaîne de release vérifie désormais que le tag Git correspond à la version de `package.json` ;
+- les notes de Release sont générées depuis la section de version du `CHANGELOG.md` au lieu d'un fichier 1.0.0 codé en dur.
+
 ### Documentation
 - clarification de la configuration Mistral Vibe : clé API pour une première installation ou réutilisation d'un profil Vibe existant.
 
