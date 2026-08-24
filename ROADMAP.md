@@ -42,3 +42,27 @@ Ce fichier conserve les idées volontairement sorties du périmètre de la versi
 - éviter de multiplier les connecteurs cloud tant que le besoin n'est pas validé.
 
 **Décision du 24 août 2026 :** fonctionnalité explicitement repoussée en roadmap afin de préserver un périmètre de version maîtrisé.
+
+### Variantes intelligentes
+
+**Statut :** Roadmap — non retenu pour la version Augmented actuelle.
+
+**Objectif :** générer plusieurs variantes maîtrisées d'un même contenu à partir du modèle d'idée commun, sans modifier les faits ni les sources.
+
+**Variantes envisagées :**
+
+- Executive ;
+- Pédagogique ;
+- Visuelle ;
+- Dense ;
+- Équilibrée ;
+- Minimaliste.
+
+**Principes envisagés :**
+
+- comparer au maximum trois variantes côte à côte ;
+- faire varier la densité, le ton, le niveau de détail ou l'orientation ;
+- conserver le même socle factuel et les mêmes références ;
+- éviter la génération infinie de versions.
+
+**Décision du 24 août 2026 :** fonctionnalité repoussée en roadmap pour concentrer la version Augmented actuelle sur le cœur de composition et de rendu.
