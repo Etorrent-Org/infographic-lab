@@ -1,0 +1,94 @@
+name: infographic-lab-augmented
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: infographic-lab-augmented:local
+    container_name: infographic-lab-augmented
+    environment:
+      PORT: 3092
+      VIBE_RUNNER_URL: http://vibe-runner:7020
+      CODEX_RUNNER_URL: http://codex-runner:7030
+      RUNNER_SHARED_TOKEN: ${RUNNER_SHARED_TOKEN:-infographic-augmented-local-change-me}
+      AI_PROVIDER_ORDER: ${AI_PROVIDER_ORDER:-vibe,codex}
+    ports:
+      - "${AUGMENTED_BIND:-127.0.0.1}:${AUGMENTED_PORT:-3092}:3092"
+    depends_on:
+      vibe-runner:
+        condition: service_healthy
+      codex-runner:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3092/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    restart: unless-stopped
+
+  vibe-runner:
+    image: erwanntorrent/infographic-vibe-runner:${INFOGRAPHIC_LAB_IMAGE_TAG:-1.0.0}
+    container_name: infographic-vibe-runner-augmented
+    environment:
+      RUNNER_SHARED_TOKEN: ${RUNNER_SHARED_TOKEN:-infographic-augmented-local-change-me}
+      MISTRAL_API_KEY: ${MISTRAL_API_KEY:-}
+      VIBE_HOME: /home/vibe/.vibe
+      RUNNER_PORT: 7020
+    volumes:
+      - vibe_home:/home/vibe/.vibe
+    expose:
+      - "7020"
+    tmpfs:
+      - /tmp:size=256m,mode=1777
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:7020/health', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    restart: unless-stopped
+
+  codex-runner:
+    build:
+      context: ./runners/codex
+      dockerfile: Dockerfile
+      args:
+        CODEX_VERSION: ${CODEX_VERSION:-latest}
+    image: infographic-codex-runner:local
+    container_name: infographic-codex-runner
+    environment:
+      RUNNER_SHARED_TOKEN: ${RUNNER_SHARED_TOKEN:-infographic-augmented-local-change-me}
+      CODEX_HOME: /home/node/.codex
+      CODEX_WORK_DIR: /work
+      RUNNER_PORT: 7030
+    volumes:
+      - codex_home:/home/node/.codex
+    expose:
+      - "7030"
+    tmpfs:
+      - /tmp:size=256m,mode=1777
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:7030/health', timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 4
+      start_period: 10s
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    restart: unless-stopped
+
+volumes:
+  vibe_home:
+    name: ${VIBE_HOME_VOLUME:-infographic-lab_vibe_home}
+  codex_home:
+    name: ${CODEX_HOME_VOLUME:-infographic-lab_codex_home}
