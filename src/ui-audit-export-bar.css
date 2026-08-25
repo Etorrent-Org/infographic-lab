@@ -106,7 +106,8 @@
   color: var(--ui-surface, var(--mk-panel));
 }
 
-@media (max-width: 760px) {
+/* #25 — même seuil responsive que la navigation tablette */
+@media (max-width: 850px) {
   .studio-stage-footer,
   .marketing-stage-footer {
     min-height: auto;
