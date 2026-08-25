@@ -397,6 +397,97 @@
   background: color-mix(in srgb, var(--ui-accent, var(--mk-accent, #82a2ff)) 15%, transparent);
 }
 
+/* #5 — lisibilité et confort des formulaires */
+.studio-app input,
+.studio-app textarea,
+.studio-app select,
+.marketing-panel input,
+.marketing-panel textarea,
+.marketing-panel select {
+  min-height: 40px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.studio-app textarea,
+.marketing-panel textarea {
+  padding-block: 10px;
+}
+
+.studio-field > span,
+.studio-file-field > span,
+.studio-field-label,
+.marketing-panel label > span,
+.marketing-format-section > span,
+.marketing-benefits > span {
+  font-size: 10.5px;
+  line-height: 1.25;
+}
+
+.studio-section-title p,
+.marketing-panel-title p,
+.studio-intent-grid small,
+.studio-provider-picker small,
+.marketing-template-grid button small,
+.marketing-format-grid button small,
+.marketing-pack-list small,
+.marketing-note span {
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.studio-primary,
+.studio-secondary,
+.marketing-primary,
+.marketing-secondary,
+.studio-header-button,
+.studio-theme-toggle,
+.marketing-header-actions button,
+.studio-view-tabs button,
+.marketing-toolbar-actions button,
+.marketing-export-actions button {
+  font-size: 11.5px;
+}
+
+.studio-primary,
+.studio-secondary,
+.marketing-primary,
+.marketing-secondary {
+  min-height: 42px;
+}
+
+.studio-block-editor-head button,
+.studio-link-button,
+.studio-block-list-head button,
+.studio-issues article > button {
+  font-size: 10px;
+}
+
+.studio-block-row-copy strong,
+.studio-provider-picker strong,
+.marketing-note strong {
+  font-size: 11px;
+}
+
+.studio-block-row-copy small,
+.studio-source-field > small,
+.marketing-color-grid small,
+.marketing-stage-caption small,
+.marketing-export-info {
+  font-size: 9.5px;
+}
+
+.studio-app[data-theme="dark"] .studio-section-title p,
+.studio-app[data-theme="dark"] .studio-intent-grid small,
+.studio-app[data-theme="dark"] .studio-provider-picker small,
+.marketing-app[data-theme="dark"] .marketing-panel-title p,
+.marketing-app[data-theme="dark"] .marketing-template-grid button small,
+.marketing-app[data-theme="dark"] .marketing-format-grid button small,
+.marketing-app[data-theme="dark"] .marketing-pack-list small,
+.marketing-app[data-theme="dark"] .marketing-note span {
+  color: color-mix(in srgb, currentColor 88%, white 12%);
+}
+
 @media (max-width: 1100px) {
   .studio-header,
   .marketing-header {
