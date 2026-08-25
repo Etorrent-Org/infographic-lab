@@ -1,3 +1,5 @@
+export {};
+
 const tabRailSelector = ".studio-inspector-tabs, .marketing-panel-tabs";
 const mobileQuery = window.matchMedia("(max-width: 760px)");
 const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
