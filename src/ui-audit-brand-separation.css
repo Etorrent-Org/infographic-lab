@@ -1,0 +1,23 @@
+/* #30 — les couleurs du Brand Kit ne pilotent plus l'interface du studio. */
+
+.studio-app {
+  --ui-accent: #315fce !important;
+  --ui-accent-soft: color-mix(in srgb, #315fce 10%, transparent) !important;
+  --ui-accent-strong: #274fae !important;
+}
+
+.studio-app[data-theme="dark"] {
+  --ui-accent: #82a2ff !important;
+  --ui-accent-soft: color-mix(in srgb, #82a2ff 16%, transparent) !important;
+  --ui-accent-strong: #a9bfff !important;
+}
+
+.marketing-app {
+  --mk-accent: #315fce !important;
+  --mk-primary: #172033 !important;
+}
+
+.marketing-app[data-theme="dark"] {
+  --mk-accent: #82a2ff !important;
+  --mk-primary: #3f6fe5 !important;
+}
