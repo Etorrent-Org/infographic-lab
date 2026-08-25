@@ -24,6 +24,7 @@ import {
   type MarketingMockup,
 } from "./marketing";
 import { downloadBlob, downloadHref } from "./project";
+import { StudioNotice } from "./StudioNotice";
 import type { BrandProfile } from "./types";
 import "./marketing.css";
 
@@ -254,6 +255,11 @@ export function MarketingStudio() {
         </div>
       </header>
 
+      <div className="studio-notice-stack" aria-label="Notifications">
+        {message && <StudioNotice tone="success" autoDismiss onClose={() => setMessage(null)}>{message}</StudioNotice>}
+        {error && <StudioNotice tone="error" onClose={() => setError(null)}>{error}</StudioNotice>}
+      </div>
+
       <div className="marketing-workbench">
         <aside className="marketing-inspector">
           <nav className="marketing-panel-tabs">
@@ -319,9 +325,6 @@ export function MarketingStudio() {
                 <button type="button" className="marketing-primary" disabled={exporting || !packFormats.length} onClick={() => void exportCampaignPack()}>{exporting ? "Création du Campaign Pack…" : `Exporter le Campaign Pack (${packFormats.length})`}</button>
               </section>
             )}
-
-            {message && <p className="marketing-message ok">{message}</p>}
-            {error && <p className="marketing-message error">{error}</p>}
           </div>
         </aside>
 
