@@ -10,6 +10,7 @@ import "./studio-controls.css";
 import "./v1.css";
 import "./augmented.css";
 import "./ui-audit.css";
+import "./ui-audit-actions.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
