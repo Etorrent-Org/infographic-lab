@@ -18,6 +18,7 @@ import "./ui-audit-selection.css";
 import "./ui-audit-files.css";
 import "./ui-audit-mobile.css";
 import "./ui-audit-colors.css";
+import "./ui-audit-labels";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
