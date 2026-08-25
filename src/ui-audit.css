@@ -1,0 +1,114 @@
+/* Ajustements UI/UX validés pendant l'audit V2. */
+
+.suite-root {
+  grid-template-columns: 84px minmax(0, 1fr);
+}
+
+.suite-rail {
+  gap: 10px;
+  padding: 12px 6px 10px;
+}
+
+.suite-rail-brand {
+  width: 44px;
+  height: 44px;
+  margin-bottom: 12px;
+}
+
+.suite-rail button {
+  position: relative;
+  width: 70px;
+  min-height: 66px;
+  gap: 7px;
+  padding: 8px 6px;
+  border-radius: 14px;
+}
+
+.suite-icon {
+  width: 23px;
+  height: 23px;
+  display: grid;
+  place-items: center;
+}
+
+.suite-icon svg {
+  width: 23px;
+  height: 23px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.suite-rail button small {
+  font-size: 10px;
+  line-height: 1.1;
+  font-weight: 750;
+  letter-spacing: 0;
+}
+
+.suite-rail button.active {
+  background: color-mix(in srgb, #4f7df3 13%, white);
+  color: #274fbd;
+  border-color: color-mix(in srgb, #4f7df3 38%, transparent);
+  box-shadow: none;
+}
+
+.suite-rail button.active::before {
+  content: "";
+  position: absolute;
+  left: -7px;
+  top: 15px;
+  bottom: 15px;
+  width: 3px;
+  border-radius: 999px;
+  background: #4f7df3;
+}
+
+.suite-rail button:hover:not(.active) {
+  transform: translateY(-1px);
+}
+
+.suite-rail button:focus-visible {
+  outline: 3px solid color-mix(in srgb, #4f7df3 35%, transparent);
+  outline-offset: 2px;
+}
+
+.suite-root:has(.studio-app[data-theme="dark"]) .suite-rail button.active,
+.suite-root:has(.marketing-app[data-theme="dark"]) .suite-rail button.active {
+  background: rgba(79, 125, 243, 0.16);
+  color: #a9bfff;
+  border-color: rgba(109, 143, 235, 0.34);
+}
+
+.suite-root:has(.studio-app[data-theme="dark"]) .suite-rail button.active::before,
+.suite-root:has(.marketing-app[data-theme="dark"]) .suite-rail button.active::before {
+  background: #82a2ff;
+}
+
+/* Le branding principal est déjà porté par le rail : on évite de répéter le monogramme IL dans chaque header. */
+.studio-product-mark,
+.marketing-product-mark {
+  display: none;
+}
+
+.studio-product,
+.marketing-product {
+  gap: 0;
+}
+
+@media (max-width: 760px) {
+  .suite-root {
+    grid-template-columns: 70px minmax(0, 1fr);
+  }
+
+  .suite-rail button {
+    width: 58px;
+    min-height: 62px;
+  }
+
+  .suite-rail button small {
+    font-size: 9px;
+  }
+}
