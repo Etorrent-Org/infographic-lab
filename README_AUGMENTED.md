@@ -43,7 +43,9 @@ Fonctions disponibles :
 - mockups T-shirt, mug, tote bag, packaging, kakemono et vitrine ;
 - Campaign Pack ZIP multi-format avec copy Markdown et fichier de campagne.
 
-Les visuels V2 sont rendus localement dans le navigateur. L'asset marketing n'est pas envoyé à un moteur image externe.
+Les créations de la V2 sont construites par un moteur graphique SVG local : cela permet un rendu éditable, des exports nets et une adaptation immédiate aux formats de campagne. Le visuel produit ajouté par l'utilisateur reste dans le navigateur et n'est pas envoyé à un moteur image externe.
+
+Les mockups de cette V2 sont volontairement vectoriels et servent à valider la mise en situation. Les mockups photoréalistes et la génération d'images via ComfyUI ou autres moteurs locaux sont prévus avec le panneau Provider & Model Control Center de la V3.
 
 ## Démarrage
 
