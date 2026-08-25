@@ -12,14 +12,11 @@ import {
   claimOptions,
   dataUrlToBytes,
   defaultBrands,
-  deleteLocalProject,
-  duplicateLocalProject,
   intentOptions,
   loadBrands,
   loadLibrary,
   localQualityReview,
   normalizeInfographic,
-  renameLocalProject,
   safeSlug,
   saveCustomBrand,
   upsertLocalProject,
@@ -29,6 +26,7 @@ import {
 import { CustomVisual } from "./CustomVisual";
 import { MarkdownView } from "./MarkdownView";
 import { MermaidView } from "./MermaidView";
+import { ProjectLibraryModal } from "./ProjectLibraryModal";
 import {
   buildStandaloneHtml,
   downloadBlob,
@@ -937,15 +935,14 @@ export function AugmentedStudioV2() {
       </div>
 
       {libraryOpen && (
-        <div className="studio-modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setLibraryOpen(false); }}>
-          <section className="studio-modal" role="dialog" aria-modal="true" aria-label="Bibliothèque de projets">
-            <header><div><span>BIBLIOTHÈQUE LOCALE</span><h2>Mes projets</h2></div><button type="button" onClick={() => setLibraryOpen(false)} aria-label="Fermer">×</button></header>
-            <div className="studio-modal-content">
-              {!library.length && <div className="studio-panel-empty">Aucun projet local pour le moment.</div>}
-              {library.map((record) => <article key={record.id} className={record.id === projectId ? "studio-project-card active" : "studio-project-card"}><div className="studio-project-card-copy"><strong>{record.name}</strong><small>{formatDate(record.updatedAt)} · {record.infographic.items.length} blocs</small></div><div className="studio-project-card-actions"><button type="button" onClick={() => loadProject(record)}>Ouvrir</button><button type="button" onClick={() => { duplicateLocalProject(record.id); setLibraryVersion((value) => value + 1); }}>Dupliquer</button><button type="button" onClick={() => { const name = window.prompt("Nouveau nom", record.name); if (name) { renameLocalProject(record.id, name); setLibraryVersion((value) => value + 1); } }}>Renommer</button><button type="button" onClick={() => { if (window.confirm(`Supprimer « ${record.name} » ?`)) { deleteLocalProject(record.id); setLibraryVersion((value) => value + 1); } }}>Supprimer</button></div>{record.snapshots.length > 0 && <details><summary>{record.snapshots.length} version(s) enregistrée(s)</summary><div className="studio-version-list">{record.snapshots.map((snapshot, index) => <button key={snapshot.id} type="button" onClick={() => restoreSnapshot(record, index)}>{formatDate(snapshot.savedAt)} · restaurer</button>)}</div></details>}</article>)}
-            </div>
-          </section>
-        </div>
+        <ProjectLibraryModal
+          records={library}
+          activeProjectId={projectId}
+          onOpen={loadProject}
+          onRestore={restoreSnapshot}
+          onChanged={() => setLibraryVersion((value) => value + 1)}
+          onClose={() => setLibraryOpen(false)}
+        />
       )}
     </main>
   );
