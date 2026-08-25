@@ -90,6 +90,8 @@ export function MarketingStudio() {
   const [error, setError] = useState<string | null>(null);
 
   const format = marketingFormats.find((item) => item.id === formatId) ?? marketingFormats[0];
+  const activeMockup = mockupOptions.find((item) => item.id === mockup);
+  const activeMockupLabel = activeMockup?.label ?? "Mockup";
   const svg = useMemo(() => renderMarketingSvg(campaign, brand, format, mockup), [campaign, brand, format, mockup]);
   const previewRatio = mockup === "none" ? `${format.width} / ${format.height}` : "1200 / 1280";
 
@@ -331,7 +333,25 @@ export function MarketingStudio() {
         <section className="marketing-stage">
           <div className="marketing-stage-toolbar">
             <div><span>FORMAT ACTIF</span><strong>{format.label}</strong><small>{format.hint}</small></div>
-            <div className="marketing-toolbar-actions"><button type="button" onClick={() => setMockup("none")} className={mockup === "none" ? "active" : ""}>Création</button><button type="button" onClick={() => setActivePanel("mockup")} className={mockup !== "none" ? "active" : ""}>{mockup === "none" ? "Mockup" : mockup}</button></div>
+            <div className="marketing-toolbar-actions">
+              <button
+                type="button"
+                onClick={() => setMockup("none")}
+                className={mockup === "none" ? "active" : ""}
+                aria-pressed={mockup === "none"}
+              >
+                Création
+              </button>
+              <button
+                type="button"
+                onClick={() => setActivePanel("mockup")}
+                className={mockup !== "none" ? "active" : ""}
+                aria-pressed={mockup !== "none"}
+                title={mockup === "none" ? "Choisir un mockup" : `Mockup actif : ${activeMockupLabel}`}
+              >
+                {mockup === "none" ? "Mockup" : `Mockup · ${activeMockupLabel}`}
+              </button>
+            </div>
           </div>
           <div className="marketing-stage-scroll">
             <div className="marketing-canvas-shell" style={{ aspectRatio: previewRatio }}>
