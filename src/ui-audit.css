@@ -293,6 +293,110 @@
   background: color-mix(in srgb, var(--ui-accent, var(--mk-accent, #82a2ff)) 14%, transparent);
 }
 
+/* #4 — sélecteur de vue du canvas unifié */
+.studio-stage-toolbar,
+.marketing-stage-toolbar {
+  min-width: 0;
+}
+
+.studio-view-tabs,
+.marketing-toolbar-actions {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px;
+  border: 1px solid var(--ui-border, var(--mk-border));
+  border-radius: 11px;
+  background: var(--ui-surface-2, var(--mk-panel-soft));
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.studio-view-tabs::-webkit-scrollbar,
+.marketing-toolbar-actions::-webkit-scrollbar {
+  display: none;
+}
+
+.studio-view-tabs button,
+.marketing-toolbar-actions button {
+  min-height: 36px;
+  flex: 0 0 auto;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ui-muted, var(--mk-muted));
+  padding: 0 11px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 740;
+  box-shadow: none;
+}
+
+.studio-view-tabs button > span {
+  width: 16px;
+  height: 16px;
+  overflow: hidden;
+  color: transparent;
+  font-size: 0;
+  display: grid;
+  place-items: center;
+}
+
+.studio-view-tabs button > span::before,
+.marketing-toolbar-actions button::before {
+  color: currentColor;
+  font-size: 15px;
+  line-height: 1;
+  font-weight: 650;
+}
+
+.studio-view-tabs button:nth-child(1) > span::before { content: "▦"; }
+.studio-view-tabs button:nth-child(2) > span::before { content: "⌁"; }
+.studio-view-tabs button:nth-child(3) > span::before { content: "⌘"; }
+.studio-view-tabs button:nth-child(4) > span::before { content: "≡"; }
+.marketing-toolbar-actions button:nth-child(1)::before { content: "▦"; }
+.marketing-toolbar-actions button:nth-child(2)::before { content: "▣"; }
+
+.studio-view-tabs button:hover:not(:disabled),
+.marketing-toolbar-actions button:hover {
+  border-color: var(--ui-border-strong, var(--mk-border));
+  color: var(--ui-text, var(--mk-text));
+  background: var(--ui-surface-3, var(--mk-panel));
+}
+
+.studio-view-tabs button.active,
+.marketing-toolbar-actions button.active {
+  border-color: color-mix(in srgb, var(--ui-accent, var(--mk-accent, #4f7df3)) 34%, var(--ui-border, var(--mk-border)));
+  background: color-mix(in srgb, var(--ui-accent, var(--mk-accent, #4f7df3)) 11%, var(--ui-surface, var(--mk-panel)));
+  color: var(--ui-accent-strong, var(--mk-accent, #4f7df3));
+  box-shadow: none;
+}
+
+.studio-view-tabs button.active > span::before,
+.marketing-toolbar-actions button.active::before {
+  color: inherit;
+}
+
+.studio-view-tabs button:focus-visible,
+.marketing-toolbar-actions button:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--ui-accent, var(--mk-accent, #4f7df3)) 30%, transparent);
+  outline-offset: 1px;
+}
+
+.studio-view-tabs button:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+.studio-app[data-theme="dark"] .studio-view-tabs button.active,
+.marketing-app[data-theme="dark"] .marketing-toolbar-actions button.active {
+  background: color-mix(in srgb, var(--ui-accent, var(--mk-accent, #82a2ff)) 15%, transparent);
+}
+
 @media (max-width: 1100px) {
   .studio-header,
   .marketing-header {
@@ -340,5 +444,16 @@
   .marketing-panel-tabs button {
     min-height: 54px;
     font-size: 9px;
+  }
+
+  .studio-view-tabs,
+  .marketing-toolbar-actions {
+    max-width: 100%;
+  }
+
+  .studio-view-tabs button,
+  .marketing-toolbar-actions button {
+    min-height: 36px;
+    padding-inline: 9px;
   }
 }
