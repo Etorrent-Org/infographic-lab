@@ -1,5 +1,5 @@
-import { AugmentedStudioV2 } from "./AugmentedStudio.v2";
+import { StudioSuite } from "./StudioSuite";
 
 export function App() {
-  return <AugmentedStudioV2 />;
+  return <StudioSuite />;
 }
