@@ -21,6 +21,7 @@ import "./ui-audit-colors.css";
 import "./ui-audit-labels";
 import "./ui-audit-active-tab";
 import "./ui-audit-focus.css";
+import "./ui-audit-scroll.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
