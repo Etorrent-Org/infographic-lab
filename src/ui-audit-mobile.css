@@ -1,0 +1,186 @@
+/* #14 — navigation réellement exploitable sur petits écrans */
+
+@media (max-width: 760px) {
+  .suite-root {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    min-height: 100vh;
+  }
+
+  .suite-rail {
+    position: sticky;
+    top: 0;
+    z-index: 120;
+    width: 100%;
+    height: 56px;
+    min-height: 56px;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px;
+    border-right: 0;
+    border-bottom: 1px solid #dce2eb;
+    box-shadow: 0 8px 22px rgba(15, 23, 42, .06);
+  }
+
+  .suite-rail-brand {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    margin: 0 4px 0 0;
+    border-radius: 11px;
+  }
+
+  .suite-rail button {
+    width: auto;
+    min-width: 96px;
+    min-height: 44px;
+    grid-template-columns: auto auto;
+    place-items: center;
+    align-content: center;
+    gap: 7px;
+    padding: 6px 10px;
+    border-radius: 11px;
+  }
+
+  .suite-rail button small {
+    display: inline;
+    font-size: 10px;
+    line-height: 1;
+  }
+
+  .suite-icon,
+  .suite-icon svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  .suite-rail button.active::before {
+    left: 13px;
+    right: 13px;
+    top: auto;
+    bottom: -6px;
+    width: auto;
+    height: 3px;
+  }
+
+  .suite-rail-spacer {
+    flex: 1 1 auto;
+    min-width: 4px;
+  }
+
+  .suite-version {
+    flex: 0 0 auto;
+  }
+
+  .suite-content {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .studio-header,
+  .marketing-header {
+    position: sticky;
+    top: 56px;
+    z-index: 90;
+  }
+
+  .studio-inspector,
+  .marketing-inspector {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    min-width: 0;
+    min-height: 0;
+    max-height: none;
+    border-right: 0;
+  }
+
+  .studio-inspector-tabs,
+  .marketing-panel-tabs {
+    min-width: 0;
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+    padding: 8px;
+    border-right: 0;
+    border-bottom: 1px solid var(--ui-border, var(--mk-border-soft));
+  }
+
+  .studio-inspector-tabs button,
+  .marketing-panel-tabs button {
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 96px;
+    min-height: 46px;
+    grid-template-columns: auto auto;
+    align-content: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 7px 10px;
+    font-size: 10px;
+  }
+
+  .studio-inspector-tabs button > span,
+  .marketing-panel-tabs button > span {
+    font-size: 9px;
+  }
+
+  .studio-inspector-tabs button.active::before,
+  .marketing-panel-tabs button.active::before {
+    left: 14px;
+    right: 14px;
+    top: auto;
+    bottom: 3px;
+    width: auto;
+    height: 3px;
+  }
+
+  .studio-inspector-scroll,
+  .marketing-inspector-scroll {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .studio-app[data-theme="dark"] ~ *,
+  .marketing-app[data-theme="dark"] ~ * {
+    color-scheme: dark;
+  }
+
+  .suite-root:has(.studio-app[data-theme="dark"]) .suite-rail,
+  .suite-root:has(.marketing-app[data-theme="dark"]) .suite-rail {
+    border-bottom-color: #2b3444;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .24);
+  }
+}
+
+@media (max-width: 460px) {
+  .suite-rail {
+    gap: 4px;
+    padding-inline: 6px;
+  }
+
+  .suite-rail-brand {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    font-size: 11px;
+  }
+
+  .suite-rail button {
+    min-width: 88px;
+    padding-inline: 8px;
+  }
+
+  .suite-version {
+    width: 30px;
+  }
+
+  .studio-inspector-tabs button,
+  .marketing-panel-tabs button {
+    min-width: 92px;
+  }
+}
