@@ -1,4 +1,4 @@
-/* Passe finale UI/UX : corrections #38 a #43. */
+/* Passe finale UI/UX : corrections #38 a #46. */
 
 /* #38 — supprime l'ancien etat hybride Structure entre 851 et 900 px. */
 @media (min-width: 851px) and (max-width: 900px) {
@@ -74,6 +74,15 @@
   overflow-y: auto;
 }
 
+/* #46 — une modale doit rester au-dessus des notifications et du chrome de navigation. */
+.studio-library-backdrop {
+  z-index: 160;
+}
+
+.studio-library-action-layer {
+  z-index: 180;
+}
+
 /* #41 — cibles tactiles et pile sticky coherentes sous 850 px. */
 @media (max-width: 850px) {
   .studio-header,
@@ -107,8 +116,9 @@
     top: 112px;
   }
 
+  /* #45 — les notifications passent sous nav + header + onglets sticky. */
   .studio-notice-stack {
-    top: calc(120px + env(safe-area-inset-top, 0px));
+    top: calc(183px + env(safe-area-inset-top, 0px));
   }
 
   .studio-view-tabs button,
