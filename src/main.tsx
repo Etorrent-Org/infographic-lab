@@ -28,6 +28,7 @@ import "./ui-audit-brand-separation.css";
 import "./ui-audit-global-theme.css";
 import "./ui-audit-dark-primary-actions.css";
 import "./ui-audit-view-icons.css";
+import "./ui-audit-placeholders.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
