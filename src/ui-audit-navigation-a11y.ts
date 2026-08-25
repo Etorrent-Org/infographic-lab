@@ -24,6 +24,11 @@ function syncNavigationAccessibility() {
       });
     });
   });
+
+  /* #44 — le nom de campagne du header possede un libelle explicite, comme le nom de projet. */
+  document.querySelectorAll<HTMLInputElement>(".marketing-campaign-name input").forEach((input) => {
+    if (!input.hasAttribute("aria-label")) input.setAttribute("aria-label", "Nom de la campagne");
+  });
 }
 
 let scheduled = false;
