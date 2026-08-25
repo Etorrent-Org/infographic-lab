@@ -2,10 +2,11 @@ name: infographic-lab-augmented
 
 services:
   app:
+    image: ${AUGMENTED_APP_IMAGE:-erwanntorrent/infographic-lab:augmented-v2}
+    pull_policy: ${AUGMENTED_PULL_POLICY:-missing}
     build:
       context: .
       dockerfile: Dockerfile
-    image: infographic-lab-augmented:local
     container_name: infographic-lab-augmented
     environment:
       PORT: 3092
@@ -57,12 +58,13 @@ services:
     restart: unless-stopped
 
   codex-runner:
+    image: ${AUGMENTED_CODEX_IMAGE:-erwanntorrent/infographic-codex-runner:augmented-v2}
+    pull_policy: ${AUGMENTED_PULL_POLICY:-missing}
     build:
       context: ./runners/codex
       dockerfile: Dockerfile
       args:
         CODEX_VERSION: ${CODEX_VERSION:-latest}
-    image: infographic-codex-runner:local
     container_name: infographic-codex-runner
     environment:
       RUNNER_SHARED_TOKEN: ${RUNNER_SHARED_TOKEN:-infographic-augmented-local-change-me}
