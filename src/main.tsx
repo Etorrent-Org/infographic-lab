@@ -9,6 +9,7 @@ import "./project-export.css";
 import "./studio-controls.css";
 import "./v1.css";
 import "./augmented.css";
+import "./ui-audit.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
