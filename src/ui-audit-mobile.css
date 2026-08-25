@@ -1,6 +1,7 @@
 /* #14 — navigation réellement exploitable sur petits écrans */
+/* #22 — même comportement responsive propre jusqu'aux tablettes portrait */
 
-@media (max-width: 760px) {
+@media (max-width: 850px) {
   .suite-root {
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: auto minmax(0, 1fr);
