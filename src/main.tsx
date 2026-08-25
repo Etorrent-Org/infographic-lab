@@ -29,6 +29,7 @@ import "./ui-audit-global-theme.css";
 import "./ui-audit-dark-primary-actions.css";
 import "./ui-audit-view-icons.css";
 import "./ui-audit-placeholders.css";
+import "./ui-audit-navigation-a11y";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
