@@ -1,0 +1,166 @@
+/* #11 — états de sélection cohérents entre Structure et Visuels */
+
+.studio-intent-grid button,
+.studio-provider-picker button,
+.marketing-template-grid button,
+.marketing-format-grid button,
+.marketing-mockup-grid button,
+.marketing-pack-list label {
+  position: relative;
+  transition:
+    border-color 140ms ease,
+    background-color 140ms ease,
+    color 140ms ease,
+    box-shadow 140ms ease,
+    transform 140ms ease;
+}
+
+.studio-intent-grid button:hover:not(.active),
+.studio-provider-picker button:hover:not(.active),
+.marketing-template-grid button:hover:not(.active),
+.marketing-format-grid button:hover:not(.active),
+.marketing-mockup-grid button:hover:not(.active),
+.marketing-pack-list label:hover:not(.selected) {
+  border-color: var(--ui-border-strong, var(--mk-border));
+  background: var(--ui-surface-3, var(--mk-panel));
+  transform: translateY(-1px);
+}
+
+.studio-intent-grid button.active,
+.studio-provider-picker button.active,
+.marketing-template-grid button.active,
+.marketing-format-grid button.active,
+.marketing-mockup-grid button.active,
+.marketing-pack-list label.selected {
+  border-color: color-mix(
+    in srgb,
+    var(--ui-accent, var(--mk-accent, #4f7df3)) 58%,
+    var(--ui-border, var(--mk-border))
+  );
+  background: color-mix(
+    in srgb,
+    var(--ui-accent, var(--mk-accent, #4f7df3)) 10%,
+    var(--ui-surface, var(--mk-panel))
+  );
+  color: var(--ui-text, var(--mk-text));
+  box-shadow: inset 0 0 0 1px color-mix(
+    in srgb,
+    var(--ui-accent, var(--mk-accent, #4f7df3)) 10%,
+    transparent
+  );
+}
+
+.studio-intent-grid button.active::after,
+.studio-provider-picker button.active::after,
+.marketing-template-grid button.active::after,
+.marketing-format-grid button.active::after,
+.marketing-mockup-grid button.active::after {
+  content: "✓";
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--ui-accent, var(--mk-accent, #4f7df3));
+  color: #fff;
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1;
+  box-shadow: 0 0 0 2px var(--ui-surface, var(--mk-panel));
+}
+
+/* Le provider possède déjà son indicateur de disponibilité à gauche : le check reste volontairement à droite. */
+.studio-provider-picker button.active {
+  padding-right: 32px;
+}
+
+.marketing-template-grid button.active,
+.marketing-format-grid button.active,
+.marketing-mockup-grid button.active {
+  padding-right: 34px;
+}
+
+.studio-intent-grid button:focus-visible,
+.studio-provider-picker button:focus-visible,
+.marketing-template-grid button:focus-visible,
+.marketing-format-grid button:focus-visible,
+.marketing-mockup-grid button:focus-visible,
+.marketing-pack-list label:has(input:focus-visible) {
+  outline: 3px solid color-mix(
+    in srgb,
+    var(--ui-accent, var(--mk-accent, #4f7df3)) 30%,
+    transparent
+  );
+  outline-offset: 2px;
+}
+
+.marketing-pack-list input[type="checkbox"] {
+  width: 17px;
+  height: 17px;
+  min-height: 17px;
+  margin: 0;
+  padding: 0;
+  accent-color: var(--mk-accent, #4f7df3);
+  cursor: pointer;
+}
+
+.marketing-pack-list label.selected::after {
+  content: "Sélectionné";
+  justify-self: end;
+  align-self: start;
+  grid-column: 2;
+  grid-row: 1;
+  margin-left: 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--mk-accent, #4f7df3) 13%, var(--mk-panel));
+  color: var(--mk-accent, #4f7df3);
+  padding: 3px 6px;
+  font-size: 8px;
+  font-weight: 820;
+  letter-spacing: .03em;
+}
+
+.marketing-pack-list label.selected > div {
+  grid-column: 2;
+  grid-row: 1;
+  padding-right: 70px;
+}
+
+.studio-intent-grid button.active small,
+.studio-provider-picker button.active small,
+.marketing-template-grid button.active small,
+.marketing-format-grid button.active small,
+.marketing-pack-list label.selected small {
+  color: var(--ui-muted, var(--mk-muted));
+}
+
+.studio-app[data-theme="dark"] .studio-intent-grid button.active,
+.studio-app[data-theme="dark"] .studio-provider-picker button.active,
+.marketing-app[data-theme="dark"] .marketing-template-grid button.active,
+.marketing-app[data-theme="dark"] .marketing-format-grid button.active,
+.marketing-app[data-theme="dark"] .marketing-mockup-grid button.active,
+.marketing-app[data-theme="dark"] .marketing-pack-list label.selected {
+  background: color-mix(
+    in srgb,
+    var(--ui-accent, var(--mk-accent, #82a2ff)) 15%,
+    var(--ui-surface, var(--mk-panel))
+  );
+}
+
+@media (max-width: 560px) {
+  .marketing-pack-list label.selected::after {
+    content: "✓";
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    display: grid;
+    place-items: center;
+  }
+
+  .marketing-pack-list label.selected > div {
+    padding-right: 28px;
+  }
+}
