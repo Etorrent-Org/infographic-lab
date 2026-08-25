@@ -1,5 +1,6 @@
 /* Ajustements UI/UX validés pendant l'audit V2. */
 
+/* #1 — navigation principale Structure / Visuels */
 .suite-root {
   grid-template-columns: 84px minmax(0, 1fr);
 }
@@ -98,6 +99,113 @@
   gap: 0;
 }
 
+/* #2 — header cohérent entre Structure et Visuels */
+.marketing-header {
+  flex: 0 0 64px;
+  min-height: 64px;
+  grid-template-columns: 260px minmax(240px, 1fr) auto;
+  gap: 18px;
+  padding: 0 18px;
+  background: color-mix(in srgb, var(--mk-panel) 94%, transparent);
+  backdrop-filter: blur(16px);
+}
+
+.studio-product-copy,
+.marketing-product > div:last-child {
+  min-width: 0;
+  display: grid;
+  gap: 1px;
+}
+
+.studio-product-copy strong,
+.marketing-product strong {
+  font-size: 14px;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+}
+
+.studio-product-copy span,
+.marketing-product span {
+  font-size: 10px;
+  font-weight: 720;
+  letter-spacing: 0.09em;
+}
+
+.marketing-campaign-name {
+  justify-self: center;
+  width: min(520px, 100%);
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 9px;
+}
+
+.marketing-campaign-name > span {
+  font-size: 10px;
+  font-weight: 760;
+  letter-spacing: 0.08em;
+}
+
+.marketing-campaign-name input {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  padding: 7px 8px;
+  font-size: 13px;
+  font-weight: 730;
+  text-align: center;
+  outline: none;
+}
+
+.marketing-campaign-name input:hover,
+.marketing-campaign-name input:focus {
+  border-color: var(--mk-border);
+  background: var(--mk-panel-soft);
+}
+
+.marketing-header-actions {
+  gap: 7px;
+}
+
+.marketing-header-actions button {
+  min-height: 34px;
+  border-radius: 9px;
+  background: var(--mk-panel-soft);
+  color: var(--mk-muted);
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 720;
+}
+
+.marketing-header-actions button:hover {
+  border-color: color-mix(in srgb, var(--mk-border) 50%, var(--mk-text));
+  color: var(--mk-text);
+  background: color-mix(in srgb, var(--mk-panel-soft) 70%, var(--mk-panel));
+}
+
+.marketing-local-pill {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 10px;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 1100px) {
+  .studio-header,
+  .marketing-header {
+    grid-template-columns: 210px minmax(180px, 1fr) auto;
+    gap: 12px;
+    padding-inline: 14px;
+  }
+}
+
 @media (max-width: 760px) {
   .suite-root {
     grid-template-columns: 70px minmax(0, 1fr);
@@ -110,5 +218,15 @@
 
   .suite-rail button small {
     font-size: 9px;
+  }
+
+  .studio-header,
+  .marketing-header {
+    grid-template-columns: minmax(150px, 1fr) auto;
+  }
+
+  .studio-project-title,
+  .marketing-campaign-name {
+    display: none;
   }
 }
