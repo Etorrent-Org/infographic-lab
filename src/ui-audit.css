@@ -197,6 +197,102 @@
   letter-spacing: 0.04em;
 }
 
+/* #3 — navigation secondaire unifiée */
+.studio-inspector {
+  display: grid;
+  grid-template-columns: 82px minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+}
+
+.studio-inspector-tabs,
+.marketing-panel-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+  padding: 12px 8px;
+  border-right: 1px solid var(--ui-border, var(--mk-border-soft));
+  border-bottom: 0;
+  background: var(--ui-surface-2, var(--mk-panel-soft));
+}
+
+.studio-inspector-tabs {
+  flex: none;
+}
+
+.marketing-inspector {
+  grid-template-columns: 82px minmax(0, 1fr);
+}
+
+.studio-inspector-tabs button,
+.marketing-panel-tabs button {
+  position: relative;
+  min-width: 0;
+  min-height: 58px;
+  width: 100%;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 4px;
+  padding: 8px 5px;
+  border: 1px solid transparent;
+  border-radius: 11px;
+  background: transparent;
+  font-size: 10px;
+  line-height: 1.1;
+  font-weight: 760;
+  cursor: pointer;
+}
+
+.studio-inspector-tabs button > span,
+.marketing-panel-tabs button > span {
+  font-size: 9px;
+  font-weight: 820;
+  letter-spacing: 0.08em;
+  opacity: 0.72;
+}
+
+.studio-inspector-tabs button.active,
+.marketing-panel-tabs button.active {
+  border-color: color-mix(in srgb, var(--ui-accent, var(--mk-accent, #4f7df3)) 32%, var(--ui-border, var(--mk-border)));
+  background: color-mix(in srgb, var(--ui-accent, var(--mk-accent, #4f7df3)) 10%, var(--ui-surface, var(--mk-panel)));
+  color: var(--ui-accent-strong, var(--mk-accent, #4f7df3));
+}
+
+.studio-inspector-tabs button.active::before,
+.marketing-panel-tabs button.active::before {
+  content: "";
+  position: absolute;
+  left: -9px;
+  top: 13px;
+  bottom: 13px;
+  width: 3px;
+  border-radius: 999px;
+  background: var(--ui-accent, var(--mk-accent, #4f7df3));
+}
+
+.studio-inspector-tabs button:hover:not(.active),
+.marketing-panel-tabs button:hover:not(.active) {
+  background: var(--ui-surface-3, var(--mk-panel));
+  color: var(--ui-text, var(--mk-text));
+}
+
+.studio-inspector-tabs button:focus-visible,
+.marketing-panel-tabs button:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--ui-accent, var(--mk-accent, #4f7df3)) 30%, transparent);
+  outline-offset: 1px;
+}
+
+.studio-inspector-scroll,
+.marketing-inspector-scroll {
+  min-width: 0;
+}
+
+.studio-app[data-theme="dark"] .studio-inspector-tabs button.active,
+.marketing-app[data-theme="dark"] .marketing-panel-tabs button.active {
+  background: color-mix(in srgb, var(--ui-accent, var(--mk-accent, #82a2ff)) 14%, transparent);
+}
+
 @media (max-width: 1100px) {
   .studio-header,
   .marketing-header {
@@ -228,5 +324,21 @@
   .studio-project-title,
   .marketing-campaign-name {
     display: none;
+  }
+
+  .studio-inspector,
+  .marketing-inspector {
+    grid-template-columns: 70px minmax(0, 1fr);
+  }
+
+  .studio-inspector-tabs,
+  .marketing-panel-tabs {
+    padding-inline: 6px;
+  }
+
+  .studio-inspector-tabs button,
+  .marketing-panel-tabs button {
+    min-height: 54px;
+    font-size: 9px;
   }
 }
