@@ -1,0 +1,29 @@
+/* #34 — une seule convention pour les actions principales en mode sombre. */
+
+.studio-app[data-theme="dark"] .studio-export-actions .studio-export-pack,
+.studio-app[data-theme="dark"] .studio-project-open,
+.studio-app[data-theme="dark"] .studio-dialog-primary {
+  border-color: var(--ui-accent);
+  background: var(--ui-accent);
+  color: #fff;
+}
+
+.studio-app[data-theme="dark"] .studio-export-actions .studio-export-pack:hover:not(:disabled),
+.studio-app[data-theme="dark"] .studio-project-open:hover:not(:disabled),
+.studio-app[data-theme="dark"] .studio-dialog-primary:hover:not(:disabled) {
+  border-color: var(--ui-accent-strong);
+  background: var(--ui-accent-strong);
+  color: #fff;
+}
+
+.marketing-app[data-theme="dark"] .marketing-export-actions .marketing-pack-button {
+  border-color: var(--mk-accent);
+  background: var(--mk-accent);
+  color: #fff;
+}
+
+.marketing-app[data-theme="dark"] .marketing-export-actions .marketing-pack-button:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--mk-accent) 82%, white 18%);
+  background: color-mix(in srgb, var(--mk-accent) 82%, white 18%);
+  color: #fff;
+}
