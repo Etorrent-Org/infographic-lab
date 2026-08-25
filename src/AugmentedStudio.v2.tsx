@@ -27,6 +27,7 @@ import { CustomVisual } from "./CustomVisual";
 import { MarkdownView } from "./MarkdownView";
 import { MermaidView } from "./MermaidView";
 import { ProjectLibraryModal } from "./ProjectLibraryModal";
+import { StudioNotice } from "./StudioNotice";
 import {
   buildStandaloneHtml,
   downloadBlob,
@@ -739,6 +740,12 @@ export function AugmentedStudioV2() {
         </div>
       </header>
 
+      <div className="studio-notice-stack" aria-label="Notifications">
+        {error && <StudioNotice tone="error" onClose={() => setError(null)}>{error}</StudioNotice>}
+        {warnings.length > 0 && <StudioNotice tone="warning" onClose={() => setWarnings([])}>{warnings.join(" · ")}</StudioNotice>}
+        {qualityError && <StudioNotice tone="warning" onClose={() => setQualityError(null)}>{qualityError} · contrôle local affiché.</StudioNotice>}
+      </div>
+
       <div className="studio-workbench">
         <aside className="studio-inspector">
           <nav className="studio-inspector-tabs" aria-label="Outils de composition">
@@ -794,8 +801,6 @@ export function AugmentedStudioV2() {
                 </div>
 
                 <button type="button" className="studio-primary" disabled={loading} onClick={() => void handleGenerate()}>{loading ? "Structuration en cours…" : result ? "Reconstruire le modèle" : "Construire le modèle"}</button>
-                {error && <p className="studio-message error">{error}</p>}
-                {warnings.map((warning) => <p key={warning} className="studio-message warning">{warning}</p>)}
               </section>
             )}
 
@@ -873,7 +878,6 @@ export function AugmentedStudioV2() {
                   <>
                     {activeQuality && <div className="studio-score"><strong>{activeQuality.score}</strong><span>/100</span><p>{activeQuality.summary}</p></div>}
                     <button type="button" className="studio-secondary" disabled={qualityLoading} onClick={() => void handleQualityReview()}>{qualityLoading ? "Analyse en cours…" : "Analyser avec l'IA"}</button>
-                    {qualityError && <p className="studio-message warning">{qualityError} · contrôle local affiché.</p>}
                     <div className="studio-issues">{activeQuality?.issues.map((issue, index) => <article key={`${issue.message}-${index}`} className={issue.severity}><span>{issue.category}</span><strong>{issue.message}</strong>{issue.suggestion && <small>{issue.suggestion}</small>}{issue.itemIndex !== undefined && (issue.proposedTitle || issue.proposedDescription) && <button type="button" onClick={() => applyQualityIssue(issue)}>Appliquer la correction</button>}</article>)}</div>
                   </>
                 )}
