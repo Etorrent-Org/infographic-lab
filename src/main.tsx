@@ -32,6 +32,7 @@ import "./ui-audit-placeholders.css";
 import "./ui-audit-navigation-a11y";
 import "./ui-audit-modal-isolation";
 import "./ui-audit-final-pass.css";
+import "./ui-audit-polish.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
