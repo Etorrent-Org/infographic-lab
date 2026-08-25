@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   deleteLocalProject,
   duplicateLocalProject,
@@ -16,11 +16,61 @@ type ProjectLibraryModalProps = {
   onClose: () => void;
 };
 
+const focusableSelector = [
+  "button:not([disabled])",
+  "input:not([disabled])",
+  "select:not([disabled])",
+  "textarea:not([disabled])",
+  "a[href]",
+  '[tabindex]:not([tabindex="-1"])',
+].join(",");
+
 function formatDate(value: string) {
   try {
     return new Intl.DateTimeFormat("fr-FR", { dateStyle: "short", timeStyle: "short" }).format(new Date(value));
   } catch {
     return value;
+  }
+}
+
+function focusableElements(container: HTMLElement | null) {
+  if (!container) return [];
+  return Array.from(container.querySelectorAll<HTMLElement>(focusableSelector)).filter((element) => {
+    return !element.hasAttribute("disabled") && element.getAttribute("aria-hidden") !== "true";
+  });
+}
+
+function focusFirst(container: HTMLElement | null, preferredSelector?: string) {
+  if (!container) return;
+  const preferred = preferredSelector ? container.querySelector<HTMLElement>(preferredSelector) : null;
+  const target = preferred ?? focusableElements(container)[0] ?? container;
+  target.focus();
+}
+
+function trapTab(event: KeyboardEvent, container: HTMLElement | null) {
+  if (event.key !== "Tab" || !container) return;
+  const focusable = focusableElements(container);
+  if (!focusable.length) {
+    event.preventDefault();
+    container.focus();
+    return;
+  }
+
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+  const active = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+
+  if (event.shiftKey) {
+    if (!active || !container.contains(active) || active === first) {
+      event.preventDefault();
+      last.focus();
+    }
+    return;
+  }
+
+  if (!active || !container.contains(active) || active === last) {
+    event.preventDefault();
+    first.focus();
   }
 }
 
@@ -35,28 +85,107 @@ export function ProjectLibraryModal({
   const [renameTarget, setRenameTarget] = useState<LocalProjectRecord | null>(null);
   const [renameValue, setRenameValue] = useState("");
   const [deleteTarget, setDeleteTarget] = useState<LocalProjectRecord | null>(null);
+  const libraryDialogRef = useRef<HTMLElement>(null);
+  const renameDialogRef = useRef<HTMLFormElement>(null);
+  const deleteDialogRef = useRef<HTMLElement>(null);
+  const returnFocusRef = useRef<HTMLElement | null>(null);
+  const actionTriggerRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    returnFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const frame = window.requestAnimationFrame(() => {
+      focusFirst(libraryDialogRef.current, ".studio-project-open");
+    });
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      const target = returnFocusRef.current;
+      if (target && document.contains(target)) {
+        window.requestAnimationFrame(() => target.focus());
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!renameTarget) return;
+    const frame = window.requestAnimationFrame(() => {
+      focusFirst(renameDialogRef.current, "input");
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [renameTarget]);
+
+  useEffect(() => {
+    if (!deleteTarget) return;
+    const frame = window.requestAnimationFrame(() => {
+      focusFirst(deleteDialogRef.current, ".studio-dialog-secondary");
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [deleteTarget]);
+
+  function restoreActionFocus() {
+    const target = actionTriggerRef.current;
+    actionTriggerRef.current = null;
+    window.requestAnimationFrame(() => {
+      if (target && document.contains(target)) {
+        target.focus();
+        return;
+      }
+      focusFirst(libraryDialogRef.current, ".studio-project-open");
+    });
+  }
+
+  function closeRename() {
+    setRenameTarget(null);
+    restoreActionFocus();
+  }
+
+  function closeDelete() {
+    setDeleteTarget(null);
+    restoreActionFocus();
+  }
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== "Escape") return;
+      if (event.key === "Escape") {
+        event.preventDefault();
+        if (renameTarget) {
+          closeRename();
+          return;
+        }
+        if (deleteTarget) {
+          closeDelete();
+          return;
+        }
+        onClose();
+        return;
+      }
+
       if (renameTarget) {
-        setRenameTarget(null);
+        trapTab(event, renameDialogRef.current);
         return;
       }
       if (deleteTarget) {
-        setDeleteTarget(null);
+        trapTab(event, deleteDialogRef.current);
         return;
       }
-      onClose();
+      trapTab(event, libraryDialogRef.current);
     };
+
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [deleteTarget, onClose, renameTarget]);
 
-  function startRename(record: LocalProjectRecord) {
+  function startRename(record: LocalProjectRecord, trigger: HTMLElement) {
+    actionTriggerRef.current = trigger;
     setDeleteTarget(null);
     setRenameTarget(record);
     setRenameValue(record.name);
+  }
+
+  function startDelete(record: LocalProjectRecord, trigger: HTMLElement) {
+    actionTriggerRef.current = trigger;
+    setRenameTarget(null);
+    setDeleteTarget(record);
   }
 
   function submitRename(event: React.FormEvent<HTMLFormElement>) {
@@ -66,7 +195,7 @@ export function ProjectLibraryModal({
     if (!nextName) return;
     renameLocalProject(renameTarget.id, nextName);
     onChanged();
-    setRenameTarget(null);
+    closeRename();
   }
 
   function duplicate(record: LocalProjectRecord) {
@@ -78,7 +207,7 @@ export function ProjectLibraryModal({
     if (!deleteTarget) return;
     deleteLocalProject(deleteTarget.id);
     onChanged();
-    setDeleteTarget(null);
+    closeDelete();
   }
 
   return (
@@ -89,7 +218,14 @@ export function ProjectLibraryModal({
         if (event.target === event.currentTarget) onClose();
       }}
     >
-      <section className="studio-modal studio-library-modal" role="dialog" aria-modal="true" aria-labelledby="project-library-title">
+      <section
+        ref={libraryDialogRef}
+        className="studio-modal studio-library-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="project-library-title"
+        tabIndex={-1}
+      >
         <header>
           <div>
             <span>BIBLIOTHÈQUE LOCALE</span>
@@ -114,8 +250,8 @@ export function ProjectLibraryModal({
               <div className="studio-project-card-actions">
                 <button type="button" className="studio-project-open" onClick={() => onOpen(record)}>Ouvrir</button>
                 <button type="button" className="studio-project-quiet" onClick={() => duplicate(record)}>Dupliquer</button>
-                <button type="button" className="studio-project-quiet" onClick={() => startRename(record)}>Renommer</button>
-                <button type="button" className="studio-project-danger" onClick={() => { setRenameTarget(null); setDeleteTarget(record); }}>Supprimer</button>
+                <button type="button" className="studio-project-quiet" onClick={(event) => startRename(record, event.currentTarget)}>Renommer</button>
+                <button type="button" className="studio-project-danger" onClick={(event) => startDelete(record, event.currentTarget)}>Supprimer</button>
               </div>
 
               {record.snapshots.length > 0 && (
@@ -137,8 +273,8 @@ export function ProjectLibraryModal({
       </section>
 
       {renameTarget && (
-        <div className="studio-library-action-layer" role="presentation" onMouseDown={(event) => { event.stopPropagation(); if (event.target === event.currentTarget) setRenameTarget(null); }}>
-          <form className="studio-library-action-dialog" onSubmit={submitRename} role="dialog" aria-modal="true" aria-labelledby="rename-project-title">
+        <div className="studio-library-action-layer" role="presentation" onMouseDown={(event) => { event.stopPropagation(); if (event.target === event.currentTarget) closeRename(); }}>
+          <form ref={renameDialogRef} className="studio-library-action-dialog" onSubmit={submitRename} role="dialog" aria-modal="true" aria-labelledby="rename-project-title" tabIndex={-1}>
             <div className="studio-library-action-copy">
               <span>RENOMMER</span>
               <h3 id="rename-project-title">Nom du projet</h3>
@@ -146,10 +282,10 @@ export function ProjectLibraryModal({
             </div>
             <label>
               <span>Nouveau nom</span>
-              <input autoFocus value={renameValue} maxLength={120} onChange={(event) => setRenameValue(event.target.value)} />
+              <input value={renameValue} maxLength={120} onChange={(event) => setRenameValue(event.target.value)} />
             </label>
             <div className="studio-library-action-buttons">
-              <button type="button" className="studio-dialog-secondary" onClick={() => setRenameTarget(null)}>Annuler</button>
+              <button type="button" className="studio-dialog-secondary" onClick={closeRename}>Annuler</button>
               <button type="submit" className="studio-dialog-primary" disabled={!renameValue.trim()}>Enregistrer</button>
             </div>
           </form>
@@ -157,8 +293,8 @@ export function ProjectLibraryModal({
       )}
 
       {deleteTarget && (
-        <div className="studio-library-action-layer" role="presentation" onMouseDown={(event) => { event.stopPropagation(); if (event.target === event.currentTarget) setDeleteTarget(null); }}>
-          <section className="studio-library-action-dialog studio-library-delete-dialog" role="dialog" aria-modal="true" aria-labelledby="delete-project-title">
+        <div className="studio-library-action-layer" role="presentation" onMouseDown={(event) => { event.stopPropagation(); if (event.target === event.currentTarget) closeDelete(); }}>
+          <section ref={deleteDialogRef} className="studio-library-action-dialog studio-library-delete-dialog" role="dialog" aria-modal="true" aria-labelledby="delete-project-title" tabIndex={-1}>
             <div className="studio-library-danger-mark" aria-hidden="true">!</div>
             <div className="studio-library-action-copy">
               <span>SUPPRESSION</span>
@@ -166,7 +302,7 @@ export function ProjectLibraryModal({
               <p>Le projet sera retiré de la bibliothèque locale. Cette action ne touche pas aux fichiers déjà exportés.</p>
             </div>
             <div className="studio-library-action-buttons">
-              <button type="button" className="studio-dialog-secondary" onClick={() => setDeleteTarget(null)}>Annuler</button>
+              <button type="button" className="studio-dialog-secondary" onClick={closeDelete}>Annuler</button>
               <button type="button" className="studio-dialog-danger" onClick={removeProject}>Supprimer</button>
             </div>
           </section>
