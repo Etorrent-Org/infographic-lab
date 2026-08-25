@@ -1,13 +1,35 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AugmentedStudioV2 } from "./AugmentedStudio.v2";
 import { MarketingStudio } from "./MarketingStudio";
 import "./marketing.css";
 
 type WorkspaceMode = "structure" | "visuals";
 
+type PanelScrollContext = {
+  key: string;
+  scroll: HTMLElement;
+};
+
 function initialMode(): WorkspaceMode {
   const stored = localStorage.getItem("infographic-lab-workspace-mode");
   return stored === "visuals" || stored === "structure" ? stored : "structure";
+}
+
+function currentPanelScrollContext(): PanelScrollContext | null {
+  const studio = document.querySelector<HTMLElement>(".suite-content > .studio-app, .suite-content > .marketing-app");
+  if (!studio) return null;
+
+  const structure = studio.classList.contains("studio-app");
+  const nav = studio.querySelector<HTMLElement>(structure ? ".studio-inspector-tabs" : ".marketing-panel-tabs");
+  const scroll = studio.querySelector<HTMLElement>(structure ? ".studio-inspector-scroll" : ".marketing-inspector-scroll");
+  const active = nav?.querySelector<HTMLButtonElement>("button.active");
+  if (!scroll || !active) return null;
+
+  const label = active.textContent?.trim().replace(/\s+/g, " ") || "panel";
+  return {
+    key: `${structure ? "structure" : "visuals"}:${label}`,
+    scroll,
+  };
 }
 
 function StructureIcon() {
@@ -33,10 +55,55 @@ function VisualsIcon() {
 
 export function StudioSuite() {
   const [mode, setMode] = useState<WorkspaceMode>(initialMode);
+  const panelScrollPositions = useRef(new Map<string, number>());
 
   useEffect(() => {
     localStorage.setItem("infographic-lab-workspace-mode", mode);
   }, [mode]);
+
+  useEffect(() => {
+    let lastPanelKey: string | null = null;
+    let frame = 0;
+
+    const restoreActivePanel = () => {
+      window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(() => {
+        const context = currentPanelScrollContext();
+        if (!context || context.key === lastPanelKey) return;
+        lastPanelKey = context.key;
+        context.scroll.scrollTop = panelScrollPositions.current.get(context.key) ?? 0;
+      });
+    };
+
+    const rememberPanelScroll = (event: Event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) return;
+      if (!target.classList.contains("studio-inspector-scroll") && !target.classList.contains("marketing-inspector-scroll")) return;
+
+      const context = currentPanelScrollContext();
+      if (context?.scroll === target) panelScrollPositions.current.set(context.key, target.scrollTop);
+    };
+
+    const suite = document.querySelector(".suite-root");
+    const observer = new MutationObserver(restoreActivePanel);
+    if (suite) {
+      observer.observe(suite, {
+        subtree: true,
+        childList: true,
+        attributes: true,
+        attributeFilter: ["class"],
+      });
+    }
+
+    document.addEventListener("scroll", rememberPanelScroll, true);
+    restoreActivePanel();
+
+    return () => {
+      observer.disconnect();
+      document.removeEventListener("scroll", rememberPanelScroll, true);
+      window.cancelAnimationFrame(frame);
+    };
+  }, []);
 
   return (
     <div className="suite-root" data-workspace={mode}>
