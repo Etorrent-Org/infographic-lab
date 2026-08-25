@@ -11,6 +11,7 @@ import "./v1.css";
 import "./augmented.css";
 import "./ui-audit.css";
 import "./ui-audit-actions.css";
+import "./ui-audit-dark-preview.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
