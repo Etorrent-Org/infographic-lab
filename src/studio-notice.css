@@ -104,11 +104,12 @@
   box-shadow: 0 18px 52px rgba(0, 0, 0, .38);
 }
 
-@media (max-width: 700px) {
+/* #27 — sur tablette/mobile les notifications restent sous les deux barres sticky. */
+@media (max-width: 850px) {
   .studio-notice-stack {
-    top: 70px;
-    right: 10px;
-    left: 10px;
+    top: calc(118px + env(safe-area-inset-top, 0px));
+    right: calc(10px + env(safe-area-inset-right, 0px));
+    left: calc(10px + env(safe-area-inset-left, 0px));
     width: auto;
   }
 }
