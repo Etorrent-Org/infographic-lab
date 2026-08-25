@@ -1,0 +1,178 @@
+/* Passe finale UI/UX : corrections #38 a #43. */
+
+/* #38 — supprime l'ancien etat hybride Structure entre 851 et 900 px. */
+@media (min-width: 851px) and (max-width: 900px) {
+  body {
+    overflow: hidden;
+  }
+
+  .studio-app {
+    min-height: 0;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .studio-header {
+    position: relative;
+    top: auto;
+    grid-template-columns: 220px minmax(180px, 1fr) auto;
+    gap: 18px;
+  }
+
+  .studio-project-title {
+    display: grid;
+  }
+
+  .studio-workbench {
+    min-height: 0;
+    grid-template-columns: 340px minmax(0, 1fr);
+    overflow: hidden;
+  }
+
+  .studio-inspector {
+    min-height: 0;
+    border-right: 1px solid var(--ui-border);
+    border-bottom: 0;
+  }
+
+  .studio-stage,
+  .studio-stage-scroll {
+    min-height: 0;
+  }
+}
+
+/* #39 — le rail principal ne repasse jamais sur un hover blanc en mode sombre. */
+.suite-root:has(.studio-app[data-theme="dark"]) .suite-rail button:hover:not(.active),
+.suite-root:has(.marketing-app[data-theme="dark"]) .suite-rail button:hover:not(.active) {
+  border-color: #344154;
+  background: #1a2330;
+  color: #edf2f8;
+}
+
+.suite-root:has(.studio-app[data-theme="dark"]) .suite-rail-brand,
+.suite-root:has(.marketing-app[data-theme="dark"]) .suite-rail-brand {
+  border: 1px solid #344154;
+  background: #1d2735;
+  color: #f4f7fb;
+  box-shadow: none;
+}
+
+/* #40 — les modales utilisent la hauteur reellement visible du navigateur. */
+.studio-modal {
+  max-height: min(760px, calc(100vh - 56px));
+  max-height: min(760px, calc(100dvh - 56px));
+}
+
+.studio-library-action-layer {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.studio-library-action-dialog {
+  max-height: calc(100vh - 48px);
+  max-height: calc(100dvh - 48px);
+  overflow-y: auto;
+}
+
+/* #41 — cibles tactiles et pile sticky coherentes sous 850 px. */
+@media (max-width: 850px) {
+  .studio-header,
+  .marketing-header {
+    min-height: 56px;
+  }
+
+  .studio-project-title input,
+  .marketing-campaign-name input {
+    min-height: 44px;
+    height: 44px;
+    line-height: 42px;
+  }
+
+  .studio-header-actions .studio-header-button,
+  .studio-theme-toggle,
+  .marketing-header-actions button {
+    min-height: 44px;
+    height: 44px;
+  }
+
+  .studio-header-actions .studio-header-button:nth-of-type(2),
+  .studio-theme-toggle,
+  .marketing-header-actions button {
+    width: 44px;
+    min-width: 44px;
+  }
+
+  .studio-inspector-tabs,
+  .marketing-panel-tabs {
+    top: 112px;
+  }
+
+  .studio-notice-stack {
+    top: calc(120px + env(safe-area-inset-top, 0px));
+  }
+
+  .studio-view-tabs button,
+  .marketing-toolbar-actions button,
+  .studio-export-actions button,
+  .marketing-export-actions button,
+  .studio-project-card-actions button,
+  .studio-version-list button,
+  .studio-library-action-buttons button,
+  .studio-link-button,
+  .studio-issues article > button,
+  .marketing-asset-preview button {
+    min-height: 44px;
+  }
+
+  .studio-block-editor-head > div > button,
+  .studio-variant-control button,
+  .studio-modal > header button,
+  .studio-notice-close {
+    min-width: 44px;
+    width: 44px;
+    min-height: 44px;
+    height: 44px;
+  }
+
+  .studio-notice {
+    grid-template-columns: 34px minmax(0, 1fr) 44px;
+  }
+
+  .studio-library-backdrop {
+    padding:
+      max(12px, env(safe-area-inset-top, 0px))
+      max(12px, env(safe-area-inset-right, 0px))
+      max(12px, env(safe-area-inset-bottom, 0px))
+      max(12px, env(safe-area-inset-left, 0px));
+  }
+
+  .studio-library-modal {
+    max-height: calc(100vh - 24px);
+    max-height: calc(100dvh - 24px);
+  }
+
+  .studio-library-action-layer {
+    padding:
+      max(14px, env(safe-area-inset-top, 0px))
+      max(14px, env(safe-area-inset-right, 0px))
+      max(14px, env(safe-area-inset-bottom, 0px))
+      max(14px, env(safe-area-inset-left, 0px));
+  }
+
+  .studio-library-action-dialog {
+    max-height: calc(100vh - 28px);
+    max-height: calc(100dvh - 28px);
+  }
+}
+
+/* #43 — respecte le choix systeme de reduction des animations. */
+@media (prefers-reduced-motion: reduce) {
+  .suite-root *,
+  .suite-root *::before,
+  .suite-root *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
