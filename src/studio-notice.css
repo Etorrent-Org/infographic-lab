@@ -1,0 +1,114 @@
+.studio-notice-stack {
+  position: fixed;
+  z-index: 140;
+  top: 78px;
+  right: 18px;
+  width: min(390px, calc(100vw - 36px));
+  display: grid;
+  gap: 9px;
+  pointer-events: none;
+}
+
+.studio-notice {
+  --notice-border: var(--ui-border, var(--mk-border, #d8dee7));
+  --notice-bg: var(--ui-surface, var(--mk-panel, #fff));
+  --notice-text: var(--ui-text, var(--mk-text, #172033));
+  --notice-muted: var(--ui-muted, var(--mk-muted, #667085));
+  --notice-accent: var(--ui-accent, var(--mk-accent, #4f7df3));
+
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) 30px;
+  align-items: start;
+  gap: 10px;
+  padding: 11px 10px 11px 11px;
+  border: 1px solid var(--notice-border);
+  border-left: 4px solid var(--notice-accent);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--notice-bg) 96%, transparent);
+  color: var(--notice-text);
+  box-shadow: 0 18px 48px rgba(15, 23, 42, .18);
+  backdrop-filter: blur(14px);
+  pointer-events: auto;
+}
+
+.studio-notice-success {
+  --notice-accent: #23a26d;
+}
+
+.studio-notice-warning {
+  --notice-accent: #d98d12;
+}
+
+.studio-notice-error {
+  --notice-accent: #c84036;
+}
+
+.studio-notice-icon {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--notice-accent) 12%, var(--notice-bg));
+  color: var(--notice-accent);
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.studio-notice-copy {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.studio-notice-copy strong {
+  color: var(--notice-text);
+  font-size: 11px;
+  font-weight: 820;
+}
+
+.studio-notice-copy span {
+  color: var(--notice-muted);
+  font-size: 10.5px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.studio-notice-close {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--notice-muted);
+  cursor: pointer;
+  font-size: 17px;
+  line-height: 1;
+}
+
+.studio-notice-close:hover {
+  border-color: var(--notice-border);
+  background: color-mix(in srgb, var(--notice-bg) 80%, var(--notice-text) 5%);
+  color: var(--notice-text);
+}
+
+.studio-notice-close:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--notice-accent) 28%, transparent);
+  outline-offset: 1px;
+}
+
+.studio-app[data-theme="dark"] .studio-notice,
+.marketing-app[data-theme="dark"] .studio-notice {
+  box-shadow: 0 18px 52px rgba(0, 0, 0, .38);
+}
+
+@media (max-width: 700px) {
+  .studio-notice-stack {
+    top: 70px;
+    right: 10px;
+    left: 10px;
+    width: auto;
+  }
+}
