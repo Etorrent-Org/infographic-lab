@@ -26,6 +26,7 @@ import "./ui-audit-sticky-tabs.css";
 import "./ui-audit-contrast.css";
 import "./ui-audit-brand-separation.css";
 import "./ui-audit-global-theme.css";
+import "./ui-audit-dark-primary-actions.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
