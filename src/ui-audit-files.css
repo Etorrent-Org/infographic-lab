@@ -1,0 +1,130 @@
+/* #13 — imports de fichiers cohérents entre Structure et Visuels */
+
+.studio-file-field,
+.marketing-file {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border: 1px dashed var(--ui-border-strong, var(--mk-border));
+  border-radius: 12px;
+  background: var(--ui-surface-2, var(--mk-panel-soft));
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.studio-file-field:hover,
+.marketing-file:hover {
+  border-color: color-mix(in srgb, var(--ui-accent, var(--mk-accent, #4f7df3)) 46%, var(--ui-border-strong, var(--mk-border)));
+  background: color-mix(in srgb, var(--ui-accent, var(--mk-accent, #4f7df3)) 4%, var(--ui-surface-2, var(--mk-panel-soft)));
+}
+
+.studio-file-field > span,
+.marketing-file > span {
+  color: var(--ui-text, var(--mk-text));
+  font-size: 10.5px;
+  font-weight: 780;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.studio-file-field input[type="file"],
+.marketing-file input[type="file"] {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  border: 1px solid var(--ui-border, var(--mk-border)) !important;
+  border-radius: 9px;
+  background: var(--ui-surface, var(--mk-input, var(--mk-panel))) !important;
+  color: var(--ui-muted, var(--mk-muted));
+  padding: 4px !important;
+  font-size: 10.5px !important;
+  line-height: 1.3;
+  cursor: pointer;
+  box-shadow: none;
+}
+
+.studio-file-field input[type="file"]::file-selector-button,
+.marketing-file input[type="file"]::file-selector-button {
+  min-height: 34px;
+  margin-right: 10px;
+  border: 1px solid var(--ui-border-strong, var(--mk-border));
+  border-radius: 7px;
+  background: var(--ui-surface-2, var(--mk-panel-soft));
+  color: var(--ui-text, var(--mk-text));
+  padding: 0 11px;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 760;
+  transition:
+    border-color 150ms ease,
+    background 150ms ease,
+    color 150ms ease;
+}
+
+.studio-file-field input[type="file"]:hover::file-selector-button,
+.marketing-file input[type="file"]:hover::file-selector-button {
+  border-color: color-mix(in srgb, var(--ui-accent, var(--mk-accent, #4f7df3)) 48%, var(--ui-border-strong, var(--mk-border)));
+  background: color-mix(in srgb, var(--ui-accent, var(--mk-accent, #4f7df3)) 9%, var(--ui-surface, var(--mk-panel)));
+  color: var(--ui-accent-strong, var(--mk-accent, #4f7df3));
+}
+
+.studio-file-field input[type="file"]:focus-visible,
+.marketing-file input[type="file"]:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--ui-accent, var(--mk-accent, #4f7df3)) 28%, transparent);
+  outline-offset: 2px;
+  border-color: var(--ui-accent, var(--mk-accent, #4f7df3)) !important;
+}
+
+.studio-file-field::after,
+.marketing-file::after {
+  color: var(--ui-soft, var(--mk-muted));
+  font-size: 9.5px;
+  line-height: 1.4;
+}
+
+.studio-file-field:has(input[accept*="svg+xml"])::after {
+  content: "PNG, JPEG, WebP ou SVG · 300 Ko maximum";
+}
+
+.marketing-file:has(input[accept*="svg+xml"])::after {
+  content: "PNG, JPEG, WebP ou SVG · 500 Ko maximum";
+}
+
+.marketing-file:has(input[accept="image/png,image/jpeg,image/webp"])::after {
+  content: "PNG, JPEG ou WebP · 4 Mo maximum";
+}
+
+.marketing-file > small {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--mk-text);
+  font-size: 10px;
+  font-weight: 680;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.studio-app[data-theme="dark"] .studio-file-field,
+.marketing-app[data-theme="dark"] .marketing-file {
+  border-color: color-mix(in srgb, var(--ui-border-strong, var(--mk-border)) 86%, white 14%);
+}
+
+.studio-app[data-theme="dark"] .studio-file-field input[type="file"],
+.marketing-app[data-theme="dark"] .marketing-file input[type="file"] {
+  color-scheme: dark;
+}
+
+@media (max-width: 620px) {
+  .studio-file-field input[type="file"],
+  .marketing-file input[type="file"] {
+    font-size: 10px !important;
+  }
+
+  .studio-file-field input[type="file"]::file-selector-button,
+  .marketing-file input[type="file"]::file-selector-button {
+    margin-right: 7px;
+    padding-inline: 9px;
+  }
+}
