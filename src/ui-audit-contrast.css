@@ -51,3 +51,9 @@
 .suite-root:has(.marketing-app[data-theme="light"]) .suite-rail button:not(.active) {
   color: #5f697c;
 }
+
+/* #32 — Structure sombre : le niveau tertiaire reste distinct de --ui-muted,
+   mais gagne assez de contraste pour les textes de 9–10 px sur les surfaces sombres. */
+.studio-app[data-theme="dark"] {
+  --ui-soft: #8793a5;
+}
