@@ -27,7 +27,8 @@ function structureScore(svg: string) {
 
 /**
  * Harnais local de validation structurelle du studio Visuels.
- * 4 campagnes x 4 directions x 8 formats = 128 rendus.
+ * 5 campagnes x 4 directions x 8 formats = 160 rendus.
+ * Le cas event-premium reproduit le brief qui avait exposé le rendu 5/10.
  * Le score 8/10 est un gate heuristique de composition, pas une note artistique humaine.
  */
 export function buildMarketingBaselineReport(): MarketingBaselineRow[] {
@@ -53,11 +54,11 @@ export function buildMarketingBaselineReport(): MarketingBaselineRow[] {
 export function assertMarketingBaseline() {
   const rows = buildMarketingBaselineReport();
   const failures = rows.filter((row) => !row.valid || row.layout === "safe-composition" || row.structureScore < 8);
-  if (rows.length !== 128) {
-    throw new Error(`Baseline marketing incomplète : ${rows.length} rendus au lieu de 128.`);
+  if (rows.length !== 160) {
+    throw new Error(`Baseline marketing incomplète : ${rows.length} rendus au lieu de 160.`);
   }
   if (failures.length) {
-    throw new Error(`Baseline marketing sous le seuil : ${failures.map((row) => `${row.template}/${row.format}/${row.layout}: ${row.errors.join(", ") || `score ${row.structureScore}`}`).join(" | ")}`);
+    throw new Error(`Baseline marketing sous le seuil : ${failures.map((row) => `${row.id}/${row.template}/${row.format}/${row.layout}: ${row.errors.join(", ") || `score ${row.structureScore}`}`).join(" | ")}`);
   }
   return rows;
 }
