@@ -16,7 +16,7 @@ Pour une adresse LAN ou WireGuard, utilisez `AUGMENTED_BIND` dans `.env.augmente
 
 La version Augmented est recentrée sur le cœur d'Infographic Lab : **transformer une idée ou un texte en structure claire puis en représentations visuelles exploitables**.
 
-Le module **Visual Campaign Studio n'est plus inclus dans cette version**. Son code a été isolé sur la branche `feature/visual-campaign-studio` afin de repartir de zéro sans bloquer la finalisation d'Infographic Lab.
+Le module **Visual Campaign Studio n'est plus inclus dans cette version**. Son code est isolé sur la branche `feature/visual-campaign-studio` afin de repartir sur une architecture dédiée sans bloquer la finalisation d'Infographic Lab.
 
 ### Studio Structure
 
@@ -31,21 +31,27 @@ Le module **Visual Campaign Studio n'est plus inclus dans cette version**. Son c
 
 ## Infographies
 
-Le moteur s'appuie sur `@antv/infographic` et sur quelques rendus SVG locaux lorsque le format le justifie.
+Le moteur s'appuie sur `@antv/infographic` et sur des rendus SVG locaux spécialisés lorsque cela apporte une représentation plus utile qu'un template générique.
 
 Les familles disponibles couvrent notamment :
 
-- processus ;
+- processus et étapes ;
 - roadmap / timeline ;
 - checklist / listes ;
-- comparatif ;
-- plan d'action ;
-- présentation d'offre ;
+- comparaison ;
+- entonnoir ;
+- pyramide ;
 - iceberg ;
 - cycle ;
-- Sankey narratif.
+- Sankey narratif ;
+- **matrice de synthèse 2×2** ;
+- **architecture en couches** ;
+- **carte radiale / hub d'idées** ;
+- cartes, waterfall et variantes compactes AntV.
 
-La finalisation de la version Augmented ajoute des représentations complémentaires orientées décision, stratégie et pédagogie.
+Les trois dernières représentations sont des rendus SVG locaux ajoutés pendant la finalisation. Elles utilisent le même modèle d'idée et restent exportables comme les autres infographies.
+
+Le projet conserve `@antv/infographic` comme moteur open source principal plutôt que de réimplémenter les familles déjà couvertes en amont.
 
 ## Exports
 
@@ -71,7 +77,11 @@ Pour tester le code de la branche avant republication Docker Hub, utilisez un bu
 
 Branche : `feature/visual-campaign-studio`.
 
-Le chantier repart séparément avec étude de briques open source existantes plutôt que de maintenir un moteur graphique maison insuffisant. Aucun code Campaign Studio ne doit revenir dans la version Augmented avant validation autonome du module.
+Le chantier repart séparément. La piste technique prioritaire est désormais **Fabric.js** pour disposer d'un vrai canvas éditable au lieu d'un moteur de placement marketing maison. Konva.js reste une alternative à évaluer ; Polotno Studio App et React Design Editor servent de références d'architecture / UX selon leurs licences respectives.
+
+Le cadrage de reprise est documenté dans `CAMPAIGN_STUDIO_RESTART.md` sur la branche dédiée.
+
+Aucun code Campaign Studio ne doit revenir dans la version Augmented avant validation autonome du module.
 
 ### V3 providers
 
