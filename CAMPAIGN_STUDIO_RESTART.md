@@ -8,6 +8,30 @@ Visual Campaign Studio est sorti d'Infographic Lab Augmented afin de ne plus blo
 
 Les moteurs SVG successifs ont permis de valider le workflow, mais pas le niveau artistique attendu. Le chantier repart donc comme un produit/module autonome, sans rustine et sans obligation de conserver les layouts actuels.
 
+## État du restart
+
+- [x] branche dédiée créée ;
+- [x] Fabric.js `7.4.0` ajouté comme base technique ;
+- [x] ancien StudioSuite débranché sur cette branche ;
+- [x] nouveau prototype `CampaignStudioNext` rendu directement par l'application ;
+- [x] scène 1080×1350 basée sur de vrais objets Fabric ;
+- [x] sélection / déplacement / redimensionnement natifs ;
+- [x] texte éditable ;
+- [x] ajout de texte et de formes ;
+- [x] suppression et ordre avant / arrière ;
+- [x] export PNG ×2, SVG et scène JSON ;
+- [x] CI dédiée activée sur la branche ;
+- [x] CI #155 verte ;
+- [ ] images / logo ;
+- [ ] panneau de calques ;
+- [ ] undo / redo ;
+- [ ] templates JSON ;
+- [ ] Brand Kit ;
+- [ ] multi-format ;
+- [ ] première validation artistique humaine.
+
+Le visuel actuellement préchargé dans le prototype est uniquement une **scène de démonstration technique** : il ne constitue pas une direction artistique validée.
+
 ## Positionnement
 
 Visual Campaign Studio ne cherche pas à remplacer Canva.
@@ -25,6 +49,8 @@ Seuil de retour dans Infographic Lab : **validation humaine ≥ 8/10** sur les c
 ### Base prioritaire : Fabric.js
 
 Repo : `fabricjs/fabric.js`
+
+Version de référence vérifiée au démarrage du restart : `7.4.0`.
 
 Pourquoi :
 - Canvas éditable mature ;
@@ -67,7 +93,7 @@ Repo : `salgum1114/react-design-editor`
 - faux score artistique automatique présenté comme un indicateur de qualité visuelle ;
 - dépendance du planning Infographic Lab à Campaign Studio.
 
-Les anciens fichiers restent sur cette branche uniquement comme historique et source de besoins fonctionnels.
+Les anciens fichiers restent dans l'historique de la branche uniquement comme source de besoins fonctionnels. Le point d'entrée actif est désormais le prototype Fabric.
 
 ## MVP technique à reconstruire
 
