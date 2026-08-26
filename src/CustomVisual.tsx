@@ -236,8 +236,142 @@ function Sankey({ data, style }: Omit<Props, "kind">) {
   );
 }
 
+function Matrix({ data, style }: Omit<Props, "kind">) {
+  const colors = getVisualColors(style, data);
+  const text = colors.dark ? "#F8FAFC" : "#27313A";
+  const items = data.items.slice(0, 4);
+  const startX = 80;
+  const startY = 142;
+  const gap = 18;
+  const gridW = WIDTH - 160;
+  const gridH = HEIGHT - 202;
+  const cellW = (gridW - gap) / 2;
+  const cellH = (gridH - gap) / 2;
+
+  return (
+    <svg className={`custom-visual custom-${style}`} viewBox={`0 0 ${WIDTH} ${HEIGHT}`} role="img" aria-label={`Matrice de synthèse : ${data.title}`}>
+      <rect width={WIDTH} height={HEIGHT} rx="26" fill={colors.background} />
+      <Header data={data} color={text} />
+      <text x={startX} y="122" fill={text} fontSize="11" fontWeight="800" opacity="0.58" letterSpacing="1.7">MATRICE DE SYNTHÈSE · 4 AXES</text>
+      {items.map((item, index) => {
+        const col = index % 2;
+        const row = Math.floor(index / 2);
+        const x = startX + col * (cellW + gap);
+        const y = startY + row * (cellH + gap);
+        const color = colors.palette[index % colors.palette.length];
+        const titleLines = shortLines(item.title, 28, 2);
+        const descLines = shortLines(item.description, 48, 4);
+        return (
+          <g key={`matrix-${index}`}>
+            <rect x={x} y={y} width={cellW} height={cellH} rx="24" fill={color} opacity={colors.dark ? 0.2 : 0.1} stroke={color} strokeOpacity="0.46" strokeWidth="2" />
+            <rect x={x} y={y} width="9" height={cellH} rx="4.5" fill={color} />
+            <text x={x + 34} y={y + 42} fill={color} fontSize="12" fontWeight="850" letterSpacing="1.4">{String(index + 1).padStart(2, "0")}</text>
+            <text x={x + 34} y={y + 80} fill={text} fontSize="22" fontWeight="760">
+              {titleLines.map((line, lineIndex) => <tspan key={`${line}-${lineIndex}`} x={x + 34} dy={lineIndex ? 26 : 0}>{line}</tspan>)}
+            </text>
+            <text x={x + 34} y={y + 136 + Math.max(0, titleLines.length - 1) * 26} fill={text} fontSize="13" opacity="0.78">
+              {descLines.map((line, lineIndex) => <tspan key={`${line}-${lineIndex}`} x={x + 34} dy={lineIndex ? 19 : 0}>{line}</tspan>)}
+            </text>
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
+function Architecture({ data, style }: Omit<Props, "kind">) {
+  const colors = getVisualColors(style, data);
+  const text = colors.dark ? "#F8FAFC" : "#27313A";
+  const items = data.items.slice(0, 6);
+  const startX = 115;
+  const startY = 138;
+  const width = 890;
+  const gap = 10;
+  const available = 490;
+  const layerH = Math.min(94, (available - gap * Math.max(0, items.length - 1)) / Math.max(1, items.length));
+
+  return (
+    <svg className={`custom-visual custom-${style}`} viewBox={`0 0 ${WIDTH} ${HEIGHT}`} role="img" aria-label={`Architecture : ${data.title}`}>
+      <rect width={WIDTH} height={HEIGHT} rx="26" fill={colors.background} />
+      <Header data={data} color={text} />
+      <text x="78" y="390" fill={text} fontSize="11" fontWeight="850" opacity="0.48" letterSpacing="2" transform="rotate(-90 78 390)">ARCHITECTURE · COUCHES</text>
+      {items.map((item, index) => {
+        const y = startY + index * (layerH + gap);
+        const color = colors.palette[index % colors.palette.length];
+        const titleLines = shortLines(item.title, 30, 2);
+        const descLines = shortLines(item.description, 72, 2);
+        return (
+          <g key={`architecture-${index}`}>
+            <rect x={startX} y={y} width={width} height={layerH} rx="18" fill={color} opacity={colors.dark ? 0.2 : 0.09} stroke={color} strokeOpacity="0.42" />
+            <rect x={startX} y={y} width="74" height={layerH} rx="18" fill={color} opacity="0.96" />
+            <text x={startX + 37} y={y + layerH / 2 + 7} textAnchor="middle" fill={colors.dark ? "#111827" : "#FFFFFF"} fontSize="18" fontWeight="850">{String(index + 1).padStart(2, "0")}</text>
+            <text x={startX + 102} y={y + 31} fill={text} fontSize="18" fontWeight="760">
+              {titleLines.map((line, lineIndex) => <tspan key={`${line}-${lineIndex}`} x={startX + 102} dy={lineIndex ? 21 : 0}>{line}</tspan>)}
+            </text>
+            <text x={startX + 405} y={y + 31} fill={text} fontSize="12.5" opacity="0.76">
+              {descLines.map((line, lineIndex) => <tspan key={`${line}-${lineIndex}`} x={startX + 405} dy={lineIndex ? 18 : 0}>{line}</tspan>)}
+            </text>
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
+function Hub({ data, style }: Omit<Props, "kind">) {
+  const colors = getVisualColors(style, data);
+  const text = colors.dark ? "#F8FAFC" : "#27313A";
+  const items = data.items.slice(0, 6);
+  const centerX = WIDTH / 2;
+  const centerY = 386;
+  const radiusX = 360;
+  const radiusY = 205;
+  const cardW = 205;
+  const cardH = 112;
+
+  return (
+    <svg className={`custom-visual custom-${style}`} viewBox={`0 0 ${WIDTH} ${HEIGHT}`} role="img" aria-label={`Carte radiale : ${data.title}`}>
+      <rect width={WIDTH} height={HEIGHT} rx="26" fill={colors.background} />
+      <Header data={data} color={text} />
+      <circle cx={centerX} cy={centerY} r="104" fill={colors.accent} opacity={colors.dark ? 0.28 : 0.14} stroke={colors.accent} strokeWidth="3" />
+      <circle cx={centerX} cy={centerY} r="78" fill={colors.background} stroke={colors.accent} strokeOpacity="0.5" strokeWidth="2" />
+      <text x={centerX} y={centerY - 8} textAnchor="middle" fill={text} fontSize="16" fontWeight="850" letterSpacing="1.2">CARTE</text>
+      <text x={centerX} y={centerY + 17} textAnchor="middle" fill={text} fontSize="13" opacity="0.68">des idées clés</text>
+      {items.map((item, index) => {
+        const angle = -Math.PI / 2 + (index * Math.PI * 2) / items.length;
+        const anchorX = centerX + Math.cos(angle) * radiusX;
+        const anchorY = centerY + Math.sin(angle) * radiusY;
+        const x = Math.max(34, Math.min(WIDTH - cardW - 34, anchorX - cardW / 2));
+        const y = Math.max(122, Math.min(HEIGHT - cardH - 34, anchorY - cardH / 2));
+        const cx = x + cardW / 2;
+        const cy = y + cardH / 2;
+        const color = colors.palette[index % colors.palette.length];
+        const titleLines = shortLines(item.title, 24, 2);
+        const descLines = shortLines(item.description, 30, 3);
+        return (
+          <g key={`hub-${index}`}>
+            <line x1={centerX} y1={centerY} x2={cx} y2={cy} stroke={color} strokeWidth="3" strokeOpacity="0.34" />
+            <circle cx={cx} cy={cy} r="8" fill={color} />
+            <rect x={x} y={y} width={cardW} height={cardH} rx="18" fill={colors.background} stroke={color} strokeWidth="2" />
+            <rect x={x} y={y} width="7" height={cardH} rx="3.5" fill={color} />
+            <text x={x + 20} y={y + 29} fill={text} fontSize="15" fontWeight="760">
+              {titleLines.map((line, lineIndex) => <tspan key={`${line}-${lineIndex}`} x={x + 20} dy={lineIndex ? 18 : 0}>{line}</tspan>)}
+            </text>
+            <text x={x + 20} y={y + 69 + Math.max(0, titleLines.length - 1) * 18} fill={text} fontSize="11" opacity="0.72">
+              {descLines.map((line, lineIndex) => <tspan key={`${line}-${lineIndex}`} x={x + 20} dy={lineIndex ? 15 : 0}>{line}</tspan>)}
+            </text>
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
 export function CustomVisual({ kind, data, style }: Props) {
   if (kind === "iceberg") return <Iceberg data={data} style={style} />;
   if (kind === "cycle") return <Cycle data={data} style={style} />;
+  if (kind === "matrix") return <Matrix data={data} style={style} />;
+  if (kind === "architecture") return <Architecture data={data} style={style} />;
+  if (kind === "hub") return <Hub data={data} style={style} />;
   return <Sankey data={data} style={style} />;
 }
