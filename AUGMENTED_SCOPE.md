@@ -78,18 +78,19 @@ La version stable `main` reste la référence publique 1.0.0. Le studio Augmente
     - espace séparé `Visuels` accessible depuis la navigation de la suite ;
     - brief marketing : objectif, cible, offre, ton, badge, prix, CTA ;
     - assistance Vibe / Codex pour optimiser l'accroche, le sous-message et les bénéfices ;
-    - cinq directions visuelles natives : Editorial Luxe, Campaign Impact, Product Spotlight, Retail Promo, Zen Minimal ;
-    - huit formats : LinkedIn portrait, carré, Story, bannière, flyer A4, affiche, fiche produit et kakemono ;
+    - quatre familles visuelles natives : Editorial Premium, Campaign Bold, Product / Offer Spotlight, Clean Retail / Promo ;
+    - douze layouts réels, trois par famille ;
+    - huit formats : LinkedIn portrait, carré, Story, bannière, flyer A4, affiche, visuel offre et affiche verticale ;
     - brand kit réutilisant les profils visuels locaux ;
     - ajout local d'une photo, d'un produit ou d'une illustration ;
     - exports SVG, PNG et JPG ;
-    - rendu marketing calculé localement, sans upload obligatoire du visuel.
+    - rendu marketing calculé localement, sans upload obligatoire du visuel ;
+    - aucune fonctionnalité de mockup / merchandising.
 
-12. **Merchandising & communication**
-    - mockups vectoriels : T-shirt, mug, tote bag, packaging, kakemono et vitrine / affiche ;
-    - Campaign Pack multi-format ;
+12. **Campaign Pack multi-format**
     - adaptation automatique d'une même création à plusieurs formats ;
-    - export ZIP avec visuels SVG/PNG, copy Markdown et métadonnées de campagne.
+    - export ZIP avec visuels SVG/PNG, copy Markdown et métadonnées de campagne ;
+    - aucun export mockup.
 
 13. **Moteurs de rendu embarqués**
     - Mermaid.js pour le diagramme réel ;
@@ -103,8 +104,7 @@ Voir `ROADMAP.md` pour les décisions reportées, notamment :
 - import intelligent multi-source ;
 - variantes intelligentes multiples ;
 - panneau de configuration multi-IA ;
-- Ollama / LM Studio / ComfyUI et fournisseurs configurables par l'utilisateur ;
-- mockups photoréalistes génératifs.
+- Ollama / LM Studio / ComfyUI et fournisseurs configurables par l'utilisateur.
 
 Le **Provider & Model Control Center** est désormais ciblé explicitement pour la V3.
 

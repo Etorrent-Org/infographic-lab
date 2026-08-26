@@ -110,4 +110,4 @@ Ce fichier conserve les idées volontairement sorties du périmètre de la versi
 - les moteurs locaux restent privilégiables ;
 - un provider indisponible ne doit jamais empêcher l'application de démarrer.
 
-**Décision du 25 août 2026 :** le panneau multi-IA ne fait pas partie de la V2. La V2 utilise le Gateway existant Vibe / Codex pour l'assistance textuelle et concentre l'effort produit sur les visuels marketing, communication et merchandising.
+**Décision du 25 août 2026 :** le panneau multi-IA ne fait pas partie de la V2. La V2 utilise le Gateway existant Vibe / Codex pour l'assistance textuelle et concentre l'effort produit sur les visuels marketing et communication.

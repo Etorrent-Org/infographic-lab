@@ -89,14 +89,19 @@ export function validateSvg(svg: string, format: MarketingFormat): SvgValidation
   if (!svg.includes(`height=\"${format.height}\"`)) errors.push("hauteur incohérente");
   if (!svg.includes(`viewBox=\"0 0 ${format.width} ${format.height}\"`)) errors.push("viewBox incohérent");
   if (/NaN|undefined|Infinity/.test(svg)) errors.push("valeur numérique invalide");
-  // Les positions x/y negatives sont legitimes pour etendre une zone de filtre SVG.
   if (/\b(?:width|height|r|rx|ry)=\"-\d/.test(svg)) errors.push("dimension negative explicite");
   if (/<text[^>]*>\s*<\/text>/.test(svg)) errors.push("texte vide");
   return { valid: errors.length === 0, errors };
 }
 
 export function isCandidateAcceptable(candidate: RenderCandidate) {
-  return qualityPenalty(candidate) < 95 && !candidate.metrics.textOverflow && candidate.metrics.titleRatio <= 0.44;
+  const m = candidate.metrics;
+  return qualityPenalty(candidate) < 78
+    && !m.textOverflow
+    && m.titleRatio <= 0.38
+    && m.heroRatio >= 0.2
+    && m.deadZone <= 0.3
+    && m.density <= 0.76;
 }
 
 export function assertMarketingSvg(svg: string, format: MarketingFormat) {
@@ -108,7 +113,7 @@ export function assertMarketingSvg(svg: string, format: MarketingFormat) {
 }
 
 export function validationMatrix(brand: BrandProfile, formats: MarketingFormat[]) {
-  const templates: MarketingTemplate[] = ["editorial", "impact", "spotlight", "retail", "zen"];
+  const templates: MarketingTemplate[] = ["editorial", "impact", "spotlight", "retail"];
   return baselineCases.flatMap((entry) => templates.flatMap((template) => formats.map((format) => ({
     id: `${entry.id}:${template}:${format.id}`,
     brand,

@@ -3,8 +3,7 @@ import { renderMarketingSvgV2 } from "./marketing-wow-v2-renderer";
 
 export type MarketingObjective = "sell" | "launch" | "announce" | "recruit" | "event" | "educate";
 export type MarketingTone = "premium" | "editorial" | "bold" | "tech" | "zen" | "retail";
-export type MarketingTemplate = "editorial" | "impact" | "spotlight" | "retail" | "zen";
-export type MarketingMockup = "none" | "tshirt" | "mug" | "tote" | "packaging" | "rollup" | "storefront";
+export type MarketingTemplate = "editorial" | "impact" | "spotlight" | "retail";
 export type MarketingFormatId = "linkedin-portrait" | "square" | "story" | "banner" | "a4" | "poster" | "product-card" | "rollup";
 
 export type MarketingFormat = {
@@ -41,26 +40,15 @@ export const marketingFormats: MarketingFormat[] = [
   { id: "banner", label: "Bannière", category: "social", width: 1200, height: 628, hint: "1200 × 628" },
   { id: "a4", label: "Flyer A4", category: "print", width: 1240, height: 1754, hint: "A4 portrait" },
   { id: "poster", label: "Affiche", category: "print", width: 1400, height: 2000, hint: "Affiche portrait" },
-  { id: "product-card", label: "Fiche produit", category: "retail", width: 1400, height: 1800, hint: "Produit / offre" },
-  { id: "rollup", label: "Kakemono", category: "retail", width: 1200, height: 3000, hint: "Roll-up vertical" },
+  { id: "product-card", label: "Visuel offre", category: "retail", width: 1400, height: 1800, hint: "Produit / service / offre" },
+  { id: "rollup", label: "Affiche verticale", category: "retail", width: 1200, height: 3000, hint: "Très grand vertical" },
 ];
 
 export const templateOptions: { id: MarketingTemplate; label: string; hint: string }[] = [
-  { id: "editorial", label: "Editorial Luxe", hint: "premium, respiration, typographie" },
-  { id: "impact", label: "Campaign Impact", hint: "fort contraste, accroche massive" },
-  { id: "spotlight", label: "Product Spotlight", hint: "produit au centre de la scène" },
-  { id: "retail", label: "Retail Promo", hint: "offre, prix, merchandising" },
-  { id: "zen", label: "Zen Minimal", hint: "sobre, élégant, très lisible" },
-];
-
-export const mockupOptions: { id: MarketingMockup; label: string }[] = [
-  { id: "none", label: "Visuel seul" },
-  { id: "tshirt", label: "T-shirt" },
-  { id: "mug", label: "Mug" },
-  { id: "tote", label: "Tote bag" },
-  { id: "packaging", label: "Packaging" },
-  { id: "rollup", label: "Kakemono" },
-  { id: "storefront", label: "Vitrine / affiche" },
+  { id: "editorial", label: "Editorial Premium", hint: "grille éditoriale, respiration, matière" },
+  { id: "impact", label: "Campaign Bold", hint: "contraste, rythme, impact immédiat" },
+  { id: "spotlight", label: "Product / Offer Spotlight", hint: "sujet central, preuve, bénéfices" },
+  { id: "retail", label: "Clean Retail / Promo", hint: "offre, prix, CTA, lecture 2 secondes" },
 ];
 
 export const objectiveOptions: { id: MarketingObjective; label: string }[] = [
@@ -94,8 +82,8 @@ export const defaultMarketingCampaign: MarketingCampaign = {
   template: "editorial",
 };
 
-export function renderMarketingSvg(campaign: MarketingCampaign, brand: BrandProfile, format: MarketingFormat, mockup: MarketingMockup = "none") {
-  return renderMarketingSvgV2(campaign, brand, format, mockup);
+export function renderMarketingSvg(campaign: MarketingCampaign, brand: BrandProfile, format: MarketingFormat) {
+  return renderMarketingSvgV2(campaign, brand, format);
 }
 
 export function svgStringToDataUrl(svg: string) {

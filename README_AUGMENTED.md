@@ -26,29 +26,18 @@ Pour une adresse LAN ou WireGuard, utilisez `AUGMENTED_BIND` dans `.env.augmente
 
 ### Visuels — Visual Campaign Studio
 
-Le studio Visuels conserve son UI actuelle, mais son moteur de rendu marketing a été entièrement remplacé.
+Visual Campaign Studio produit des assets de communication à partir d'un brief structuré et d'une identité de marque.
 
-Le nouveau moteur V2 comprend :
+Le moteur créatif est recentré sur quatre familles :
 
-- 5 directions créatives ;
-- 3 layouts minimum par direction ;
-- 15 compositions distinctes ;
-- sélection automatique du layout selon le format, la densité de contenu et la présence d'un asset ;
-- typographie adaptative calculée à partir des zones réellement disponibles ;
-- Quality Gate local pour éviter les compositions faibles ;
-- cas sans image traités comme de vraies compositions ;
-- mockups enrichis ;
-- validation structurelle des SVG.
+- **Editorial Premium** — B2B, expertise, vision, offre premium ;
+- **Campaign Bold** — lancement, annonce, événement, social ads ;
+- **Product / Offer Spotlight** — produit, service, solution, fonctionnalité ;
+- **Clean Retail / Promo** — prix, promotion, bundle, offre limitée.
 
-Variantes livrées :
+Chaque famille dispose de trois layouts réels, soit 12 compositions. Le moteur choisit automatiquement une variante selon le format, la densité de contenu, la présence d'un asset, d'un prix et d'un badge.
 
-- Editorial Luxe : `editorial-split`, `editorial-cover`, `editorial-typographic`
-- Campaign Impact : `impact-diagonal`, `impact-poster`, `impact-split-blast`
-- Product Spotlight : `spotlight-center-stage`, `spotlight-split-hero`, `spotlight-full-bleed`
-- Retail Promo : `retail-offer-hero`, `retail-shelf`, `retail-flyer`
-- Zen Minimal : `zen-gallery`, `zen-centered-editorial`, `zen-balanced`
-
-Le plan et les critères de validation sont dans `VISUAL_CAMPAIGN_REDESIGN_PLAN.md`.
+Les mockups merchandising ont été supprimés pour recentrer le produit sur des supports directement exploitables.
 
 ## Formats Visuels
 
@@ -58,15 +47,29 @@ Le plan et les critères de validation sont dans `VISUAL_CAMPAIGN_REDESIGN_PLAN.
 - bannière 1200×628
 - flyer A4
 - affiche
-- fiche produit
-- kakemono
+- visuel offre
+- affiche verticale
 
 ## Exports
 
 - SVG
 - PNG
 - JPG
-- Campaign Pack ZIP
+- Campaign Pack ZIP multi-format
+
+## Moteur créatif
+
+Le rendu reste local et déterministe :
+
+- 12 layouts distincts ;
+- typographie adaptative ;
+- grilles éditoriales, textures légères et compositions à contraste renforcé ;
+- intégration d'un asset utilisateur sans upload externe ;
+- Quality Gate local ;
+- fallback de rendu pour éviter une page blanche si une validation SVG échoue ;
+- baseline structurelle de 128 rendus.
+
+Le cadrage détaillé est documenté dans `VISUAL_CAMPAIGN_REDESIGN_PLAN.md`.
 
 ## Déploiement Augmented
 

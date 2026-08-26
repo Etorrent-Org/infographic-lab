@@ -12,7 +12,7 @@ export type MarketingBaselineRow = {
   layout: string;
 };
 
-const templates: MarketingTemplate[] = ["editorial", "impact", "spotlight", "retail", "zen"];
+const templates: MarketingTemplate[] = ["editorial", "impact", "spotlight", "retail"];
 
 function layoutName(svg: string) {
   return svg.match(/data-layout=\"([^\"]+)\"/)?.[1] ?? "unknown";
@@ -20,8 +20,7 @@ function layoutName(svg: string) {
 
 /**
  * Harnais local de validation visuelle/structurelle.
- * Il ne modifie pas l'UI et peut être appelé depuis un test ou un outil de développement.
- * 4 campagnes x 5 directions x 8 formats = 160 rendus contrôlés.
+ * 4 campagnes x 4 directions x 8 formats = 128 rendus contrôlés.
  */
 export function buildMarketingBaselineReport(): MarketingBaselineRow[] {
   const brand = defaultBrands[0];
@@ -29,7 +28,7 @@ export function buildMarketingBaselineReport(): MarketingBaselineRow[] {
 
   return baselineCases.flatMap((entry) => templates.flatMap((template) => marketingFormats.map((format) => {
     const campaign = { ...entry.campaign, template };
-    const svg = renderMarketingSvgV2(campaign, brand, format, "none");
+    const svg = renderMarketingSvgV2(campaign, brand, format);
     const validation = validateSvg(svg, format);
     return {
       id: entry.id,
@@ -45,7 +44,7 @@ export function buildMarketingBaselineReport(): MarketingBaselineRow[] {
 export function assertMarketingBaseline() {
   const rows = buildMarketingBaselineReport();
   const failures = rows.filter((row) => !row.valid);
-  if (rows.length < 40) {
+  if (rows.length < 100) {
     throw new Error(`Baseline marketing incomplète : ${rows.length} rendus.`);
   }
   if (failures.length) {
