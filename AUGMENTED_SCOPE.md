@@ -75,17 +75,22 @@ La version stable `main` reste la référence publique 1.0.0. Le studio Augmente
     - restauration locale.
 
 11. **Moteurs de rendu embarqués**
-    - `@antv/infographic` pour les infographies ;
-    - rendus SVG locaux pour certaines représentations spécialisées ;
+    - `@antv/infographic` pour les familles couvertes par AntV ;
+    - rendus SVG locaux pour les représentations spécialisées ;
     - Mermaid.js pour le diagramme réel ;
     - react-markdown + GFM pour le document Markdown réel ;
     - thème clair / sombre persistant pour l'interface.
 
 12. **Catalogue d'infographies enrichi**
     - processus, timeline, comparaison et listes ;
+    - entonnoir, pyramide, cartes et waterfall AntV ;
     - iceberg, cycle et Sankey narratif ;
-    - formats décisionnels et stratégiques complémentaires ajoutés pendant la finalisation ;
-    - priorité aux rendus utiles TPE / PME plutôt qu'à la multiplication de variantes décoratives.
+    - **matrice de synthèse 2×2** pour quatre axes ;
+    - **architecture en couches** pour structurer 3 à 6 niveaux ;
+    - **carte radiale / hub d'idées** pour relier un sujet central à 3 à 6 points ;
+    - priorité aux représentations utiles TPE / PME plutôt qu'à la multiplication de variantes décoratives.
+
+Les nouveaux rendus locaux restent des variantes du modèle canonique existant : aucune rupture de schéma côté runners ni des projets enregistrés.
 
 ## Module extrait : Visual Campaign Studio
 
@@ -93,7 +98,9 @@ Visual Campaign Studio ne fait plus partie de cette version Augmented.
 
 - branche dédiée : `feature/visual-campaign-studio` ;
 - code actuel conservé uniquement comme point de départ / historique ;
-- nouvelle étude technique basée en priorité sur des briques open source existantes ;
+- nouvelle architecture étudiée en priorité autour de **Fabric.js** ;
+- Konva.js reste une alternative ;
+- Polotno Studio App et React Design Editor sont étudiés comme références selon leurs licences ;
 - aucun retour du module dans Augmented tant qu'il n'atteint pas un niveau visuel validé de façon autonome.
 
 Cette séparation permet de finaliser Infographic Lab sans faire dépendre sa sortie d'un éditeur marketing encore expérimental.
