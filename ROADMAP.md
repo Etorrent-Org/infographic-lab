@@ -1,84 +1,55 @@
 # Roadmap — Infographic Lab Augmented
 
-Ce fichier conserve les idées volontairement sorties du périmètre de la version Augmented en cours, afin de limiter le scope sans les perdre.
+Ce fichier conserve uniquement les idées volontairement sorties du périmètre de la version Augmented en cours. Une entrée placée ici n'est pas engagée pour la version actuelle.
 
 ## Principes
 
-- La version stable `main` reste inchangée tant que la version Augmented n'est pas validée.
-- Les développements Augmented restent isolés sur `feature/infographic-lab-augmented`.
-- Une idée placée ici n'est pas engagée pour la version en cours.
-- Chaque entrée devra être revalidée avant toute implémentation future.
+- la version stable `main` reste inchangée tant que la version Augmented n'est pas validée ;
+- les développements Augmented restent isolés sur `feature/infographic-lab-augmented` ;
+- Visual Campaign Studio reste isolé sur `feature/visual-campaign-studio` ;
+- chaque entrée de roadmap doit être revalidée avant implémentation ;
+- priorité au flux **structure → représentation** et aux usages réellement utiles aux TPE / PME.
+
+## Sorti de la roadmap et intégré à Augmented
+
+Les éléments suivants ont été retenus pour la finalisation et ne sont donc plus des idées futures :
+
+- orientation Auto / Portrait / Paysage / Carré ;
+- niveau de détail Synthétique / Équilibré / Détaillé ;
+- option « Rester proche du texte source » ;
+- visuel cible explicite ;
+- Iceberg directement sélectionnable ;
+- Table visuelle ;
+- Hiérarchie / arbre ;
+- Venn ;
+- Matrix, SWOT, Impact / Effort, Eisenhower et Matrice de risque ;
+- KPI ;
+- graphiques Barres, Colonnes, Courbe, Donut et Waterfall chiffré ;
+- métadonnées numériques optionnelles `value`, `unit`, `category`, `series`.
 
 ## Visual Campaign Studio — chantier séparé
 
 **Statut :** extrait de la version Augmented et isolé sur `feature/visual-campaign-studio`.
 
-**Décision du 26 août 2026 :** le module visuel marketing est retiré d'Infographic Lab Augmented. Les rendus maison successifs n'atteignent pas le seuil visuel attendu et ne doivent plus ralentir la finalisation du cœur Structure / Infographie.
+**Décision du 26 août 2026 :** le module visuel marketing ne doit plus ralentir la finalisation du cœur Structure / Infographie.
 
-### Objectif du chantier séparé
+### Objectif
 
-Construire un studio de campagne capable de transformer un brief structuré en asset marketing crédible, sans chercher à remplacer Canva comme éditeur généraliste.
+Construire un studio capable de transformer un brief structuré en asset marketing crédible, sans chercher à remplacer Canva comme éditeur généraliste.
 
-### Règles de reprise
+### Direction technique
 
-- repartir de l'usage et de l'architecture, pas des layouts SVG actuels ;
-- réutiliser le brief, le Brand Kit et les sorties structurées d'Infographic Lab ;
-- privilégier une vraie brique d'édition graphique open source plutôt qu'un moteur de composition maison ;
-- conserver un fonctionnement local-first ;
-- ne réintégrer le module dans Infographic Lab qu'après validation autonome.
+La piste prioritaire est **Fabric.js** pour disposer d'un vrai canvas éditable. Konva.js reste une alternative. Polotno Studio App et React Design Editor servent uniquement de références tant que leurs conditions de réutilisation ne sont pas pleinement clarifiées.
 
-### Briques GitHub à étudier
+### Règle de retour
 
-#### Fabric.js — piste prioritaire
+Aucun code Campaign Studio ne revient dans Augmented avant validation autonome du module et accord explicite.
 
-Repo : `fabricjs/fabric.js`.
+## Import intelligent multi-source
 
-- bibliothèque Canvas mature ;
-- TypeScript ;
-- import / export SVG ;
-- édition d'objets, texte, images, transformations ;
-- licence MIT détectée sur GitHub ;
-- bonne base pour construire un éditeur de campagne sur mesure sans réinventer le canvas.
+**Statut :** futur — non retenu pour la version Augmented actuelle.
 
-#### Konva.js — alternative
-
-Repo : `konvajs/konva`.
-
-- framework Canvas interactif TypeScript ;
-- drag & drop, shapes, transformations et événements ;
-- écosystème React disponible ;
-- licence à vérifier précisément avant intégration : GitHub ne remonte pas de SPDX exploitable sur le dépôt principal au moment du cadrage.
-
-#### Polotno Studio App — référence à examiner, pas dépendance validée
-
-Repo : `polotno-project/polotno-studio-app`.
-
-- éditeur de design orienté desktop / agents IA ;
-- intéressant comme référence d'architecture et d'UX ;
-- aucune licence détectée sur GitHub au moment du cadrage : ne pas reprendre le code tant que les droits de réutilisation ne sont pas clarifiés.
-
-### Première orientation technique
-
-Commencer le prototype Campaign Studio sur **Fabric.js**, avec :
-
-- scène éditable ;
-- templates JSON structurés ;
-- texte réellement redimensionnable ;
-- images / assets de marque ;
-- calques ;
-- export SVG / PNG ;
-- génération de plusieurs formats à partir d'un modèle de campagne ;
-- moteur IA limité à la préparation du contenu et à la sélection d'un template, pas au placement pixel par pixel.
-
-## À étudier après la version Augmented actuelle
-
-### Import intelligent multi-source
-
-**Statut :** Roadmap — non retenu pour la version Augmented actuelle.
-
-**Objectif :** permettre à Infographic Lab d'ingérer plusieurs types de sources puis de les normaliser avant construction du modèle d'idée commun.
-
-**Entrées envisagées :**
+### Entrées envisagées
 
 - texte collé ;
 - Markdown ;
@@ -87,54 +58,68 @@ Commencer le prototype Campaign Studio sur **Fabric.js**, avec :
 - image ;
 - fichier texte / JSON.
 
-**Pistes ultérieures :**
+### Pistes ultérieures
 
 - DOCX ;
 - PPTX ;
 - Notion ;
 - Google Drive / OneDrive / SharePoint ;
-- import de plusieurs sources dans un même projet.
+- plusieurs sources dans un même projet.
 
-**Principes techniques envisagés :**
+### Principes
 
-- privilégier l'extraction locale quand elle est fiable ;
-- réserver l'IA à la compréhension sémantique, à la hiérarchisation et à la reformulation ;
-- conserver la provenance des contenus pour alimenter le mode preuves & sources ;
-- éviter de multiplier les connecteurs cloud tant que le besoin n'est pas validé.
+- extraction locale lorsque fiable ;
+- IA réservée à la compréhension et à la structuration ;
+- conservation de la provenance ;
+- pas de multiplication de connecteurs cloud sans besoin validé.
 
-**Décision du 24 août 2026 :** fonctionnalité explicitement repoussée en roadmap afin de préserver un périmètre de version maîtrisé.
+## Comparaison de variantes intelligentes
 
-### Variantes intelligentes
+**Statut :** futur.
 
-**Statut :** Roadmap — non retenu pour la version Augmented actuelle.
-
-**Objectif :** générer plusieurs variantes maîtrisées d'un même contenu à partir du modèle d'idée commun, sans modifier les faits ni les sources.
-
-**Variantes envisagées :**
+L'orientation et le niveau de détail sont maintenant intégrés. Ce chantier futur concerne uniquement la **comparaison simultanée** de plusieurs propositions d'un même modèle, par exemple :
 
 - Executive ;
 - Pédagogique ;
 - Visuelle ;
-- Dense ;
-- Équilibrée ;
 - Minimaliste.
 
-**Principes envisagés :**
+Règles envisagées :
 
-- comparer au maximum trois variantes côte à côte ;
-- faire varier la densité, le ton, le niveau de détail ou l'orientation ;
-- conserver le même socle factuel et les mêmes références ;
-- éviter la génération infinie de versions.
+- maximum trois variantes comparées ;
+- même socle factuel ;
+- aucune génération infinie de versions ;
+- sélection explicite par l'utilisateur.
 
-**Décision du 24 août 2026 :** fonctionnalité repoussée en roadmap pour concentrer la version Augmented actuelle sur le cœur de composition et de rendu.
+## Data avancée
+
+**Statut :** futur.
+
+La version Augmented couvre les graphiques à une série issus de valeurs explicites. Sont volontairement repoussés :
+
+- séries multiples complexes ;
+- axes doubles ;
+- statistiques calculées ;
+- agrégations automatiques ;
+- import CSV / XLSX ;
+- Sankey quantitatif avec poids réels ;
+- dashboards multi-pages.
+
+Toute évolution devra conserver la règle : **pas de donnée inventée pour rendre un graphique possible**.
+
+## Slides / présentations
+
+**Statut :** hors scope actuel.
+
+Napkin et d'autres outils couvrent désormais la présentation complète. Infographic Lab ne suit pas cette direction dans la version actuelle afin d'éviter de devenir un éditeur bureautique généraliste.
 
 ## V3 — Provider & Model Control Center
 
-**Statut :** V3 — explicitement repoussé après la finalisation du cœur Infographic Lab.
+**Statut :** V3.
 
-**Objectif :** permettre à l'utilisateur de configurer lui-même les moteurs IA disponibles, leurs capacités et leur routage sans modifier le code ou le Docker Compose.
+Objectif : permettre à l'utilisateur de configurer lui-même les moteurs disponibles et leur routage sans modifier le code ou le Docker Compose.
 
-### Fournisseurs texte / raisonnement envisagés
+### Providers texte / raisonnement envisagés
 
 - Vibe ;
 - Codex ;
@@ -143,16 +128,15 @@ Commencer le prototype Campaign Studio sur **Fabric.js**, avec :
 - endpoints compatibles OpenAI ;
 - fournisseurs API configurables.
 
-### Fournisseurs image envisagés
+### Providers image envisagés
 
 - ComfyUI local ;
 - moteurs Stable Diffusion locaux compatibles ;
-- endpoints image API lorsque l'utilisateur choisit explicitement de les activer.
+- endpoints image API activés explicitement par l'utilisateur.
 
 ### Règles de sécurité
 
 - aucun secret transmis au frontend ;
 - configuration locale par défaut ;
 - aucune dépendance obligatoire à une API payante ;
-- les moteurs locaux restent privilégiables ;
 - un provider indisponible ne doit jamais empêcher l'application de démarrer.
