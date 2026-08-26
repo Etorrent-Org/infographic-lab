@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, feature/visual-campaign-studio]
   pull_request:
     branches: [main]
 
