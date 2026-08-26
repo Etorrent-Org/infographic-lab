@@ -89,7 +89,8 @@ export function validateSvg(svg: string, format: MarketingFormat): SvgValidation
   if (!svg.includes(`height=\"${format.height}\"`)) errors.push("hauteur incohérente");
   if (!svg.includes(`viewBox=\"0 0 ${format.width} ${format.height}\"`)) errors.push("viewBox incohérent");
   if (/NaN|undefined|Infinity/.test(svg)) errors.push("valeur numérique invalide");
-  if (/\b(?:width|height|x|y|r|rx|ry)=\"-\d/.test(svg)) errors.push("dimension ou coordonnée négative explicite");
+  // Les positions x/y negatives sont legitimes pour etendre une zone de filtre SVG.
+  if (/\b(?:width|height|r|rx|ry)=\"-\d/.test(svg)) errors.push("dimension negative explicite");
   if (/<text[^>]*>\s*<\/text>/.test(svg)) errors.push("texte vide");
   return { valid: errors.length === 0, errors };
 }
