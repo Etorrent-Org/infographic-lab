@@ -48,10 +48,12 @@ function clamp(value: number, min: number, max: number) {
 export function cleanVisualText(value: string) {
   return value
     .replace(/\s+/g, " ")
-    .replace(/\s+([:;,.!?])/g, "$1")
+    .replace(/\s+([,.])/g, "$1")
+    .replace(/\s*([:;!?])\s*/g, " $1 ")
     .replace(/([:;,])\s*\.{2,}/g, "$1")
     .replace(/\.{3,}/g, "…")
     .replace(/[:;,\-]?\s*…\s*$/g, "")
+    .replace(/\s+/g, " ")
     .trim();
 }
 
@@ -317,21 +319,44 @@ function sankeyPlan(value: CanonicalInfographic, spec: CanvasSpec, content: Layo
 }
 
 function matrixPlan(kind: CustomVisualKind, spec: CanvasSpec, content: LayoutBox): VisualLayoutPlan {
-  const matrixRegion = makeBox("matrix-region", content.x, content.y + 6, content.width, content.height - 12, "plot", undefined, true);
-  return { kind, spec, content, boxes: gridBoxes(4, matrixRegion, 2, kind, "item", spec.width < 900 ? 12 : 16), meta: {} };
+  const insetX = spec.width < 900 ? 28 : 34;
+  const insetY = spec.width < 900 ? 28 : 26;
+  const matrixRegion = makeBox(
+    "matrix-region",
+    content.x + insetX,
+    content.y + insetY,
+    content.width - insetX * 2,
+    content.height - insetY * 2,
+    "plot",
+    undefined,
+    true,
+  );
+  return { kind, spec, content, boxes: gridBoxes(4, matrixRegion, 2, kind, "item", spec.width < 900 ? 20 : 24), meta: {} };
 }
 
 function architecturePlan(value: CanonicalInfographic, spec: CanvasSpec, content: LayoutBox): VisualLayoutPlan {
   const count = Math.min(6, value.items.length);
-  const gap = 10;
-  const baseHeight = (content.height - gap * Math.max(0, count - 1)) / Math.max(1, count);
+  const outerX = spec.width < 900 ? 30 : 40;
+  const outerY = 20;
+  const gap = 16;
+  const region = makeBox(
+    "architecture-region",
+    content.x + outerX,
+    content.y + outerY,
+    content.width - outerX * 2,
+    content.height - outerY * 2,
+    "plot",
+    undefined,
+    true,
+  );
+  const baseHeight = (region.height - gap * Math.max(0, count - 1)) / Math.max(1, count);
   const boxes = Array.from({ length: count }, (_, index) => {
-    const inset = Math.min(content.width * 0.13, index * (spec.width < 900 ? 12 : 18));
+    const inset = Math.min(region.width * 0.12, index * (spec.width < 900 ? 12 : 18));
     return makeBox(
       `architecture-${index}`,
-      content.x + inset,
-      content.y + index * (baseHeight + gap),
-      content.width - inset * 2,
+      region.x + inset,
+      region.y + index * (baseHeight + gap),
+      region.width - inset * 2,
       baseHeight,
       "item",
       index,
@@ -342,18 +367,44 @@ function architecturePlan(value: CanonicalInfographic, spec: CanvasSpec, content
 
 function tablePlan(value: CanonicalInfographic, spec: CanvasSpec, content: LayoutBox): VisualLayoutPlan {
   const count = Math.min(8, value.items.length);
-  const headerHeight = 52;
-  const rowsRegion = makeBox("table-rows", content.x, content.y + headerHeight, content.width, content.height - headerHeight, "plot", undefined, true);
-  const rows = stackBoxes(count, rowsRegion, "table-row", "item", 0);
-  const header = makeBox("table-header", content.x, content.y, content.width, headerHeight, "label");
+  const marginX = 20;
+  const marginY = 18;
+  const headerHeight = 48;
+  const headerGap = 10;
+  const rowGap = 7;
+  const tableX = content.x + marginX;
+  const tableWidth = content.width - marginX * 2;
+  const header = makeBox("table-header", tableX, content.y + marginY, tableWidth, headerHeight, "label");
+  const rowsRegion = makeBox(
+    "table-rows",
+    tableX,
+    header.y + header.height + headerGap,
+    tableWidth,
+    content.y + content.height - marginY - (header.y + header.height + headerGap),
+    "plot",
+    undefined,
+    true,
+  );
+  const rows = stackBoxes(count, rowsRegion, "table-row", "item", rowGap);
   return { kind: "table", spec, content, boxes: [header, ...rows], meta: { headerHeight } };
 }
 
 function kpiPlan(value: CanonicalInfographic, spec: CanvasSpec, content: LayoutBox): VisualLayoutPlan {
   const count = Math.min(6, value.items.length);
   const columns = spec.width < 900 ? 2 : 3;
-  const region = makeBox("kpi-region", content.x, content.y + 8, content.width, content.height - 16, "plot", undefined, true);
-  return { kind: "kpi", spec, content, boxes: gridBoxes(count, region, columns, "kpi", "item", 16), meta: { columns } };
+  const insetX = spec.width < 900 ? 26 : 32;
+  const insetY = 24;
+  const region = makeBox(
+    "kpi-region",
+    content.x + insetX,
+    content.y + insetY,
+    content.width - insetX * 2,
+    content.height - insetY * 2,
+    "plot",
+    undefined,
+    true,
+  );
+  return { kind: "kpi", spec, content, boxes: gridBoxes(count, region, columns, "kpi", "item", 20), meta: { columns } };
 }
 
 function vennPlan(value: CanonicalInfographic, spec: CanvasSpec, content: LayoutBox): VisualLayoutPlan {
@@ -402,7 +453,7 @@ function barPlan(value: CanonicalInfographic, spec: CanvasSpec, content: LayoutB
   const labelWidth = spec.width < 900 ? 190 : 220;
   const gap = 18;
   const labelRegion = makeBox("bar-labels", content.x, content.y + 8, labelWidth, content.height - 16, "plot", undefined, true);
-  const labels = stackBoxes(count, labelRegion, "bar-label", "label", 4);
+  const labels = stackBoxes(count, labelRegion, "bar-label", "label", 8);
   const plot = makeBox("bar-plot", content.x + labelWidth + gap, content.y + 8, content.width - labelWidth - gap, content.height - 16, "plot", undefined, true);
   return { kind: "chart-bar", spec, content, boxes: [...labels, plot], meta: { labelWidth } };
 }
@@ -412,11 +463,12 @@ function cartesianPlan(kind: "chart-column" | "chart-line" | "chart-waterfall", 
   const labelHeight = 54;
   const plot = makeBox("cartesian-plot", content.x + 44, content.y + 8, content.width - 64, content.height - labelHeight - 18, "plot", undefined, true);
   const slot = plot.width / Math.max(1, count);
+  const labelGap = 8;
   const labels = Array.from({ length: count }, (_, index) => makeBox(
     `${kind}-label-${index}`,
-    plot.x + index * slot,
+    plot.x + index * slot + labelGap / 2,
     plot.y + plot.height + 8,
-    slot,
+    Math.max(28, slot - labelGap),
     labelHeight,
     "label",
     index,
