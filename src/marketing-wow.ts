@@ -4,6 +4,7 @@ export {
   marketingFormats,
   mockupOptions,
   objectiveOptions,
+  renderMarketingSvg,
   svgStringToDataUrl,
   svgStringToRaster,
   templateOptions,
@@ -16,4 +17,4 @@ export type {
   MarketingMockup,
 } from "./marketing";
 
-export { renderMarketingSvg } from "./marketing-wow-renderer";
+export { buildMarketingBaselineReport, assertMarketingBaseline } from "./marketing-wow-v2-baseline";
