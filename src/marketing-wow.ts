@@ -2,7 +2,6 @@ export {
   campaignCopyMarkdown,
   defaultMarketingCampaign,
   marketingFormats,
-  mockupOptions,
   objectiveOptions,
   renderMarketingSvg,
   svgStringToDataUrl,
@@ -14,7 +13,7 @@ export {
 export type {
   MarketingCampaign,
   MarketingFormatId,
-  MarketingMockup,
+  MarketingTemplate,
 } from "./marketing";
 
 export { buildMarketingBaselineReport, assertMarketingBaseline } from "./marketing-wow-v2-baseline";
