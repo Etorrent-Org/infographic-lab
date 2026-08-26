@@ -319,8 +319,9 @@ function sankeyPlan(value: CanonicalInfographic, spec: CanvasSpec, content: Layo
 }
 
 function matrixPlan(kind: CustomVisualKind, spec: CanvasSpec, content: LayoutBox): VisualLayoutPlan {
-  const insetX = spec.width < 900 ? 28 : 34;
-  const insetY = spec.width < 900 ? 28 : 26;
+  const portrait = spec.width < 900;
+  const insetX = portrait ? 38 : 34;
+  const insetY = portrait ? 38 : 26;
   const matrixRegion = makeBox(
     "matrix-region",
     content.x + insetX,
@@ -331,7 +332,7 @@ function matrixPlan(kind: CustomVisualKind, spec: CanvasSpec, content: LayoutBox
     undefined,
     true,
   );
-  return { kind, spec, content, boxes: gridBoxes(4, matrixRegion, 2, kind, "item", spec.width < 900 ? 20 : 24), meta: {} };
+  return { kind, spec, content, boxes: gridBoxes(4, matrixRegion, 2, kind, "item", portrait ? 24 : 24), meta: {} };
 }
 
 function architecturePlan(value: CanonicalInfographic, spec: CanvasSpec, content: LayoutBox): VisualLayoutPlan {
@@ -367,11 +368,11 @@ function architecturePlan(value: CanonicalInfographic, spec: CanvasSpec, content
 
 function tablePlan(value: CanonicalInfographic, spec: CanvasSpec, content: LayoutBox): VisualLayoutPlan {
   const count = Math.min(8, value.items.length);
-  const marginX = 20;
-  const marginY = 18;
+  const marginX = spec.width < 1000 ? 34 : 28;
+  const marginY = spec.width < 1000 ? 30 : 22;
   const headerHeight = 48;
-  const headerGap = 10;
-  const rowGap = 7;
+  const headerGap = 12;
+  const rowGap = spec.width < 1000 ? 10 : 8;
   const tableX = content.x + marginX;
   const tableWidth = content.width - marginX * 2;
   const header = makeBox("table-header", tableX, content.y + marginY, tableWidth, headerHeight, "label");
@@ -391,9 +392,10 @@ function tablePlan(value: CanonicalInfographic, spec: CanvasSpec, content: Layou
 
 function kpiPlan(value: CanonicalInfographic, spec: CanvasSpec, content: LayoutBox): VisualLayoutPlan {
   const count = Math.min(6, value.items.length);
-  const columns = spec.width < 900 ? 2 : 3;
-  const insetX = spec.width < 900 ? 26 : 32;
-  const insetY = 24;
+  const portrait = spec.width < 900;
+  const columns = portrait ? 2 : 3;
+  const insetX = portrait ? 36 : 32;
+  const insetY = portrait ? 32 : 24;
   const region = makeBox(
     "kpi-region",
     content.x + insetX,
@@ -404,7 +406,7 @@ function kpiPlan(value: CanonicalInfographic, spec: CanvasSpec, content: LayoutB
     undefined,
     true,
   );
-  return { kind: "kpi", spec, content, boxes: gridBoxes(count, region, columns, "kpi", "item", 20), meta: { columns } };
+  return { kind: "kpi", spec, content, boxes: gridBoxes(count, region, columns, "kpi", "item", portrait ? 22 : 20), meta: { columns } };
 }
 
 function vennPlan(value: CanonicalInfographic, spec: CanvasSpec, content: LayoutBox): VisualLayoutPlan {
