@@ -21,6 +21,13 @@ const blockTypes = ["process", "timeline", "comparison", "list", "cycle", "matri
 const claimTypes = ["fact", "interpretation", "suggestion"];
 const intentTypes = ["explain", "decide", "convince", "train", "summarize"];
 const providerTypes = ["auto", "vibe", "codex"];
+const orientations = ["auto", "portrait", "landscape", "square"];
+const detailLevels = ["summary", "balanced", "detailed"];
+const wordingModes = ["rephrase", "close"];
+const visualTargets = [
+  "auto", "iceberg", "cycle", "sankey", "matrix", "architecture", "hub", "table", "kpi",
+  "tree", "venn", "swot", "impact", "eisenhower", "risk", "bar", "column", "line", "donut", "waterfall",
+];
 
 const itemOutputSchema = {
   type: "object",
@@ -32,6 +39,10 @@ const itemOutputSchema = {
     blockType: { type: "string", enum: blockTypes },
     claimType: { type: "string", enum: claimTypes },
     evidence: { type: "string", minLength: 1, maxLength: 260 },
+    value: { type: "number" },
+    unit: { type: "string", minLength: 1, maxLength: 24 },
+    category: { type: "string", minLength: 1, maxLength: 40 },
+    series: { type: "string", minLength: 1, maxLength: 40 },
   },
 };
 
@@ -79,6 +90,35 @@ const intentRules = {
   convince: "Structure le contenu pour soutenir un message : bénéfices, problème résolu, preuves présentes dans la source et différenciation sans inventer de faits.",
   train: "Structure le contenu pour apprendre : séquence logique, notions clés, étapes et formulations pédagogiques.",
   summarize: "Conserve seulement l'essentiel : élimine les répétitions, hiérarchise les messages clés et garde une densité faible.",
+};
+
+const detailRules = {
+  summary: "Vise 3 à 4 blocs, titres très courts et descriptions d'une phrase brève.",
+  balanced: "Vise 3 à 6 blocs avec un bon équilibre entre synthèse et contexte.",
+  detailed: "Vise 5 à 8 blocs uniquement si la source contient assez de matière ; reste lisible et évite les répétitions.",
+};
+
+const visualRules = {
+  auto: "Choisis une structure générique adaptée au contenu.",
+  iceberg: "Prépare idéalement 4 à 6 items : 1 à 2 symptômes visibles puis les causes, mécanismes ou leviers plus profonds.",
+  cycle: "Prépare 3 à 7 étapes qui forment réellement une boucle.",
+  sankey: "Prépare 3 à 7 étapes d'un flux narratif. Ne prétends pas encoder les largeurs quantitativement.",
+  matrix: "Prépare exactement 4 axes compatibles avec une matrice 2×2.",
+  swot: "Prépare exactement 4 items dans cet ordre : Forces, Faiblesses, Opportunités, Menaces, en restant fidèle à la source.",
+  impact: "Prépare exactement 4 items utiles à une lecture Impact / Effort sans inventer de score chiffré.",
+  eisenhower: "Prépare exactement 4 items utiles aux quadrants Faire, Planifier, Déléguer, Éliminer.",
+  risk: "Prépare exactement 4 items utiles à une matrice de risque ; n'invente aucune probabilité ni gravité absente de la source.",
+  architecture: "Prépare 3 à 6 couches ou niveaux cohérents, du socle vers le sommet.",
+  hub: "Prépare 3 à 6 idées satellites autour du sujet central.",
+  tree: "Prépare 3 à 7 branches de premier niveau pour une hiérarchie lisible.",
+  venn: "Prépare 2 ou 3 ensembles comparables avec leurs idées distinctives ; ne fabrique pas d'intersection absente de la source.",
+  table: "Prépare 3 à 7 lignes comparables et concises.",
+  kpi: "Préserve uniquement les indicateurs numériques explicitement présents dans la source et renseigne value et unit quand ils sont disponibles.",
+  bar: "Préserve les valeurs numériques explicites dans value, avec unit/category/series si présents. N'invente jamais une valeur manquante.",
+  column: "Préserve les valeurs numériques explicites dans value, avec unit/category/series si présents. N'invente jamais une valeur manquante.",
+  line: "Préserve les valeurs numériques explicites dans value dans un ordre temporel ou séquentiel fidèle à la source.",
+  donut: "Préserve uniquement des valeurs positives explicitement présentes dans la source ; n'invente aucune part.",
+  waterfall: "Préserve les variations numériques explicites dans value, positives ou négatives, dans l'ordre de la source.",
 };
 
 function sendJson(res, status, body) {
@@ -176,6 +216,16 @@ async function runWithProvider(requested, prompt, schema, timeoutMs = 120000) {
   throw new Error(`Aucun moteur IA n'a répondu. ${errors.join(" | ")}`);
 }
 
+function normalizePreferences(value) {
+  const preferences = value && typeof value === "object" && !Array.isArray(value) ? value : {};
+  return {
+    orientation: orientations.includes(preferences.orientation) ? preferences.orientation : "auto",
+    detail: detailLevels.includes(preferences.detail) ? preferences.detail : "balanced",
+    wording: wordingModes.includes(preferences.wording) ? preferences.wording : "rephrase",
+    visual: visualTargets.includes(preferences.visual) ? preferences.visual : "auto",
+  };
+}
+
 function validateInput(value) {
   if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error("Entrée invalide.");
   const text = typeof value.text === "string" ? value.text.trim() : "";
@@ -185,31 +235,44 @@ function validateInput(value) {
   const style = supportedStyles.includes(value.style) ? value.style : "clean";
   const intent = intentTypes.includes(value.intent) ? value.intent : "explain";
   const provider = providerTypes.includes(value.provider) ? value.provider : "auto";
-  return { text, type, style, language: "fr", intent, provider };
+  return { text, type, style, language: "fr", intent, provider, preferences: normalizePreferences(value.preferences) };
 }
 
 function buildPrompt(input) {
+  const wordingRule = input.preferences.wording === "close"
+    ? "Reste aussi proche que possible du vocabulaire et des formulations du texte source ; raccourcis seulement ce qui est nécessaire pour la lisibilité."
+    : "Tu peux reformuler le texte pour le rendre plus clair et plus concis sans en changer le sens ni ajouter de faits.";
   return JSON.stringify({
     protocol: PROMPT_PROTOCOL,
     trustedInstructions: {
       runtime: [
         "Transforme uniquement le texte fourni en un modèle d'idée fidèle, synthétique et directement visualisable.",
         intentRules[input.intent],
+        detailRules[input.preferences.detail],
+        wordingRule,
+        visualRules[input.preferences.visual],
         "N'invente ni CSS, ni HTML, ni JavaScript, ni SVG.",
         "Respecte strictement le schéma de sortie et les limites de longueur.",
-        "Conçois pour un visuel : privilégie 3 à 6 items, des titres très courts et une phrase brève par description.",
         "N'ajoute aucune URL, date, seuil, prix, statistique, organisme ou obligation absente du texte source.",
+        "Quand une donnée numérique explicite est utile au visuel, copie sa valeur numérique dans value et son unité dans unit. Utilise category et series seulement si la source les établit clairement.",
+        "Ne déduis jamais une valeur numérique à partir d'une formulation vague et ne complète jamais une série incomplète par invention.",
         "Pour chaque item, choisis blockType parmi process, timeline, comparison, list, cycle, matrix, architecture, summary.",
         "Pour chaque item, choisis claimType : fact uniquement si le contenu est explicitement présent dans la source, interpretation pour une reformulation ou déduction raisonnable, suggestion pour une proposition nouvelle.",
         "Quand claimType vaut fact, ajoute evidence avec un extrait court et exact du texte source. Ne fabrique jamais une citation.",
         "Si requestedType vaut auto, choisis le layout global le plus adapté parmi process, comparison, timeline et list.",
         "Si requestedType n'est pas auto, retourne exactement ce layout.",
         "Pour comparison, retourne exactement deux items.",
-        "Le style visuel est géré localement par l'application et ne doit pas apparaître dans la sortie.",
+        "L'orientation et le style visuel sont gérés localement par l'application et ne doivent pas apparaître dans la sortie.",
       ],
       application: "Infographic Lab Augmented",
     },
-    untrustedData: { text: input.text, requestedType: input.type, intent: input.intent, language: input.language },
+    untrustedData: {
+      text: input.text,
+      requestedType: input.type,
+      intent: input.intent,
+      language: input.language,
+      preferences: input.preferences,
+    },
     outputContract: outputSchema,
   }, null, 2);
 }
@@ -224,8 +287,9 @@ function buildItemPrompt(input) {
         "Retourne strictement un objet conforme au schéma demandé.",
         "Utilise sourceText comme seule source factuelle.",
         "Conserve blockType et claimType sauf si l'instruction demande explicitement de les faire évoluer.",
+        "Conserve value, unit, category et series lorsqu'ils existent, sauf demande explicite et seulement si la source justifie la modification.",
         "Quand claimType vaut fact, evidence doit être un extrait exact de sourceText.",
-        "N'ajoute aucune information factuelle absente de la source.",
+        "N'ajoute aucune information factuelle ou valeur numérique absente de la source.",
         "Vise 2 à 5 mots pour title et au plus 100 caractères pour description.",
       ],
       application: "Infographic Lab Augmented · Retouche",
@@ -268,12 +332,16 @@ function validText(value, min, max) {
 
 function validateItemOutput(value) {
   if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error("Bloc IA invalide.");
-  const allowed = ["title", "description", "blockType", "claimType", "evidence"];
+  const allowed = ["title", "description", "blockType", "claimType", "evidence", "value", "unit", "category", "series"];
   if (Object.keys(value).some((key) => !allowed.includes(key))) throw new Error("Bloc IA non conforme.");
   if (!validText(value.title, 1, 60) || !validText(value.description, 1, 180)) throw new Error("Contenu IA invalide.");
   if (!blockTypes.includes(value.blockType)) throw new Error("Type de bloc IA invalide.");
   if (!claimTypes.includes(value.claimType)) throw new Error("Statut de contenu IA invalide.");
   if (value.evidence !== undefined && !validText(value.evidence, 1, 260)) throw new Error("Preuve IA invalide.");
+  if (value.value !== undefined && (typeof value.value !== "number" || !Number.isFinite(value.value))) throw new Error("Valeur numérique IA invalide.");
+  if (value.unit !== undefined && !validText(value.unit, 1, 24)) throw new Error("Unité IA invalide.");
+  if (value.category !== undefined && !validText(value.category, 1, 40)) throw new Error("Catégorie IA invalide.");
+  if (value.series !== undefined && !validText(value.series, 1, 40)) throw new Error("Série IA invalide.");
   return value;
 }
 
@@ -303,6 +371,21 @@ function groundEvidence(sourceText, data) {
     }
     return item;
   });
+  return warnings;
+}
+
+function visualWarnings(preferences, data) {
+  const warnings = [];
+  const numericCount = data.items.filter((item) => typeof item.value === "number" && Number.isFinite(item.value)).length;
+  if (["bar", "column", "line", "donut", "waterfall", "kpi"].includes(preferences.visual) && numericCount < 2) {
+    warnings.push("Le visuel chiffré demandé nécessite au moins deux valeurs numériques explicites dans la source ; les valeurs manquantes n'ont pas été inventées.");
+  }
+  if (["matrix", "swot", "impact", "eisenhower", "risk"].includes(preferences.visual) && data.items.length !== 4) {
+    warnings.push("Le visuel matriciel demandé nécessite exactement quatre blocs ; un rendu compatible restera disponible dans les variantes.");
+  }
+  if (preferences.visual === "venn" && (data.items.length < 2 || data.items.length > 3)) {
+    warnings.push("Le diagramme de Venn demande deux ou trois ensembles ; un rendu compatible restera disponible dans les variantes.");
+  }
   return warnings;
 }
 
@@ -353,7 +436,7 @@ async function generate(req, res) {
     const body = await runWithProvider(input.provider, buildPrompt(input), outputSchema);
     const data = validateOutput(body.data);
     if (input.type !== "auto" && data.layout !== input.type) throw new Error(`Le moteur a retourné ${data.layout} au lieu de ${input.type}.`);
-    const warnings = groundEvidence(input.text, data);
+    const warnings = [...groundEvidence(input.text, data), ...visualWarnings(input.preferences, data)];
     return sendJson(res, 200, { data, provider: body.provider, durationMs: body.durationMs, style: input.style, warnings });
   } catch (error) {
     return sendJson(res, 400, { error: String(error?.message ?? error).slice(0, 1200) });

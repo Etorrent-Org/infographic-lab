@@ -9,6 +9,8 @@ import type {
   InfographicProject,
   InfographicStyle,
   VisualDensity,
+  VisualOrientation,
+  VisualTarget,
 } from "./types";
 
 const layouts = new Set(["process", "comparison", "timeline", "list"]);
@@ -31,6 +33,11 @@ const blockKinds = new Set<BlockKind>([
 ]);
 const claimKinds = new Set<ClaimKind>(["fact", "interpretation", "suggestion"]);
 const densities = new Set<VisualDensity>(["compact", "balanced", "airy"]);
+const orientations = new Set<VisualOrientation>(["auto", "portrait", "landscape", "square"]);
+const visualTargets = new Set<VisualTarget>([
+  "auto", "iceberg", "cycle", "sankey", "matrix", "architecture", "hub", "table", "kpi",
+  "tree", "venn", "swot", "impact", "eisenhower", "risk", "bar", "column", "line", "donut", "waterfall",
+]);
 const hexColor = /^#[0-9a-fA-F]{6}$/;
 
 function isText(value: unknown, min: number, max: number): value is string {
@@ -42,7 +49,7 @@ function validateAppearance(value: unknown): InfographicAppearance {
     throw new Error("Réponse IA invalide : apparence incorrecte.");
   }
   const data = value as Record<string, unknown>;
-  if (Object.keys(data).some((key) => !["accent", "background", "density"].includes(key))) {
+  if (Object.keys(data).some((key) => !["accent", "background", "density", "orientation", "visual"].includes(key))) {
     throw new Error("Réponse IA invalide : propriété d'apparence inattendue.");
   }
   if (data.accent !== undefined && (typeof data.accent !== "string" || !hexColor.test(data.accent))) {
@@ -54,6 +61,12 @@ function validateAppearance(value: unknown): InfographicAppearance {
   if (data.density !== undefined && (typeof data.density !== "string" || !densities.has(data.density as VisualDensity))) {
     throw new Error("Réponse IA invalide : densité incorrecte.");
   }
+  if (data.orientation !== undefined && (typeof data.orientation !== "string" || !orientations.has(data.orientation as VisualOrientation))) {
+    throw new Error("Réponse IA invalide : orientation incorrecte.");
+  }
+  if (data.visual !== undefined && (typeof data.visual !== "string" || !visualTargets.has(data.visual as VisualTarget))) {
+    throw new Error("Réponse IA invalide : visuel cible incorrect.");
+  }
   return data as InfographicAppearance;
 }
 
@@ -62,7 +75,7 @@ export function validateInfographicItem(value: unknown): InfographicItem {
     throw new Error("Réponse IA invalide : élément attendu.");
   }
   const record = value as Record<string, unknown>;
-  const allowed = ["title", "description", "icon", "blockType", "claimType", "evidence"];
+  const allowed = ["title", "description", "icon", "blockType", "claimType", "evidence", "value", "unit", "category", "series"];
   if (Object.keys(record).some((key) => !allowed.includes(key))) {
     throw new Error("Réponse IA invalide : propriété d'élément inattendue.");
   }
@@ -80,6 +93,18 @@ export function validateInfographicItem(value: unknown): InfographicItem {
   }
   if (record.evidence !== undefined && !isText(record.evidence, 1, 260)) {
     throw new Error("Réponse IA invalide : preuve source incorrecte.");
+  }
+  if (record.value !== undefined && (typeof record.value !== "number" || !Number.isFinite(record.value))) {
+    throw new Error("Réponse IA invalide : valeur numérique incorrecte.");
+  }
+  if (record.unit !== undefined && !isText(record.unit, 1, 24)) {
+    throw new Error("Réponse IA invalide : unité incorrecte.");
+  }
+  if (record.category !== undefined && !isText(record.category, 1, 40)) {
+    throw new Error("Réponse IA invalide : catégorie incorrecte.");
+  }
+  if (record.series !== undefined && !isText(record.series, 1, 40)) {
+    throw new Error("Réponse IA invalide : série incorrecte.");
   }
   return record as InfographicItem;
 }

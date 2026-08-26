@@ -10,7 +10,26 @@ export type InfographicStyle =
   | "minimal"
   | "tech";
 export type V1InfographicStyle = "clean" | "soft" | "dark" | "sketch" | "chalk";
-export type CustomVisualKind = "iceberg" | "cycle" | "sankey" | "matrix" | "architecture" | "hub";
+export type CustomVisualKind =
+  | "iceberg"
+  | "cycle"
+  | "sankey"
+  | "matrix"
+  | "architecture"
+  | "hub"
+  | "table"
+  | "kpi"
+  | "venn"
+  | "tree"
+  | "swot"
+  | "impact"
+  | "eisenhower"
+  | "risk"
+  | "chart-bar"
+  | "chart-column"
+  | "chart-line"
+  | "chart-donut"
+  | "chart-waterfall";
 
 export type InfographicIcon =
   | "idea"
@@ -31,6 +50,38 @@ export type InfographicIcon =
   | "spark";
 
 export type VisualDensity = "compact" | "balanced" | "airy";
+export type VisualOrientation = "auto" | "portrait" | "landscape" | "square";
+export type GenerationDetail = "summary" | "balanced" | "detailed";
+export type WordingMode = "rephrase" | "close";
+export type VisualTarget =
+  | "auto"
+  | "iceberg"
+  | "cycle"
+  | "sankey"
+  | "matrix"
+  | "architecture"
+  | "hub"
+  | "table"
+  | "kpi"
+  | "tree"
+  | "venn"
+  | "swot"
+  | "impact"
+  | "eisenhower"
+  | "risk"
+  | "bar"
+  | "column"
+  | "line"
+  | "donut"
+  | "waterfall";
+
+export type GenerationPreferences = {
+  orientation: VisualOrientation;
+  detail: GenerationDetail;
+  wording: WordingMode;
+  visual: VisualTarget;
+};
+
 export type UsageIntent = "explain" | "decide" | "convince" | "train" | "summarize";
 export type AIProvider = "auto" | "vibe" | "codex";
 export type RepresentationKind = "infographic" | "mermaid" | "mindmap" | "markdown";
@@ -49,6 +100,8 @@ export type InfographicAppearance = {
   accent?: string;
   background?: string;
   density?: VisualDensity;
+  orientation?: VisualOrientation;
+  visual?: VisualTarget;
 };
 
 export type InfographicItem = {
@@ -58,6 +111,10 @@ export type InfographicItem = {
   blockType?: BlockKind;
   claimType?: ClaimKind;
   evidence?: string;
+  value?: number;
+  unit?: string;
+  category?: string;
+  series?: string;
 };
 
 export type CanonicalInfographic = {
@@ -97,6 +154,7 @@ export type GenerateRequest = {
   language: "fr";
   intent?: UsageIntent;
   provider?: AIProvider;
+  preferences?: GenerationPreferences;
 };
 
 export type GenerateResponse = {

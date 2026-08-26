@@ -7,8 +7,8 @@ import type {
   RegenerateItemRequest,
   RegenerateItemResponse,
 } from "./types";
+import { loadGenerationPreferences } from "./generation-preferences";
 import { validateCanonicalInfographic, validateInfographicItem } from "./validation";
-
 
 function toAiInfographic(input: RegenerateItemRequest["infographic"]) {
   return {
@@ -21,6 +21,10 @@ function toAiInfographic(input: RegenerateItemRequest["infographic"]) {
       blockType: item.blockType,
       claimType: item.claimType,
       ...(item.evidence ? { evidence: item.evidence } : {}),
+      ...(typeof item.value === "number" ? { value: item.value } : {}),
+      ...(item.unit ? { unit: item.unit } : {}),
+      ...(item.category ? { category: item.category } : {}),
+      ...(item.series ? { series: item.series } : {}),
     })),
   };
 }
@@ -43,17 +47,24 @@ export async function getProviders(): Promise<ProviderStatus[]> {
 }
 
 export async function generateInfographic(input: GenerateRequest): Promise<GenerateResponse> {
+  const preferences = input.preferences ?? loadGenerationPreferences();
   const response = await fetch("/api/generate", {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify(input),
+    body: JSON.stringify({ ...input, preferences }),
   });
   const body = await readBody(response);
   if (!response.ok) {
     throw new Error(typeof body.error === "string" ? body.error : "La génération a échoué.");
   }
+  const infographic = validateCanonicalInfographic(body.data);
+  infographic.appearance = {
+    ...infographic.appearance,
+    orientation: preferences.orientation,
+    visual: preferences.visual,
+  };
   return {
-    infographic: validateCanonicalInfographic(body.data),
+    infographic,
     durationMs: typeof body.durationMs === "number" ? body.durationMs : undefined,
     provider: typeof body.provider === "string" ? body.provider : undefined,
     warnings: Array.isArray(body.warnings) ? body.warnings.filter((value): value is string => typeof value === "string") : undefined,

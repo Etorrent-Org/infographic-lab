@@ -1,0 +1,68 @@
+.generation-preferences {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 80;
+  width: min(330px, calc(100vw - 36px));
+  color: var(--studio-text, #172033);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+}
+
+.generation-preferences > summary {
+  margin-left: auto;
+  width: max-content;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border: 1px solid color-mix(in srgb, var(--brand-accent, #4f7df3) 42%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--studio-surface, #ffffff) 94%, transparent);
+  box-shadow: 0 12px 36px rgba(15, 23, 42, 0.16);
+  cursor: pointer;
+  backdrop-filter: blur(14px);
+}
+
+.generation-preferences > summary::-webkit-details-marker { display: none; }
+.generation-preferences > summary span { font-weight: 750; font-size: 13px; }
+.generation-preferences > summary small { font-size: 11px; opacity: .66; }
+
+.generation-preferences-panel {
+  margin-top: 10px;
+  padding: 16px;
+  border: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+  border-radius: 18px;
+  background: var(--studio-surface, #ffffff);
+  box-shadow: 0 18px 50px rgba(15, 23, 42, 0.2);
+}
+
+.generation-preferences-head strong { display: block; font-size: 14px; }
+.generation-preferences-head p,
+.generation-preferences-note { margin: 6px 0 14px; font-size: 11px; line-height: 1.45; opacity: .67; }
+.generation-preferences-note { margin: 12px 0 0; }
+
+.generation-preferences-panel label {
+  display: grid;
+  gap: 5px;
+  margin-top: 10px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.generation-preferences-panel select {
+  width: 100%;
+  min-height: 36px;
+  padding: 7px 10px;
+  border: 1px solid color-mix(in srgb, currentColor 16%, transparent);
+  border-radius: 9px;
+  background: var(--studio-surface, #ffffff);
+  color: inherit;
+  font: inherit;
+  font-weight: 550;
+}
+
+@media (max-width: 760px) {
+  .generation-preferences { right: 10px; bottom: 10px; width: min(310px, calc(100vw - 20px)); }
+  .generation-preferences-panel { max-height: 68vh; overflow: auto; }
+}
