@@ -30,6 +30,22 @@ export const baselineCases: BaselineCase[] = [
     },
   },
   {
+    id: "event-premium",
+    campaign: {
+      name: "Événement premium",
+      objective: "event",
+      target: "Dirigeants de TPE / PME",
+      offer: "Une expérience haut de gamme, lisible et immédiatement désirable.",
+      headline: "Un événement premium pour des moments inoubliables et raffinés",
+      subheadline: "Vivez une expérience d'exception dans un cadre premium où chaque détail compte.",
+      benefits: ["Exclusivité", "Prestige", "Mémoire"],
+      cta: "Découvrir",
+      badge: "Direction éditoriale",
+      tone: "editorial",
+      template: "editorial",
+    },
+  },
+  {
     id: "medium",
     campaign: {
       name: "Offre premium",
@@ -96,12 +112,13 @@ export function validateSvg(svg: string, format: MarketingFormat): SvgValidation
 
 export function isCandidateAcceptable(candidate: RenderCandidate) {
   const m = candidate.metrics;
-  return qualityPenalty(candidate) < 78
+  return qualityPenalty(candidate) < 62
     && !m.textOverflow
-    && m.titleRatio <= 0.38
-    && m.heroRatio >= 0.2
-    && m.deadZone <= 0.3
-    && m.density <= 0.76;
+    && m.titleRatio <= 0.32
+    && m.heroRatio >= 0.34
+    && m.deadZone <= 0.2
+    && m.density <= 0.68
+    && m.ctaVisible;
 }
 
 export function assertMarketingSvg(svg: string, format: MarketingFormat) {
