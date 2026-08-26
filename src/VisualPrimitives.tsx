@@ -7,6 +7,7 @@ import type { CanonicalInfographic, InfographicStyle } from "./types";
 export type VisualTheme = {
   background: string;
   surface: string;
+  surfaceStrong: string;
   text: string;
   muted: string;
   accent: string;
@@ -14,16 +15,26 @@ export type VisualTheme = {
   dark: boolean;
 };
 
+function supportingPalette(style: InfographicStyle, accent: string, dark: boolean) {
+  if (style === "soft") return [accent, "#5F7C75", "#8A6F57", "#A56B74", "#5F7397", "#8B6B9D"];
+  if (style === "sketch") return [accent, "#5F7180", "#7B6A58", "#6D7E6A", "#956E78", "#727292"];
+  if (style === "chalk") return [accent, "#79CFC2", "#7AA7E8", "#E6B96C", "#C996D6", "#E18383"];
+  if (dark) return [accent, "#60A5FA", "#2DD4BF", "#FBBF24", "#A78BFA", "#FB7185"];
+  return [accent, "#2563EB", "#0F8A7A", "#D97706", "#7C3AED", "#DC3E54"];
+}
+
 export function visualTheme(style: InfographicStyle, data: CanonicalInfographic): VisualTheme {
   const colors = getVisualColors(style, data);
+  const dark = colors.dark;
   return {
     background: colors.background,
-    surface: colors.dark ? "#171D27" : "#FFFFFF",
-    text: colors.dark ? "#F8FAFC" : "#172033",
-    muted: colors.dark ? "#B6C0CE" : "#667085",
+    surface: dark ? "#151B25" : "#FFFFFF",
+    surfaceStrong: dark ? "#202938" : "#F6F8FC",
+    text: dark ? "#F8FAFC" : "#172033",
+    muted: dark ? "#AEB8C7" : "#667085",
     accent: colors.accent,
-    palette: colors.palette,
-    dark: colors.dark,
+    palette: supportingPalette(style, colors.accent, dark),
+    dark,
   };
 }
 
@@ -56,18 +67,18 @@ export function VisualFrame({
       role="img"
       aria-label={`${label} : ${cleanVisualText(data.title)}`}
       data-visual-kind={plan.kind}
-      data-visual-version="4"
+      data-visual-version="5"
       data-layout-issues={issues.length}
       data-structure-score={score.toFixed(1)}
     >
       <defs>
         <linearGradient id={`frame-bg-${plan.kind}`} x1="0" x2="0" y1="0" y2="1">
           <stop offset="0%" stopColor={theme.background} />
-          <stop offset="100%" stopColor={theme.accent} stopOpacity={theme.dark ? "0.06" : "0.025"} />
+          <stop offset="100%" stopColor={theme.accent} stopOpacity={theme.dark ? "0.055" : "0.022"} />
         </linearGradient>
       </defs>
       <rect width={spec.width} height={spec.height} rx="28" fill={`url(#frame-bg-${plan.kind})`} />
-      <rect x="1" y="1" width={spec.width - 2} height={spec.height - 2} rx="27" fill="none" stroke={theme.text} strokeOpacity={theme.dark ? "0.08" : "0.06"} />
+      <rect x="1" y="1" width={spec.width - 2} height={spec.height - 2} rx="27" fill="none" stroke={theme.text} strokeOpacity={theme.dark ? "0.10" : "0.055"} />
 
       <g data-role="header">
         <rect x={spec.padding} y="38" width="6" height={Math.max(58, titleLines.length * (titleSize + 5) - 4)} rx="3" fill={theme.accent} />
@@ -103,7 +114,7 @@ export function CardSurface({
   box,
   theme,
   accent,
-  opacity = 0.09,
+  opacity = 0.1,
   radius = 18,
 }: {
   box: LayoutBox;
@@ -115,8 +126,9 @@ export function CardSurface({
   const color = accent ?? theme.accent;
   return (
     <>
+      <rect x={box.x} y={box.y} width={box.width} height={box.height} rx={radius} fill={theme.surface} fillOpacity={theme.dark ? 0.76 : 0.94} />
       <rect x={box.x} y={box.y} width={box.width} height={box.height} rx={radius} fill={color} opacity={opacity} />
-      <rect x={box.x} y={box.y} width={box.width} height={box.height} rx={radius} fill="none" stroke={color} strokeOpacity={theme.dark ? 0.34 : 0.22} strokeWidth="1.5" />
+      <rect x={box.x} y={box.y} width={box.width} height={box.height} rx={radius} fill="none" stroke={color} strokeOpacity={theme.dark ? 0.38 : 0.24} strokeWidth="1.5" />
     </>
   );
 }
@@ -188,6 +200,7 @@ export function ItemCard({
   descriptionSize,
   titleMaxLines,
   descriptionMaxLines,
+  opacity,
 }: {
   box: LayoutBox;
   title: string;
@@ -200,6 +213,7 @@ export function ItemCard({
   descriptionSize?: number;
   titleMaxLines?: number;
   descriptionMaxLines?: number;
+  opacity?: number;
 }) {
   const color = accent ?? theme.accent;
   const textBox = eyebrow
@@ -207,7 +221,8 @@ export function ItemCard({
     : box;
   return (
     <g data-box-id={box.id}>
-      <CardSurface box={box} theme={theme} accent={color} />
+      <CardSurface box={box} theme={theme} accent={color} opacity={opacity ?? (theme.dark ? 0.12 : 0.075)} />
+      <rect x={box.x} y={box.y + 12} width="4" height={Math.max(20, box.height - 24)} rx="2" fill={color} opacity="0.88" />
       {eyebrow && (
         <text x={box.x + 18} y={box.y + 21} fill={color} fontSize="9.5" fontWeight="850" letterSpacing="1.1">
           {eyebrow}
@@ -228,6 +243,49 @@ export function ItemCard({
         titleMaxLines={titleMaxLines}
         descriptionMaxLines={descriptionMaxLines}
       />
+    </g>
+  );
+}
+
+export function AnnotationBlock({
+  box,
+  title,
+  description,
+  theme,
+  accent,
+  eyebrow,
+  index,
+  titleSize = 14.5,
+  descriptionSize = 10.5,
+}: {
+  box: LayoutBox;
+  title: string;
+  description?: string;
+  theme: VisualTheme;
+  accent?: string;
+  eyebrow?: string;
+  index?: number;
+  titleSize?: number;
+  descriptionSize?: number;
+}) {
+  const color = accent ?? theme.accent;
+  const titleLines = wrapVisualText(title, charsForWidth(box.width - 34, titleSize, 0.56), 2).lines;
+  const descLines = description ? wrapVisualText(description, charsForWidth(box.width - 34, descriptionSize, 0.53), 1).lines : [];
+  const titleY = box.y + (eyebrow ? 33 : 22);
+  return (
+    <g data-box-id={box.id}>
+      <title>{`${cleanVisualText(title)}${description ? ` — ${cleanVisualText(description)}` : ""}`}</title>
+      <rect x={box.x} y={box.y + 7} width="4" height={Math.max(28, box.height - 14)} rx="2" fill={color} />
+      {eyebrow && <text x={box.x + 16} y={box.y + 14} fill={color} fontSize="9" fontWeight="850" letterSpacing="1.05">{eyebrow}</text>}
+      {index !== undefined && <text x={box.x + box.width - 2} y={box.y + 14} textAnchor="end" fill={color} fontSize="9.5" fontWeight="850">{String(index + 1).padStart(2, "0")}</text>}
+      <text x={box.x + 16} y={titleY} fill={theme.text} fontSize={titleSize} fontWeight="820">
+        {titleLines.map((line, lineIndex) => <tspan key={`${line}-${lineIndex}`} x={box.x + 16} dy={lineIndex === 0 ? 0 : titleSize + 4}>{line}</tspan>)}
+      </text>
+      {descLines.length > 0 && (
+        <text x={box.x + 16} y={titleY + titleLines.length * (titleSize + 4) + 6} fill={theme.muted} fontSize={descriptionSize} fontWeight="520">
+          {descLines.map((line, lineIndex) => <tspan key={`${line}-${lineIndex}`} x={box.x + 16} dy={lineIndex === 0 ? 0 : descriptionSize + 4}>{line}</tspan>)}
+        </text>
+      )}
     </g>
   );
 }

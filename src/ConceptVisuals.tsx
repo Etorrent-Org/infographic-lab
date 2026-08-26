@@ -1,5 +1,5 @@
-import { ItemCard, SectionLabel, TextBlock, VisualFrame, visualTheme } from "./VisualPrimitives";
-import { buildVisualPlan, classifyIcebergItems, cleanVisualText, wrapVisualText } from "./visual-layout";
+import { AnnotationBlock, CardSurface, ItemCard, SectionLabel, TextBlock, VisualFrame, visualTheme } from "./VisualPrimitives";
+import { buildVisualPlan, classifyIcebergItems, charsForWidth, wrapVisualText } from "./visual-layout";
 import type { LayoutBox, VisualLayoutPlan } from "./visual-layout";
 import type { CanonicalInfographic, InfographicStyle } from "./types";
 
@@ -26,72 +26,63 @@ export function IcebergVisual({ data, style }: Props) {
   const classification = classifyIcebergItems(data);
   const waterY = Number(plan.meta.waterY);
   const cx = shape.x + shape.width / 2;
-  const topPeakY = shape.y + 28;
-  const tipHalf = shape.width * 0.22;
-  const bodyTopHalf = shape.width * 0.45;
+  const topPeakY = shape.y + 22;
+  const tipHalf = shape.width * 0.24;
+  const bodyTopHalf = shape.width * 0.46;
   const bodyMidHalf = shape.width * 0.34;
   const bodyBottomY = shape.y + shape.height - 20;
-  const bodyMidY = waterY + (bodyBottomY - waterY) * 0.72;
+  const bodyMidY = waterY + (bodyBottomY - waterY) * 0.68;
   const objectiveBox = plan.boxes.find((box) => box.id === "objective");
 
   return (
     <VisualFrame plan={plan} data={data} style={style} label="Iceberg">
       <defs>
-        <linearGradient id="iceberg-v4-tip" x1="0" x2="1" y1="0" y2="1">
-          <stop offset="0%" stopColor={theme.dark ? "#E9F4F8" : "#FFFFFF"} stopOpacity="0.98" />
-          <stop offset="100%" stopColor={theme.accent} stopOpacity={theme.dark ? "0.28" : "0.16"} />
+        <linearGradient id="iceberg-v5-tip" x1="0" x2="1" y1="0" y2="1">
+          <stop offset="0%" stopColor={theme.dark ? "#F1FAFC" : "#FFFFFF"} stopOpacity="0.98" />
+          <stop offset="100%" stopColor={theme.accent} stopOpacity={theme.dark ? "0.32" : "0.14"} />
         </linearGradient>
-        <linearGradient id="iceberg-v4-body" x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0%" stopColor={theme.accent} stopOpacity={theme.dark ? "0.28" : "0.18"} />
-          <stop offset="100%" stopColor={theme.accent} stopOpacity={theme.dark ? "0.58" : "0.46"} />
+        <linearGradient id="iceberg-v5-body" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stopColor={theme.accent} stopOpacity={theme.dark ? "0.23" : "0.12"} />
+          <stop offset="100%" stopColor={theme.accent} stopOpacity={theme.dark ? "0.62" : "0.50"} />
         </linearGradient>
       </defs>
 
       <g data-role="iceberg-shape">
         <path
-          d={`M ${cx - tipHalf} ${waterY - 5} L ${cx - tipHalf * 0.48} ${topPeakY + 36} L ${cx - tipHalf * 0.1} ${topPeakY} L ${cx + tipHalf * 0.16} ${topPeakY + 18} L ${cx + tipHalf} ${waterY - 5} Z`}
-          fill="url(#iceberg-v4-tip)"
+          d={`M ${cx - tipHalf} ${waterY - 5} L ${cx - tipHalf * 0.56} ${topPeakY + 48} L ${cx - tipHalf * 0.10} ${topPeakY} L ${cx + tipHalf * 0.18} ${topPeakY + 22} L ${cx + tipHalf} ${waterY - 5} Z`}
+          fill="url(#iceberg-v5-tip)"
           stroke={theme.accent}
           strokeWidth="2.5"
         />
         <path
           d={`M ${cx - bodyTopHalf} ${waterY + 8} L ${cx + bodyTopHalf} ${waterY + 8} L ${cx + bodyMidHalf} ${bodyMidY} L ${cx + shape.width * 0.13} ${bodyBottomY - 34} L ${cx} ${bodyBottomY} L ${cx - shape.width * 0.11} ${bodyBottomY - 34} L ${cx - bodyMidHalf} ${bodyMidY} Z`}
-          fill="url(#iceberg-v4-body)"
+          fill="url(#iceberg-v5-body)"
           stroke={theme.accent}
           strokeWidth="2.5"
         />
-        <line x1={shape.x + 10} x2={shape.x + shape.width - 10} y1={waterY} y2={waterY} stroke={theme.text} strokeOpacity="0.34" strokeWidth="1.5" />
+        <line x1={shape.x + 8} x2={shape.x + shape.width - 8} y1={waterY} y2={waterY} stroke={theme.text} strokeOpacity="0.28" strokeWidth="1.5" />
         <path
-          d={`M ${shape.x + 6} ${waterY} q 8 -7 16 0 t 16 0 t 16 0 t 16 0 t 16 0 t 16 0 t 16 0 t 16 0 t 16 0 t 16 0 t 16 0 t 16 0 t 16 0 t 16 0 t 16 0 t 16 0 t 16 0 t 16 0 t 16 0 t 16 0`}
+          d={`M ${shape.x + 8} ${waterY} q 8 -6 16 0 t 16 0 t 16 0 t 16 0 t 16 0 t 16 0 t 16 0 t 16 0 t 16 0 t 16 0 t 16 0 t 16 0 t 16 0 t 16 0 t 16 0 t 16 0 t 16 0 t 16 0 t 16 0 t 16 0`}
           fill="none"
           stroke={theme.accent}
-          strokeOpacity="0.48"
-          strokeWidth="2"
+          strokeOpacity="0.45"
+          strokeWidth="1.8"
         />
-        <SectionLabel x={shape.x + 16} y={waterY - 18} label="VISIBLE" theme={theme} />
-        <SectionLabel x={shape.x + 16} y={waterY + 32} label="SOUS LA SURFACE" theme={theme} />
+        <SectionLabel x={shape.x + 12} y={waterY - 20} label="VISIBLE" theme={theme} />
+        <SectionLabel x={shape.x + 12} y={waterY + 34} label="SOUS LA SURFACE" theme={theme} />
       </g>
 
       {classification.visible.map(({ item, index }, local) => {
         const box = requireBox(plan, `visible-${local}`);
         const color = itemColor(local, theme.palette, theme.accent);
-        const targetY = waterY - 22 - local * 42;
+        const targetY = waterY - 72 + local * 46;
+        const targetX = cx - tipHalf * (local === 0 ? 0.72 : 0.42);
+        const connectorY = box.y + box.height / 2;
         return (
           <g key={`visible-${index}`}>
-            <path d={`M ${box.x + box.width} ${box.y + box.height / 2} H ${shape.x - 18} L ${cx - tipHalf * 0.68} ${targetY}`} fill="none" stroke={color} strokeOpacity="0.55" strokeWidth="1.6" />
-            <circle cx={shape.x - 18} cy={box.y + box.height / 2} r="3.5" fill={color} />
-            <ItemCard
-              box={box}
-              title={item.title}
-              description={item.description}
-              theme={theme}
-              accent={color}
-              eyebrow="SIGNAL VISIBLE"
-              titleSize={14.5}
-              descriptionSize={10.8}
-              titleMaxLines={1}
-              descriptionMaxLines={2}
-            />
+            <path d={`M ${box.x + box.width} ${connectorY} H ${shape.x - 16} L ${targetX} ${targetY}`} fill="none" stroke={color} strokeOpacity="0.48" strokeWidth="1.5" />
+            <circle cx={shape.x - 16} cy={connectorY} r="3" fill={color} />
+            <AnnotationBlock box={box} title={item.title} description={item.description} theme={theme} accent={color} eyebrow="SIGNAL VISIBLE" />
           </g>
         );
       })}
@@ -100,25 +91,22 @@ export function IcebergVisual({ data, style }: Props) {
         const box = plan.boxes.find((candidate) => candidate.id === `deep-${local}`);
         if (!box) return null;
         const color = itemColor(local + 1, theme.palette, theme.accent);
-        const anchorY = box.y + box.height / 2;
+        const connectorY = box.y + box.height / 2;
         const depthRatio = classification.deep.length <= 1 ? 0.5 : local / (classification.deep.length - 1);
-        const targetY = waterY + 48 + depthRatio * Math.max(40, bodyBottomY - waterY - 86);
-        const targetX = cx - bodyTopHalf + depthRatio * (bodyTopHalf - shape.width * 0.12);
+        const targetY = waterY + 54 + depthRatio * Math.max(40, bodyBottomY - waterY - 94);
+        const bodyHalfAtDepth = bodyTopHalf - depthRatio * (bodyTopHalf - shape.width * 0.13);
+        const targetX = cx - bodyHalfAtDepth;
         return (
           <g key={`deep-${index}`}>
-            <path d={`M ${box.x + box.width} ${anchorY} H ${shape.x - 16} L ${targetX} ${targetY}`} fill="none" stroke={color} strokeOpacity="0.54" strokeWidth="1.6" />
-            <circle cx={shape.x - 16} cy={anchorY} r="3.5" fill={color} />
-            <ItemCard
+            <path d={`M ${box.x + box.width} ${connectorY} H ${shape.x - 16} L ${targetX} ${targetY}`} fill="none" stroke={color} strokeOpacity="0.48" strokeWidth="1.5" />
+            <circle cx={shape.x - 16} cy={connectorY} r="3" fill={color} />
+            <AnnotationBlock
               box={box}
               title={item.title}
               description={item.description}
               theme={theme}
               accent={color}
               eyebrow={`CAUSE PROFONDE ${String(local + 1).padStart(2, "0")}`}
-              titleSize={14.5}
-              descriptionSize={10.8}
-              titleMaxLines={2}
-              descriptionMaxLines={2}
             />
           </g>
         );
@@ -132,10 +120,11 @@ export function IcebergVisual({ data, style }: Props) {
           theme={theme}
           accent={theme.accent}
           eyebrow="CAP / OBJECTIF"
-          titleSize={14}
-          descriptionSize={10.8}
+          titleSize={13.5}
+          descriptionSize={9.8}
           titleMaxLines={1}
-          descriptionMaxLines={2}
+          descriptionMaxLines={1}
+          opacity={theme.dark ? 0.11 : 0.055}
         />
       )}
     </VisualFrame>
@@ -148,28 +137,25 @@ export function CycleVisual({ data, style }: Props) {
   const center = requireBox(plan, "center-shape");
   const cx = center.x + center.width / 2;
   const cy = center.y + center.height / 2;
-  const r = Math.min(center.width, center.height) * 0.34;
+  const r = Math.min(center.width, center.height) * 0.32;
   const items = data.items.slice(0, 7);
 
   return (
     <VisualFrame plan={plan} data={data} style={style} label="Cycle">
-      <defs>
-        <marker id="cycle-arrow-v4" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-          <path d="M 0 0 L 8 4 L 0 8 Z" fill={theme.accent} />
-        </marker>
-      </defs>
-      <circle cx={cx} cy={cy} r={r + 28} fill={theme.accent} fillOpacity="0.045" />
-      {[0, 1, 2, 3].map((quarter) => {
-        const a0 = -Math.PI / 2 + quarter * Math.PI / 2 + 0.08;
-        const a1 = a0 + Math.PI / 2 - 0.18;
-        const x0 = cx + Math.cos(a0) * r;
-        const y0 = cy + Math.sin(a0) * r;
-        const x1 = cx + Math.cos(a1) * r;
-        const y1 = cy + Math.sin(a1) * r;
-        return <path key={quarter} d={`M ${x0} ${y0} A ${r} ${r} 0 0 1 ${x1} ${y1}`} fill="none" stroke={theme.accent} strokeWidth="8" strokeLinecap="round" markerEnd="url(#cycle-arrow-v4)" opacity="0.8" />;
+      <circle cx={cx} cy={cy} r={r + 28} fill={theme.accent} fillOpacity={theme.dark ? 0.08 : 0.045} />
+      <circle cx={cx} cy={cy} r={r} fill="none" stroke={theme.text} strokeOpacity="0.10" strokeWidth="12" />
+      {items.map((item, index) => {
+        const angle = -Math.PI / 2 + (index * Math.PI * 2) / items.length;
+        const nextAngle = -Math.PI / 2 + ((index + 0.72) * Math.PI * 2) / items.length;
+        const x0 = cx + Math.cos(angle) * r;
+        const y0 = cy + Math.sin(angle) * r;
+        const x1 = cx + Math.cos(nextAngle) * r;
+        const y1 = cy + Math.sin(nextAngle) * r;
+        const color = itemColor(index, theme.palette, theme.accent);
+        return <path key={`cycle-arc-${index}`} d={`M ${x0} ${y0} A ${r} ${r} 0 0 1 ${x1} ${y1}`} fill="none" stroke={color} strokeWidth="12" strokeLinecap="round" />;
       })}
-      <text x={cx} y={cy - 8} textAnchor="middle" fill={theme.text} fontSize="21" fontWeight="850">CYCLE</text>
-      <text x={cx} y={cy + 20} textAnchor="middle" fill={theme.muted} fontSize="11.5" fontWeight="600">{items.length} étapes reliées</text>
+      <text x={cx} y={cy - 8} textAnchor="middle" fill={theme.text} fontSize="20" fontWeight="850">CYCLE</text>
+      <text x={cx} y={cy + 20} textAnchor="middle" fill={theme.muted} fontSize="11" fontWeight="650">{items.length} étapes reliées</text>
 
       {plan.boxes.filter((box) => box.role === "item").map((box) => {
         const index = box.itemIndex ?? 0;
@@ -179,15 +165,15 @@ export function CycleVisual({ data, style }: Props) {
         const dx = point.x - cx;
         const dy = point.y - cy;
         const length = Math.max(1, Math.hypot(dx, dy));
-        const ringX = cx + dx / length * (r + 30);
-        const ringY = cy + dy / length * (r + 30);
+        const ringX = cx + dx / length * (r + 24);
+        const ringY = cy + dy / length * (r + 24);
         const cardX = point.x < cx ? box.x + box.width : box.x;
         const color = itemColor(index, theme.palette, theme.accent);
         return (
           <g key={`cycle-card-${index}`}>
-            <line x1={ringX} y1={ringY} x2={cardX} y2={point.y} stroke={color} strokeOpacity="0.42" strokeWidth="1.5" />
-            <circle cx={ringX} cy={ringY} r="4" fill={color} />
-            <ItemCard box={box} title={item.title} description={item.description} theme={theme} accent={color} eyebrow="ÉTAPE" index={index} titleSize={14} descriptionSize={10.5} titleMaxLines={2} descriptionMaxLines={2} />
+            <path d={`M ${ringX} ${ringY} L ${cardX} ${point.y}`} fill="none" stroke={color} strokeOpacity="0.34" strokeWidth="1.4" />
+            <circle cx={ringX} cy={ringY} r="5" fill={theme.background} stroke={color} strokeWidth="2.5" />
+            <AnnotationBlock box={box} title={item.title} description={item.description} theme={theme} accent={color} eyebrow="ÉTAPE" index={index} />
           </g>
         );
       })}
@@ -210,7 +196,7 @@ export function SankeyVisual({ data, style }: Props) {
         const next = nodes[index + 1];
         const mid = (node.x + next.x) / 2;
         const color = itemColor(index, theme.palette, theme.accent);
-        return <path key={`ribbon-${index}`} d={`M ${node.x} ${node.y} C ${mid} ${node.y}, ${mid} ${next.y}, ${next.x} ${next.y}`} fill="none" stroke={color} strokeOpacity="0.24" strokeWidth="30" strokeLinecap="round" />;
+        return <path key={`ribbon-${index}`} d={`M ${node.x} ${node.y} C ${mid} ${node.y}, ${mid} ${next.y}, ${next.x} ${next.y}`} fill="none" stroke={color} strokeOpacity={theme.dark ? 0.28 : 0.22} strokeWidth="24" strokeLinecap="round" />;
       })}
       {itemBoxes.map((box) => {
         const index = box.itemIndex ?? 0;
@@ -221,10 +207,10 @@ export function SankeyVisual({ data, style }: Props) {
         const cardAbove = box.y < centerY;
         return (
           <g key={`sankey-${index}`}>
-            <line x1={node.x} y1={centerY} x2={node.x} y2={cardAbove ? box.y + box.height : box.y} stroke={color} strokeWidth="1.5" strokeOpacity="0.48" />
-            <circle cx={node.x} cy={centerY} r="21" fill={color} />
-            <text x={node.x} y={centerY + 4} textAnchor="middle" fill="#FFFFFF" fontSize="11" fontWeight="850">{String(index + 1).padStart(2, "0")}</text>
-            <ItemCard box={box} title={item.title} description={item.description} theme={theme} accent={color} titleSize={13.5} descriptionSize={10} titleMaxLines={2} descriptionMaxLines={2} />
+            <line x1={node.x} y1={centerY} x2={node.x} y2={cardAbove ? box.y + box.height : box.y} stroke={color} strokeWidth="1.4" strokeOpacity="0.42" />
+            <circle cx={node.x} cy={centerY} r="19" fill={color} />
+            <text x={node.x} y={centerY + 4} textAnchor="middle" fill="#FFFFFF" fontSize="10.5" fontWeight="850">{String(index + 1).padStart(2, "0")}</text>
+            <AnnotationBlock box={box} title={item.title} description={item.description} theme={theme} accent={color} />
           </g>
         );
       })}
@@ -236,20 +222,21 @@ export function ArchitectureVisual({ data, style }: Props) {
   const plan = buildVisualPlan("architecture", data);
   const theme = visualTheme(style, data);
   const boxes = plan.boxes.filter((box) => box.role === "item");
-  const spineX = Math.min(...boxes.map((box) => box.x)) - 16;
+  const spineX = Math.min(...boxes.map((box) => box.x)) - 18;
   return (
     <VisualFrame plan={plan} data={data} style={style} label="Architecture en couches">
-      <line x1={spineX} x2={spineX} y1={boxes[0]?.y ?? plan.content.y} y2={(boxes.at(-1)?.y ?? plan.content.y) + (boxes.at(-1)?.height ?? 0)} stroke={theme.accent} strokeOpacity="0.3" strokeWidth="2" />
+      <line x1={spineX} x2={spineX} y1={boxes[0]?.y ?? plan.content.y} y2={(boxes.at(-1)?.y ?? plan.content.y) + (boxes.at(-1)?.height ?? 0)} stroke={theme.accent} strokeOpacity="0.28" strokeWidth="2" />
       {boxes.map((box, index) => {
         const item = data.items[index];
         const color = itemColor(index, theme.palette, theme.accent);
         if (!item) return null;
         return (
-          <g key={`architecture-${index}`}>
-            <rect x={box.x} y={box.y} width={box.width} height={box.height} rx="16" fill={color} fillOpacity={theme.dark ? 0.12 : 0.08} stroke={color} strokeOpacity="0.28" />
+          <g key={`architecture-${index}`} data-box-id={box.id}>
+            <CardSurface box={box} theme={theme} accent={color} opacity={theme.dark ? 0.12 : 0.065} radius={14} />
             <circle cx={spineX} cy={box.y + box.height / 2} r="5" fill={color} />
-            <text x={box.x + 18} y={box.y + 24} fill={color} fontSize="9.5" fontWeight="850" letterSpacing="1.1">NIVEAU {String(index + 1).padStart(2, "0")}</text>
-            <TextBlock box={{ ...box, y: box.y + 12, height: box.height - 12 }} title={item.title} description={item.description} theme={theme} titleSize={14.5} descriptionSize={10.7} titleMaxLines={1} descriptionMaxLines={2} />
+            <rect x={box.x} y={box.y} width="7" height={box.height} rx="3.5" fill={color} opacity="0.9" />
+            <text x={box.x + 20} y={box.y + 24} fill={color} fontSize="9.5" fontWeight="850" letterSpacing="1.05">NIVEAU {String(index + 1).padStart(2, "0")}</text>
+            <TextBlock box={{ ...box, y: box.y + 12, height: box.height - 12 }} title={item.title} description={item.description} theme={theme} titleSize={14.2} descriptionSize={10.2} titleMaxLines={1} descriptionMaxLines={1} />
           </g>
         );
       })}
@@ -263,15 +250,15 @@ export function HubVisual({ data, style }: Props) {
   const center = requireBox(plan, "center-shape");
   const cx = center.x + center.width / 2;
   const cy = center.y + center.height / 2;
-  const titleLines = wrapVisualText(data.title, 22, 2).lines;
+  const titleLines = wrapVisualText(data.title, 21, 2).lines;
   const items = data.items.slice(0, 6);
 
   return (
     <VisualFrame plan={plan} data={data} style={style} label="Hub / radial">
-      <circle cx={cx} cy={cy} r={Math.min(center.width, center.height) * 0.35} fill={theme.accent} fillOpacity="0.12" stroke={theme.accent} strokeWidth="2.5" />
-      <circle cx={cx} cy={cy} r={Math.min(center.width, center.height) * 0.22} fill={theme.accent} fillOpacity="0.08" />
-      <text x={cx} y={cy - (titleLines.length - 1) * 9} textAnchor="middle" fill={theme.text} fontSize="16" fontWeight="850">
-        {titleLines.map((line, index) => <tspan key={`${line}-${index}`} x={cx} dy={index === 0 ? 0 : 20}>{line}</tspan>)}
+      <circle cx={cx} cy={cy} r={Math.min(center.width, center.height) * 0.38} fill={theme.accent} fillOpacity={theme.dark ? 0.15 : 0.09} stroke={theme.accent} strokeWidth="2.5" />
+      <circle cx={cx} cy={cy} r={Math.min(center.width, center.height) * 0.24} fill={theme.background} fillOpacity={theme.dark ? 0.22 : 0.48} stroke={theme.accent} strokeOpacity="0.22" />
+      <text x={cx} y={cy - (titleLines.length - 1) * 9} textAnchor="middle" fill={theme.text} fontSize="15" fontWeight="850">
+        {titleLines.map((line, index) => <tspan key={`${line}-${index}`} x={cx} dy={index === 0 ? 0 : 19}>{line}</tspan>)}
       </text>
       {plan.boxes.filter((box) => box.role === "item").map((box) => {
         const index = box.itemIndex ?? 0;
@@ -282,8 +269,9 @@ export function HubVisual({ data, style }: Props) {
         const color = itemColor(index, theme.palette, theme.accent);
         return (
           <g key={`hub-${index}`}>
-            <path d={`M ${cx} ${cy} H ${(cx + cardEdgeX) / 2} V ${point.y} H ${cardEdgeX}`} fill="none" stroke={color} strokeOpacity="0.4" strokeWidth="1.6" />
-            <ItemCard box={box} title={item.title} description={item.description} theme={theme} accent={color} eyebrow="AXE" index={index} titleSize={14} descriptionSize={10.5} titleMaxLines={2} descriptionMaxLines={2} />
+            <path d={`M ${cx} ${cy} H ${(cx + cardEdgeX) / 2} V ${point.y} H ${cardEdgeX}`} fill="none" stroke={color} strokeOpacity="0.35" strokeWidth="1.5" />
+            <circle cx={cardEdgeX} cy={point.y} r="3" fill={color} />
+            <AnnotationBlock box={box} title={item.title} description={item.description} theme={theme} accent={color} eyebrow="AXE" index={index} />
           </g>
         );
       })}
@@ -301,11 +289,11 @@ export function TreeVisual({ data, style }: Props) {
 
   return (
     <VisualFrame plan={plan} data={data} style={style} label="Hiérarchie / arbre">
-      <rect x={root.x} y={root.y} width={root.width} height={root.height} rx="18" fill={theme.accent} fillOpacity="0.13" stroke={theme.accent} strokeWidth="2" />
-      <text x={rootCenter} y={root.y + 31} textAnchor="middle" fill={theme.accent} fontSize="9.5" fontWeight="850" letterSpacing="1.2">RACINE</text>
-      <text x={rootCenter} y={root.y + 55} textAnchor="middle" fill={theme.text} fontSize="16" fontWeight="850">{wrapVisualText(data.title, 34, 1).lines[0]}</text>
+      <rect x={root.x} y={root.y} width={root.width} height={root.height} rx="18" fill={theme.accent} fillOpacity={theme.dark ? 0.18 : 0.10} stroke={theme.accent} strokeWidth="2" />
+      <text x={rootCenter} y={root.y + 25} textAnchor="middle" fill={theme.accent} fontSize="9" fontWeight="850" letterSpacing="1.2">RACINE</text>
+      <text x={rootCenter} y={root.y + 53} textAnchor="middle" fill={theme.text} fontSize="15.5" fontWeight="850">{wrapVisualText(data.title, 34, 1).lines[0]}</text>
       <line x1={rootCenter} y1={root.y + root.height} x2={rootCenter} y2={busY} stroke={theme.accent} strokeWidth="2" />
-      {children.length > 0 && <line x1={Math.min(...children.map((box) => box.x + box.width / 2))} x2={Math.max(...children.map((box) => box.x + box.width / 2))} y1={busY} y2={busY} stroke={theme.accent} strokeWidth="2" strokeOpacity="0.5" />}
+      {children.length > 0 && <line x1={Math.min(...children.map((box) => box.x + box.width / 2))} x2={Math.max(...children.map((box) => box.x + box.width / 2))} y1={busY} y2={busY} stroke={theme.accent} strokeWidth="2" strokeOpacity="0.42" />}
       {children.map((box, index) => {
         const item = data.items[index];
         if (!item) return null;
@@ -313,8 +301,8 @@ export function TreeVisual({ data, style }: Props) {
         const centerX = box.x + box.width / 2;
         return (
           <g key={`tree-${index}`}>
-            <path d={`M ${centerX} ${busY} V ${box.y - 8}`} fill="none" stroke={color} strokeOpacity="0.5" strokeWidth="1.5" />
-            <ItemCard box={box} title={item.title} description={item.description} theme={theme} accent={color} eyebrow="BRANCHE" index={index} titleSize={13.5} descriptionSize={10.2} titleMaxLines={2} descriptionMaxLines={2} />
+            <path d={`M ${centerX} ${busY} V ${box.y - 8}`} fill="none" stroke={color} strokeOpacity="0.44" strokeWidth="1.5" />
+            <ItemCard box={box} title={item.title} description={item.description} theme={theme} accent={color} eyebrow="BRANCHE" index={index} titleSize={13} descriptionSize={9.8} titleMaxLines={2} descriptionMaxLines={1} opacity={theme.dark ? 0.11 : 0.055} />
           </g>
         );
       })}
@@ -340,10 +328,13 @@ export function VennVisual({ data, style }: Props) {
       {items.map((item, index) => {
         const center = centers[index];
         const color = itemColor(index, theme.palette, theme.accent);
+        const titleLines = wrapVisualText(item.title, Math.max(10, charsForWidth(r * 1.25, 13.5)), 2).lines;
         return (
           <g key={`venn-circle-${index}`}>
-            <circle cx={center.x} cy={center.y} r={r} fill={color} fillOpacity={theme.dark ? 0.2 : 0.16} stroke={color} strokeOpacity="0.7" strokeWidth="2" />
-            <text x={center.x} y={center.y + 5} textAnchor="middle" fill={theme.text} fontSize="17" fontWeight="880" opacity="0.78">{String.fromCharCode(65 + index)}</text>
+            <circle cx={center.x} cy={center.y} r={r} fill={color} fillOpacity={theme.dark ? 0.23 : 0.15} stroke={color} strokeOpacity="0.72" strokeWidth="2" />
+            <text x={center.x} y={center.y - (titleLines.length - 1) * 8} textAnchor="middle" fill={theme.text} fontSize="13.5" fontWeight="850">
+              {titleLines.map((line, lineIndex) => <tspan key={`${line}-${lineIndex}`} x={center.x} dy={lineIndex === 0 ? 0 : 16}>{line}</tspan>)}
+            </text>
           </g>
         );
       })}
@@ -355,8 +346,8 @@ export function VennVisual({ data, style }: Props) {
         const point = cardCenter(box);
         return (
           <g key={`venn-card-${index}`}>
-            <line x1={point.x} y1={point.y} x2={target.x} y2={target.y} stroke={color} strokeOpacity="0.35" strokeWidth="1.3" />
-            <ItemCard box={box} title={item.title} description={item.description} theme={theme} accent={color} eyebrow={`ENSEMBLE ${String.fromCharCode(65 + index)}`} titleSize={13.5} descriptionSize={10.2} titleMaxLines={2} descriptionMaxLines={2} />
+            <line x1={point.x} y1={point.y} x2={target.x} y2={target.y} stroke={color} strokeOpacity="0.30" strokeWidth="1.2" />
+            <AnnotationBlock box={box} title={item.title} description={item.description} theme={theme} accent={color} eyebrow={`ENSEMBLE ${String.fromCharCode(65 + index)}`} />
           </g>
         );
       })}

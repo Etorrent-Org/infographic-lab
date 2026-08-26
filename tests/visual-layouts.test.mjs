@@ -28,39 +28,35 @@ function numericItem(index, value) {
   return item(index, { value, unit: "k€", category: `T${index + 1}` });
 }
 
-function dataFor(kind, orientation = "landscape") {
-  let items;
-  if (["matrix", "swot", "impact", "eisenhower", "risk"].includes(kind)) {
-    items = Array.from({ length: 4 }, (_, index) => item(index));
-  } else if (kind === "venn") {
-    items = Array.from({ length: 3 }, (_, index) => item(index));
-  } else if (kind === "architecture") {
-    items = Array.from({ length: 5 }, (_, index) => item(index));
-  } else if (kind === "hub" || kind === "cycle" || kind === "sankey") {
-    items = Array.from({ length: 6 }, (_, index) => item(index));
-  } else if (kind === "tree") {
-    items = Array.from({ length: 7 }, (_, index) => item(index));
-  } else if (kind === "iceberg") {
-    items = [
-      item(0, { category: "visible", title: "Délais de réponse", description: "Les délais s'allongent et les relances clients deviennent plus fréquentes." }),
-      item(1, { category: "visible", title: "Relances répétées", description: "Les clients doivent recontacter plusieurs fois l'entreprise pour obtenir une réponse." }),
-      item(2, { category: "deep", title: "Canaux dispersés" }),
-      item(3, { category: "deep", title: "Recopies manuelles" }),
-      item(4, { category: "deep", title: "Responsabilités floues" }),
-      item(5, { category: "deep", title: "Suivi fragmenté" }),
-      item(6, { category: "objective", title: "Objectif", description: "Fiabiliser le traitement des demandes sans remplacer tous les outils existants." }),
-    ];
-  } else if (["kpi", "chart-bar", "chart-column", "chart-line", "chart-donut", "chart-waterfall"].includes(kind)) {
-    items = [240, 280, 310, 370, 420, 455].map((value, index) => numericItem(index, value));
-  } else {
-    items = Array.from({ length: 6 }, (_, index) => item(index));
+function itemsFor(kind, count) {
+  if (kind === "iceberg") {
+    const result = Array.from({ length: count }, (_, index) => item(index, {
+      category: index < Math.min(2, Math.max(1, count - 2)) ? "visible" : "deep",
+      title: index < 2 ? `Signal visible ${index + 1}` : `Cause profonde ${index - 1}`,
+    }));
+    if (count >= 6) result[result.length - 1] = item(count - 1, { category: "objective", title: "Objectif", description: "Fiabiliser le traitement sans remplacer tous les outils existants." });
+    return result;
   }
+  if (["kpi", "chart-bar", "chart-column", "chart-line", "chart-donut", "chart-waterfall"].includes(kind)) {
+    return Array.from({ length: count }, (_, index) => numericItem(index, 120 + index * 35));
+  }
+  return Array.from({ length: count }, (_, index) => item(index));
+}
 
+function defaultCount(kind) {
+  if (["matrix", "swot", "impact", "eisenhower", "risk"].includes(kind)) return 4;
+  if (kind === "venn") return 3;
+  if (kind === "architecture") return 5;
+  if (kind === "tree") return 7;
+  return 6;
+}
+
+function dataFor(kind, orientation = "landscape", count = defaultCount(kind)) {
   return {
     title: "Transformation structurée et lisible d'un sujet métier complexe",
     subtitle: "Fixture de validation visuelle utilisée pour contrôler les collisions, les marges et la densité.",
     layout: "list",
-    items,
+    items: itemsFor(kind, count),
     appearance: { orientation },
   };
 }
@@ -77,6 +73,44 @@ for (const kind of CUSTOM_VISUAL_KINDS) {
     });
   }
 }
+
+const variableCounts = {
+  iceberg: [3, 4, 5, 6, 7],
+  cycle: [3, 4, 5, 6, 7],
+  sankey: [3, 4, 5, 6, 7],
+  architecture: [3, 4, 5, 6],
+  hub: [3, 4, 5, 6],
+  tree: [2, 3, 4, 5, 6, 7, 8],
+  venn: [2, 3],
+  table: [2, 3, 4, 5, 6, 7, 8],
+  kpi: [2, 3, 4, 5, 6],
+  "chart-bar": [2, 3, 4, 5, 6, 7, 8],
+  "chart-column": [2, 3, 4, 5, 6, 7, 8],
+  "chart-line": [2, 3, 4, 5, 6, 7, 8],
+  "chart-donut": [2, 3, 4, 5, 6],
+  "chart-waterfall": [2, 3, 4, 5, 6, 7, 8],
+};
+
+for (const [kind, counts] of Object.entries(variableCounts)) {
+  for (const count of counts) {
+    for (const orientation of ["landscape", "square", "portrait"]) {
+      test(`${kind} / ${count} items / ${orientation} reste stable`, () => {
+        const plan = buildVisualPlan(kind, dataFor(kind, orientation, count));
+        const issues = auditVisualPlan(plan);
+        assert.deepEqual(issues, [], issues.join(" | "));
+        assert.ok(structuralScore(plan) >= 9, `score structurel insuffisant : ${structuralScore(plan)}`);
+      });
+    }
+  }
+}
+
+test("les presets business imposent quatre quadrants", () => {
+  for (const kind of ["matrix", "swot", "impact", "eisenhower", "risk"]) {
+    const plan = buildVisualPlan(kind, dataFor(kind, "landscape", 4));
+    assert.equal(plan.boxes.filter((box) => box.role === "item").length, 4);
+    assert.deepEqual(auditVisualPlan(plan), []);
+  }
+});
 
 test("le catalogue custom contient chaque famille une seule fois", () => {
   assert.equal(new Set(CUSTOM_VISUAL_KINDS).size, CUSTOM_VISUAL_KINDS.length);

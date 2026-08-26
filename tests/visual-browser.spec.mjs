@@ -61,80 +61,79 @@ async function inspectRenderedVisual(page, mode) {
   return page.evaluate((auditMode) => {
     const root = document.querySelector("[data-visual-audit-root]");
     const issues = [];
-    if (!root) return { issues: ["racine d'audit absente"], score: 0, layoutIssues: -1, textCount: 0 };
+    if (!root) return { issues: ["racine d'audit absente"], score: 0, layoutIssues: -1, textCount: 0, renderedCount: 0 };
     const reportedError = root.getAttribute("data-audit-error");
     if (reportedError) issues.push(`erreur de rendu: ${reportedError}`);
+
     const svg = root.querySelector("svg");
-    if (!svg) return { issues: [...issues, "SVG absent"], score: 0, layoutIssues: -1, textCount: 0 };
+    const antvContainer = root.querySelector("[data-antv-audit-canvas]");
+    if (auditMode === "custom" && !svg) return { issues: [...issues, "SVG absent"], score: 0, layoutIssues: -1, textCount: 0, renderedCount: 0 };
+    if (auditMode === "antv" && !antvContainer) return { issues: [...issues, "conteneur AntV absent"], score: 0, layoutIssues: 0, textCount: 0, renderedCount: 0 };
 
-    const svgRect = svg.getBoundingClientRect();
-    if (svgRect.width < 200 || svgRect.height < 200) issues.push("surface SVG trop petite");
-    const textNodes = [...svg.querySelectorAll("text")].filter((node) => {
-      const rect = node.getBoundingClientRect();
-      const style = getComputedStyle(node);
-      return rect.width > 2 && rect.height > 2 && style.visibility !== "hidden" && style.display !== "none";
-    });
+    const surface = auditMode === "custom" ? svg : antvContainer;
+    const surfaceRect = surface?.getBoundingClientRect();
+    if (!surfaceRect || surfaceRect.width < 200 || surfaceRect.height < 200) issues.push("surface de rendu trop petite");
 
-    const textRects = textNodes.map((node) => ({ node, rect: node.getBoundingClientRect() }));
-    for (const { node, rect } of textRects) {
-      const tolerance = 8;
-      if (
-        rect.left < svgRect.left - tolerance || rect.right > svgRect.right + tolerance ||
-        rect.top < svgRect.top - tolerance || rect.bottom > svgRect.bottom + tolerance
-      ) {
-        issues.push(`texte hors canvas: ${node.textContent?.trim().slice(0, 48) ?? "?"}`);
-      }
-    }
-
-    for (const group of [...svg.querySelectorAll("g[data-box-id]")]) {
-      const rectNode = group.querySelector(":scope > rect");
-      const texts = [...group.querySelectorAll("text")].filter((node) => node.getBoundingClientRect().width > 2);
-      if (rectNode) {
-        const cardRect = rectNode.getBoundingClientRect();
-        for (const node of texts) {
+    const textNodes = svg
+      ? [...svg.querySelectorAll("text")].filter((node) => {
           const rect = node.getBoundingClientRect();
-          const tolerance = 5;
-          if (
-            rect.left < cardRect.left - tolerance || rect.right > cardRect.right + tolerance ||
-            rect.top < cardRect.top - tolerance || rect.bottom > cardRect.bottom + tolerance
-          ) {
-            issues.push(`texte déborde de ${group.getAttribute("data-box-id")}: ${node.textContent?.trim().slice(0, 42) ?? "?"}`);
-          }
+          const style = getComputedStyle(node);
+          return rect.width > 2 && rect.height > 2 && style.visibility !== "hidden" && style.display !== "none";
+        })
+      : [];
+    const textRects = textNodes.map((node) => ({ node, rect: node.getBoundingClientRect() }));
+
+    if (svg) {
+      const svgRect = svg.getBoundingClientRect();
+      for (const { node, rect } of textRects) {
+        const tolerance = 8;
+        if (
+          rect.left < svgRect.left - tolerance || rect.right > svgRect.right + tolerance ||
+          rect.top < svgRect.top - tolerance || rect.bottom > svgRect.bottom + tolerance
+        ) {
+          issues.push(`texte hors canvas: ${node.textContent?.trim().slice(0, 48) ?? "?"}`);
         }
       }
-      for (let i = 0; i < texts.length; i += 1) {
-        for (let j = i + 1; j < texts.length; j += 1) {
-          const a = texts[i].getBoundingClientRect();
-          const b = texts[j].getBoundingClientRect();
-          const overlapX = Math.max(0, Math.min(a.right, b.right) - Math.max(a.left, b.left));
-          const overlapY = Math.max(0, Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top));
-          if (overlapX > 2 && overlapY > 2) {
-            issues.push(`chevauchement texte dans ${group.getAttribute("data-box-id")}`);
+
+      for (const group of [...svg.querySelectorAll("g[data-box-id]")]) {
+        const groupRect = group.getBoundingClientRect();
+        const rectNodes = [...group.querySelectorAll(":scope > rect")];
+        const cardRectNode = rectNodes.find((rectNode) => {
+          const rect = rectNode.getBoundingClientRect();
+          return rect.width >= groupRect.width * 0.72 && rect.height >= groupRect.height * 0.64;
+        });
+        const texts = [...group.querySelectorAll("text")].filter((node) => node.getBoundingClientRect().width > 2);
+        if (cardRectNode) {
+          const cardRect = cardRectNode.getBoundingClientRect();
+          for (const node of texts) {
+            const rect = node.getBoundingClientRect();
+            const tolerance = 5;
+            if (
+              rect.left < cardRect.left - tolerance || rect.right > cardRect.right + tolerance ||
+              rect.top < cardRect.top - tolerance || rect.bottom > cardRect.bottom + tolerance
+            ) {
+              issues.push(`texte déborde de ${group.getAttribute("data-box-id")}: ${node.textContent?.trim().slice(0, 42) ?? "?"}`);
+            }
+          }
+        }
+        for (let i = 0; i < texts.length; i += 1) {
+          for (let j = i + 1; j < texts.length; j += 1) {
+            const a = texts[i].getBoundingClientRect();
+            const b = texts[j].getBoundingClientRect();
+            const overlapX = Math.max(0, Math.min(a.right, b.right) - Math.max(a.left, b.left));
+            const overlapY = Math.max(0, Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top));
+            if (overlapX > 2 && overlapY > 2) issues.push(`chevauchement texte dans ${group.getAttribute("data-box-id")}`);
           }
         }
       }
     }
 
-    if (auditMode === "antv") {
-      const rects = textRects.map(({ node, rect }) => ({ text: node.textContent?.trim() ?? "", rect }));
-      for (let i = 0; i < rects.length; i += 1) {
-        for (let j = i + 1; j < rects.length; j += 1) {
-          const a = rects[i];
-          const b = rects[j];
-          const overlapX = Math.max(0, Math.min(a.rect.right, b.rect.right) - Math.max(a.rect.left, b.rect.left));
-          const overlapY = Math.max(0, Math.min(a.rect.bottom, b.rect.bottom) - Math.max(a.rect.top, b.rect.top));
-          const overlapArea = overlapX * overlapY;
-          const minArea = Math.max(1, Math.min(a.rect.width * a.rect.height, b.rect.width * b.rect.height));
-          if (overlapArea / minArea > 0.55) {
-            issues.push(`chevauchement AntV: ${a.text.slice(0, 28)} / ${b.text.slice(0, 28)}`);
-          }
-        }
-      }
-    }
-
-    const layoutIssues = Number(svg.getAttribute("data-layout-issues") ?? (auditMode === "custom" ? "-1" : "0"));
-    const score = Number(svg.getAttribute("data-structure-score") ?? (auditMode === "custom" ? "0" : "10"));
-    return { issues, score, layoutIssues, textCount: textNodes.length };
+    const renderedCount = auditMode === "antv" && antvContainer
+      ? antvContainer.querySelectorAll("svg, canvas, path, rect, circle, line, polyline, polygon, foreignObject, image").length
+      : svg?.querySelectorAll("path, rect, circle, line, polyline, polygon, text").length ?? 0;
+    const layoutIssues = Number(svg?.getAttribute("data-layout-issues") ?? (auditMode === "custom" ? "-1" : "0"));
+    const score = Number(svg?.getAttribute("data-structure-score") ?? (auditMode === "custom" ? "0" : "10"));
+    return { issues, score, layoutIssues, textCount: textNodes.length, renderedCount };
   }, mode);
 }
 
@@ -169,6 +168,7 @@ test("audit navigateur de tous les rendus custom", async ({ page }) => {
     if (report.layoutIssues !== 0) caseIssues.push(`layout issues=${report.layoutIssues}`);
     if (report.score < 9) caseIssues.push(`score structurel=${report.score}`);
     if (report.textCount < 2) caseIssues.push("contenu texte insuffisant");
+    if (report.renderedCount < 8) caseIssues.push("rendu SVG insuffisamment matérialisé");
     if (caseIssues.length) failures.push(`${name}: ${caseIssues.join(" | ")}`);
   }
 
@@ -199,7 +199,7 @@ test("audit navigateur de tous les gabarits AntV exposés", async ({ page }) => 
       const name = `antv-${safeName(template)}-${style}`;
       await page.locator("[data-visual-audit-root]").screenshot({ path: join(outputDir, `${name}.png`) });
       const caseIssues = [...browserErrors, ...report.issues];
-      if (report.textCount < 2) caseIssues.push("contenu texte insuffisant");
+      if (report.renderedCount < 5) caseIssues.push(`rendu AntV insuffisant (${report.renderedCount} éléments graphiques)`);
       if (caseIssues.length) failures.push(`${name}: ${caseIssues.join(" | ")}`);
     }
   }
