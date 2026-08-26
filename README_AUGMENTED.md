@@ -1,10 +1,8 @@
 # Infographic Lab — Augmented Preview
 
-Cette branche contient la préversion augmentée d'Infographic Lab. Elle est conçue pour fonctionner en parallèle de la version stable 1.0.0.
+Cette branche contient la préversion augmentée d'Infographic Lab. Elle fonctionne en parallèle de la version stable 1.0.0.
 
 ## URL de test
-
-Par défaut :
 
 ```text
 http://127.0.0.1:3092
@@ -12,126 +10,72 @@ http://127.0.0.1:3092
 
 La version stable conserve son port 3091.
 
-Pour utiliser une adresse LAN ou WireGuard, renseignez `AUGMENTED_BIND` dans le fichier `.env.augmented` au lieu d'exposer le service publiquement.
+Pour une adresse LAN ou WireGuard, utilisez `AUGMENTED_BIND` dans `.env.augmented` plutôt qu'une exposition publique.
 
 ## Les deux studios
 
-La navigation latérale de la V2 sépare deux usages :
-
 ### Structure
 
-- modèle d'idée commun ;
-- infographie ;
-- Mermaid réel via Mermaid.js ;
-- mindmap ;
-- Markdown réel via react-markdown + GFM ;
-- sources, qualité, identité et Publication Pack.
+- Provider Gateway Vibe / Codex / Automatique
+- Infographie, Mermaid, Mindmap et Markdown
+- Brief, modèle d'idée, blocs intelligents, preuves et sources
+- profils de marque locaux
+- Quality Gate
+- Publication Pack
+- bibliothèque locale et snapshots
 
-### Visuels
+### Visuels — Visual Campaign Studio
 
-Le **Visual Campaign Studio** produit des supports marketing, communication et merchandising à partir d'un brief structuré.
+Le studio Visuels conserve son UI actuelle, mais son moteur de rendu marketing a été entièrement remplacé.
 
-Fonctions disponibles :
+Le nouveau moteur V2 comprend :
 
-- objectif, cible, offre, ton, badge, prix et CTA ;
-- assistance Vibe / Codex pour le copywriting ;
-- cinq directions visuelles : Editorial Luxe, Campaign Impact, Product Spotlight, Retail Promo et Zen Minimal ;
-- formats LinkedIn portrait, carré, Story, bannière, flyer A4, affiche, fiche produit et kakemono ;
-- réutilisation des profils de marque ;
-- ajout local d'une photo, d'un produit ou d'une illustration ;
-- exports SVG, PNG et JPG ;
-- mockups T-shirt, mug, tote bag, packaging, kakemono et vitrine ;
-- Campaign Pack ZIP multi-format avec copy Markdown et fichier de campagne.
+- 5 directions créatives ;
+- 3 layouts minimum par direction ;
+- 15 compositions distinctes ;
+- sélection automatique du layout selon le format, la densité de contenu et la présence d'un asset ;
+- typographie adaptative calculée à partir des zones réellement disponibles ;
+- Quality Gate local pour éviter les compositions faibles ;
+- cas sans image traités comme de vraies compositions ;
+- mockups enrichis ;
+- validation structurelle des SVG.
 
-Les créations de la V2 sont construites par un moteur graphique SVG local : cela permet un rendu éditable, des exports nets et une adaptation immédiate aux formats de campagne. Le visuel produit ajouté par l'utilisateur reste dans le navigateur et n'est pas envoyé à un moteur image externe.
+Variantes livrées :
 
-Les mockups de cette V2 sont volontairement vectoriels et servent à valider la mise en situation. Les mockups photoréalistes et la génération d'images via ComfyUI ou autres moteurs locaux sont prévus avec le panneau Provider & Model Control Center de la V3.
+- Editorial Luxe : `editorial-split`, `editorial-cover`, `editorial-typographic`
+- Campaign Impact : `impact-diagonal`, `impact-poster`, `impact-split-blast`
+- Product Spotlight : `spotlight-center-stage`, `spotlight-split-hero`, `spotlight-full-bleed`
+- Retail Promo : `retail-offer-hero`, `retail-shelf`, `retail-flyer`
+- Zen Minimal : `zen-gallery`, `zen-centered-editorial`, `zen-balanced`
 
-## Démarrage
+Le plan et les critères de validation sont dans `VISUAL_CAMPAIGN_REDESIGN_PLAN.md`.
 
-Depuis le dépôt de la branche `feature/infographic-lab-augmented` :
+## Formats Visuels
 
-```bash
-cp .env.augmented.example .env.augmented
-docker compose --env-file .env.augmented -f docker-compose.augmented.yml up -d --build
-```
+- LinkedIn portrait 1080×1350
+- carré 1080×1080
+- Story 1080×1920
+- bannière 1200×628
+- flyer A4
+- affiche
+- fiche produit
+- kakemono
 
-Puis vérifier :
+## Exports
 
-```bash
-docker compose --env-file .env.augmented -f docker-compose.augmented.yml ps
-```
+- SVG
+- PNG
+- JPG
+- Campaign Pack ZIP
 
-## Moteurs IA V2
+## Déploiement Augmented
 
-Le navigateur ne contacte jamais directement un fournisseur. L'application appelle un Provider Gateway local, qui route vers des runners utilisant le même contrat `/generate`.
+Le compose Augmented peut utiliser les images Docker Hub ou des images construites localement selon `AUGMENTED_APP_IMAGE`, `AUGMENTED_CODEX_IMAGE` et `AUGMENTED_PULL_POLICY`.
 
-La V2 conserve volontairement uniquement Vibe et Codex dans l'interface. Le panneau de configuration de fournisseurs supplémentaires est prévu en V3 dans `ROADMAP.md`.
+Pour tester le code de la branche avant republication Docker Hub, utilisez un build local.
 
-### Vibe
+## Validation
 
-Le compose Augmented utilise le volume défini par :
+La PR Augmented reste en brouillon tant que la preview 3092 n'est pas validée visuellement et fonctionnellement.
 
-```text
-VIBE_HOME_VOLUME
-```
-
-Il peut donc reprendre ou copier un profil Vibe déjà configuré.
-
-### Codex
-
-Le runner Codex est fourni dans `runners/codex`. Il utilise `codex exec` en mode non interactif et le profil ChatGPT/Codex stocké dans `CODEX_HOME`.
-
-Créer le volume puis authentifier Codex une première fois si aucun volume existant n'est réutilisé :
-
-```bash
-docker volume create infographic-lab_codex_home
-docker compose --env-file .env.augmented -f docker-compose.augmented.yml run --rm codex-runner codex login --device-auth
-```
-
-Si un volume Docker Codex déjà authentifié existe, renseigner son nom dans :
-
-```text
-CODEX_HOME_VOLUME=<nom-du-volume-existant>
-```
-
-## Mode Automatique
-
-Ordre par défaut :
-
-```text
-Vibe → Codex
-```
-
-Il peut être changé avec :
-
-```text
-AI_PROVIDER_ORDER=codex,vibe
-```
-
-Si un moteur manuel est choisi dans le Studio Structure, aucun fallback n'est appliqué silencieusement. Le Visual Campaign Studio utilise le mode Automatique pour l'assistance de copywriting.
-
-## V3 — moteurs configurables
-
-La V3 prévoit le **Provider & Model Control Center** pour :
-
-- Ollama ;
-- LM Studio ;
-- endpoints compatibles OpenAI ;
-- fournisseurs API configurables ;
-- ComfyUI et moteurs image locaux ;
-- routage par capacité et profils local / hybride / qualité / coût.
-
-Ce panneau n'est pas inclus dans la V2 actuelle.
-
-## Données locales
-
-La bibliothèque, les profils visuels, les snapshots, le thème et le dernier brief marketing sont conservés localement dans le navigateur. Le Publication Pack et le Campaign Pack sont construits localement puis téléchargés sous forme de ZIP.
-
-## Arrêt
-
-```bash
-docker compose --env-file .env.augmented -f docker-compose.augmented.yml down
-```
-
-Les volumes d'authentification Vibe/Codex ne sont pas supprimés par cette commande.
+L'image Docker Hub Augmented ne doit pas être republiée avant cette validation explicite.
