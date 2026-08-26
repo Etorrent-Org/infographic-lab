@@ -1,16 +1,19 @@
 # Visual Campaign Studio — Creative Refresh
 
-## Objectif
+## Objectif produit
 
-Faire de Visual Campaign Studio un générateur d'assets de communication crédibles face aux outils généralistes du marché, sans refaire l'interface du studio.
+Visual Campaign Studio ne cherche pas à remplacer Canva. Sa valeur vient du couple **structure + rendu** : Infographic Lab transforme d'abord une idée en contenu structuré, puis doit produire un asset marketing suffisamment crédible pour être publié avec peu ou pas de retouche.
 
-La refonte s'inspire des codes visuels dominants observés en 2026 : grilles éditoriales plus assumées, narration en couches, contraste plus fort, texture légère, simplicité structurée et production multi-format orientée marque.
+Le seuil visé est donc **8/10 minimum** sur la perception visuelle d'un cas simple et correctement renseigné.
+
+La direction 2026 retenue combine : grilles éditoriales assumées, narration en couches, contrastes francs, matière légère, composition asymétrique, simplicité structurée et production multi-format orientée marque.
 
 ## Décisions
 
 - suppression totale de la fonctionnalité Mockup ;
 - recentrage sur quatre familles créatives fortes ;
 - 3 layouts minimum par famille ;
+- utilisation réelle du brief dans la composition : cible, offre, bénéfices, prix, badge et CTA ;
 - conservation du pipeline local SVG / PNG / JPG et du Campaign Pack ;
 - aucune dépendance à un moteur image externe ;
 - l'image Docker Hub Augmented n'est pas republiée avant validation visuelle.
@@ -21,21 +24,21 @@ La refonte s'inspire des codes visuels dominants observés en 2026 : grilles éd
 
 Usage : offre B2B, expertise, vision, positionnement.
 
-Langage : grille éditoriale, matière légère, grands blancs, typographie structurante, split hero, cover et composition typographique.
+Langage : contraste marque plus présent, compositions asymétriques, serif/sans-serif, contenu structurel intégré au visuel, pas de faux codes magazine décoratifs.
 
 Layouts :
-- `editorial-split`
+- `editorial-duotone`
 - `editorial-cover`
-- `editorial-typographic`
+- `editorial-architect`
 
 ### Campaign Bold
 
 Usage : lancement, annonce, événement, recrutement, social ads.
 
-Langage : contraste élevé, diagonales, affichisme, rythme, CTA immédiatement visible.
+Langage : contrastes élevés, blocs francs, diagonales, affichisme, cible et CTA immédiatement visibles.
 
 Layouts :
-- `impact-diagonal`
+- `impact-signal`
 - `impact-poster`
 - `impact-split-blast`
 
@@ -43,7 +46,7 @@ Layouts :
 
 Usage : produit, service, solution, fonctionnalité.
 
-Langage : sujet central, hero clair, bénéfices courts, preuve et offre lisibles rapidement.
+Langage : sujet central, profondeur légère, hero clair, bénéfices courts, cible et offre lisibles rapidement.
 
 Layouts :
 - `spotlight-center-stage`
@@ -54,7 +57,7 @@ Layouts :
 
 Usage : prix, promo, bundle, offre limitée.
 
-Langage : prix et avantage immédiatement visibles, densité contrôlée, CTA fort, lecture en deux secondes.
+Langage : prix et avantage immédiatement visibles, grands aplats de marque, densité contrôlée, CTA fort, lecture en deux secondes.
 
 Layouts :
 - `retail-offer-hero`
@@ -63,13 +66,13 @@ Layouts :
 
 ## Garde-fous
 
-L'assistant copy demande désormais :
+L'assistant copy demande :
 - accroche : 8 à 10 mots ;
 - sous-message : 18 à 24 mots ;
 - 3 bénéfices courts ;
 - CTA : 3 mots maximum.
 
-Le moteur continue cependant à afficher le texte saisi manuellement sans le tronquer : il adapte la taille, choisit un layout plus dense si nécessaire et conserve un rendu de secours en cas d'échec structurel.
+Le moteur continue à afficher le texte saisi manuellement sans utiliser l'ellipsis comme rustine : il adapte la taille, sélectionne une composition compatible et conserve un rendu de secours uniquement en cas d'échec structurel.
 
 Le Quality Gate refuse en priorité :
 - texte en overflow ;
@@ -78,6 +81,18 @@ Le Quality Gate refuse en priorité :
 - zone morte trop importante ;
 - densité excessive ;
 - SVG structurellement invalide.
+
+Un score heuristique de composition est embarqué dans le SVG. **8/10 est le seuil structurel minimum**, mais il ne remplace pas la validation artistique humaine sur 3092.
+
+## Règles artistiques non négociables
+
+- aucun faux `ISSUE / 01`, numéro de magazine ou décoration sans sens métier ;
+- le titre ne doit pas être le seul élément qui donne de la personnalité au visuel ;
+- la palette de marque doit participer réellement à la composition ;
+- la cible, l'offre ou les bénéfices doivent enrichir le visuel au lieu de rester cachés dans le brief ;
+- un cas sans image doit rester intentionnel, pas ressembler à un placeholder ;
+- un asset importé doit être traité comme un point focal et non collé dans une carte générique ;
+- les quatre familles doivent être reconnaissables sans lire leur nom.
 
 ## Mockups supprimés
 
@@ -98,20 +113,39 @@ Les formats de communication restent disponibles indépendamment des anciens moc
 ## Baseline
 
 La matrice structurelle couvre :
-
 - 4 campagnes de référence ;
 - 4 familles créatives ;
 - 8 formats ;
 - soit 128 rendus.
 
+Le harnais rejette un cas qui :
+- utilise le fallback `safe-composition` ;
+- produit un SVG invalide ;
+- descend sous 8/10 au score heuristique de composition.
+
+## Grille humaine 8/10
+
+Chaque rendu de validation est noté sur :
+
+| Critère | Cible |
+|---|---:|
+| Impact visuel immédiat | ≥ 8/10 |
+| Hiérarchie et lisibilité | ≥ 8/10 |
+| Différenciation créative | ≥ 8/10 |
+| Crédibilité « publiable » | ≥ 8/10 |
+| Intégration de la marque | ≥ 8/10 |
+| Cohérence avec le brief structuré | ≥ 8/10 |
+
+La moyenne doit être **≥ 8/10** et aucun critère ne doit tomber sous 7/10.
+
 ## Critères de validation visuelle
 
 - [ ] aucun texte coupé ou illisible ;
 - [ ] les 4 familles sont immédiatement différenciables ;
-- [ ] Editorial Premium peut être publié tel quel sur un cas B2B simple ;
-- [ ] Campaign Bold possède une présence d'affiche / campagne ;
-- [ ] Spotlight met réellement le sujet ou l'offre au premier plan ;
-- [ ] Retail communique prix / avantage / CTA en moins de 2 secondes ;
+- [ ] Editorial Premium atteint 8/10 sur un cas B2B simple sans image ;
+- [ ] Campaign Bold atteint 8/10 sur un lancement / événement ;
+- [ ] Spotlight atteint 8/10 avec et sans asset ;
+- [ ] Retail atteint 8/10 avec prix / avantage / CTA ;
 - [ ] un asset importé est intégré à la composition et non simplement collé ;
 - [ ] les cas sans image restent intentionnels et graphiquement crédibles ;
 - [ ] au moins 70 % des cas examinés sont publiables sans retouche majeure ;
