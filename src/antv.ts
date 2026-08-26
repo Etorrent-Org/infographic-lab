@@ -188,6 +188,35 @@ function supportsCustomNarrative(value: CanonicalInfographic) {
   );
 }
 
+function supportsMatrix(value: CanonicalInfographic) {
+  return (
+    value.items.length === 4 &&
+    value.items.every(
+      (item) => item.title.trim().length <= 32 && item.description.trim().length <= 90,
+    )
+  );
+}
+
+function supportsArchitecture(value: CanonicalInfographic) {
+  return (
+    value.items.length >= 3 &&
+    value.items.length <= 6 &&
+    value.items.every(
+      (item) => item.title.trim().length <= 34 && item.description.trim().length <= 100,
+    )
+  );
+}
+
+function supportsHub(value: CanonicalInfographic) {
+  return (
+    value.items.length >= 3 &&
+    value.items.length <= 6 &&
+    value.items.every(
+      (item) => item.title.trim().length <= 26 && item.description.trim().length <= 62,
+    )
+  );
+}
+
 function resolveTheme(style: InfographicStyle, value: CanonicalInfographic) {
   const visual = styleThemes[style];
   const { accent, background } = getVisualColors(style, value);
@@ -252,6 +281,9 @@ export function getAntvVariants(value: CanonicalInfographic): AntvVisualVariant[
   const compactCards = supportsCompactCards(value);
   const tightGeometry = supportsTightGeometry(value);
   const customNarrative = supportsCustomNarrative(value);
+  const matrixReady = supportsMatrix(value);
+  const architectureReady = supportsArchitecture(value);
+  const hubReady = supportsHub(value);
 
   if (value.layout === "process") {
     const variants: AntvVisualVariant[] =
@@ -272,6 +304,10 @@ export function getAntvVariants(value: CanonicalInfographic): AntvVisualVariant[
 
     if (customNarrative) {
       variants.push(customVariant("Cycle", "cycle"), customVariant("Sankey simple", "sankey"));
+    }
+
+    if (architectureReady) {
+      variants.push(customVariant("Architecture", "architecture"));
     }
 
     if (compactCards) {
@@ -330,12 +366,24 @@ export function getAntvVariants(value: CanonicalInfographic): AntvVisualVariant[
     variants.push({ label: "Ligne", template: "list-row-horizontal-icon-line" });
   }
 
+  if (matrixReady) {
+    variants.push(customVariant("Matrice 2×2", "matrix"));
+  }
+
+  if (hubReady) {
+    variants.push(customVariant("Carte radiale", "hub"));
+  }
+
+  if (architectureReady) {
+    variants.push(customVariant("Architecture", "architecture"));
+  }
+
   if (customNarrative) {
     variants.push(customVariant("Iceberg", "iceberg"));
   }
 
   if (!value.subtitle?.trim() && tightGeometry) {
-    variants.push({ label: "Radial", template: "list-sector-simple" });
+    variants.push({ label: "Radial AntV", template: "list-sector-simple" });
   }
 
   if (compactCards) {
