@@ -74,39 +74,41 @@ La version stable `main` reste la référence publique 1.0.0. Le studio Augmente
     - huit snapshots maximum par projet ;
     - restauration locale.
 
-11. **Visual Campaign Studio**
-    - espace séparé `Visuels` accessible depuis la navigation de la suite ;
-    - brief marketing : objectif, cible, offre, ton, badge, prix, CTA ;
-    - assistance Vibe / Codex pour optimiser l'accroche, le sous-message et les bénéfices ;
-    - quatre familles visuelles natives : Editorial Premium, Campaign Bold, Product / Offer Spotlight, Clean Retail / Promo ;
-    - douze layouts réels, trois par famille ;
-    - huit formats : LinkedIn portrait, carré, Story, bannière, flyer A4, affiche, visuel offre et affiche verticale ;
-    - brand kit réutilisant les profils visuels locaux ;
-    - ajout local d'une photo, d'un produit ou d'une illustration ;
-    - exports SVG, PNG et JPG ;
-    - rendu marketing calculé localement, sans upload obligatoire du visuel ;
-    - aucune fonctionnalité de mockup / merchandising.
-
-12. **Campaign Pack multi-format**
-    - adaptation automatique d'une même création à plusieurs formats ;
-    - export ZIP avec visuels SVG/PNG, copy Markdown et métadonnées de campagne ;
-    - aucun export mockup.
-
-13. **Moteurs de rendu embarqués**
+11. **Moteurs de rendu embarqués**
+    - `@antv/infographic` pour les infographies ;
+    - rendus SVG locaux pour certaines représentations spécialisées ;
     - Mermaid.js pour le diagramme réel ;
     - react-markdown + GFM pour le document Markdown réel ;
     - thème clair / sombre persistant pour l'interface.
+
+12. **Catalogue d'infographies enrichi**
+    - processus, timeline, comparaison et listes ;
+    - iceberg, cycle et Sankey narratif ;
+    - formats décisionnels et stratégiques complémentaires ajoutés pendant la finalisation ;
+    - priorité aux rendus utiles TPE / PME plutôt qu'à la multiplication de variantes décoratives.
+
+## Module extrait : Visual Campaign Studio
+
+Visual Campaign Studio ne fait plus partie de cette version Augmented.
+
+- branche dédiée : `feature/visual-campaign-studio` ;
+- code actuel conservé uniquement comme point de départ / historique ;
+- nouvelle étude technique basée en priorité sur des briques open source existantes ;
+- aucun retour du module dans Augmented tant qu'il n'atteint pas un niveau visuel validé de façon autonome.
+
+Cette séparation permet de finaliser Infographic Lab sans faire dépendre sa sortie d'un éditeur marketing encore expérimental.
 
 ## Hors périmètre de cette version
 
 Voir `ROADMAP.md` pour les décisions reportées, notamment :
 
+- Visual Campaign Studio ;
 - import intelligent multi-source ;
 - variantes intelligentes multiples ;
 - panneau de configuration multi-IA ;
 - Ollama / LM Studio / ComfyUI et fournisseurs configurables par l'utilisateur.
 
-Le **Provider & Model Control Center** est désormais ciblé explicitement pour la V3.
+Le **Provider & Model Control Center** reste ciblé pour une V3 ultérieure.
 
 ## Principes de conception
 
@@ -116,5 +118,5 @@ Le **Provider & Model Control Center** est désormais ciblé explicitement pour 
 - pas de compte utilisateur ;
 - pas de connecteurs externes multipliés sans besoin validé ;
 - l'IA prépare et propose, l'utilisateur décide ;
-- les visuels marketing peuvent être produits sans moteur image génératif ;
+- priorité au couple **structure → représentation** ;
 - la version stable n'est pas modifiée tant que la préversion Augmented n'est pas validée.

@@ -12,64 +12,52 @@ La version stable conserve son port 3091.
 
 Pour une adresse LAN ou WireGuard, utilisez `AUGMENTED_BIND` dans `.env.augmented` plutôt qu'une exposition publique.
 
-## Les deux studios
+## Périmètre actuel
 
-### Structure
+La version Augmented est recentrée sur le cœur d'Infographic Lab : **transformer une idée ou un texte en structure claire puis en représentations visuelles exploitables**.
+
+Le module **Visual Campaign Studio n'est plus inclus dans cette version**. Son code a été isolé sur la branche `feature/visual-campaign-studio` afin de repartir de zéro sans bloquer la finalisation d'Infographic Lab.
+
+### Studio Structure
 
 - Provider Gateway Vibe / Codex / Automatique
 - Infographie, Mermaid, Mindmap et Markdown
-- Brief, modèle d'idée, blocs intelligents, preuves et sources
+- brief, modèle d'idée, blocs intelligents, preuves et sources
 - profils de marque locaux
 - Quality Gate
 - Publication Pack
 - bibliothèque locale et snapshots
+- thème clair / sombre persistant
 
-### Visuels — Visual Campaign Studio
+## Infographies
 
-Visual Campaign Studio produit des assets de communication à partir d'un brief structuré et d'une identité de marque.
+Le moteur s'appuie sur `@antv/infographic` et sur quelques rendus SVG locaux lorsque le format le justifie.
 
-Le moteur créatif est recentré sur quatre familles :
+Les familles disponibles couvrent notamment :
 
-- **Editorial Premium** — B2B, expertise, vision, offre premium ;
-- **Campaign Bold** — lancement, annonce, événement, social ads ;
-- **Product / Offer Spotlight** — produit, service, solution, fonctionnalité ;
-- **Clean Retail / Promo** — prix, promotion, bundle, offre limitée.
+- processus ;
+- roadmap / timeline ;
+- checklist / listes ;
+- comparatif ;
+- plan d'action ;
+- présentation d'offre ;
+- iceberg ;
+- cycle ;
+- Sankey narratif.
 
-Chaque famille dispose de trois layouts réels, soit 12 compositions. Le moteur choisit automatiquement une variante selon le format, la densité de contenu, la présence d'un asset, d'un prix et d'un badge.
-
-Les mockups merchandising ont été supprimés pour recentrer le produit sur des supports directement exploitables.
-
-## Formats Visuels
-
-- LinkedIn portrait 1080×1350
-- carré 1080×1080
-- Story 1080×1920
-- bannière 1200×628
-- flyer A4
-- affiche
-- visuel offre
-- affiche verticale
+La finalisation de la version Augmented ajoute des représentations complémentaires orientées décision, stratégie et pédagogie.
 
 ## Exports
 
-- SVG
-- PNG
-- JPG
-- Campaign Pack ZIP multi-format
-
-## Moteur créatif
-
-Le rendu reste local et déterministe :
-
-- 12 layouts distincts ;
-- typographie adaptative ;
-- grilles éditoriales, textures légères et compositions à contraste renforcé ;
-- intégration d'un asset utilisateur sans upload externe ;
-- Quality Gate local ;
-- fallback de rendu pour éviter une page blanche si une validation SVG échoue ;
-- baseline structurelle de 128 rendus.
-
-Le cadrage détaillé est documenté dans `VISUAL_CAMPAIGN_REDESIGN_PLAN.md`.
+- SVG ;
+- PNG ;
+- HTML autonome ;
+- Markdown ;
+- Mermaid `.mmd` ;
+- Mindmap JSON ;
+- sources ;
+- projet JSON ;
+- Publication Pack ZIP généré localement.
 
 ## Déploiement Augmented
 
@@ -77,8 +65,20 @@ Le compose Augmented peut utiliser les images Docker Hub ou des images construit
 
 Pour tester le code de la branche avant republication Docker Hub, utilisez un build local.
 
+## Chantiers séparés
+
+### Visual Campaign Studio
+
+Branche : `feature/visual-campaign-studio`.
+
+Le chantier repart séparément avec étude de briques open source existantes plutôt que de maintenir un moteur graphique maison insuffisant. Aucun code Campaign Studio ne doit revenir dans la version Augmented avant validation autonome du module.
+
+### V3 providers
+
+Le Provider & Model Control Center reste hors périmètre de cette version.
+
 ## Validation
 
-La PR Augmented reste en brouillon tant que la preview 3092 n'est pas validée visuellement et fonctionnellement.
+La PR Augmented reste en brouillon tant que la preview 3092 n'est pas validée fonctionnellement et que le catalogue d'infographies n'est pas finalisé.
 
 L'image Docker Hub Augmented ne doit pas être republiée avant cette validation explicite.
