@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { App } from "./App";
+import { VisualAuditPage } from "./VisualAuditPage";
 import "./styles.css";
 import "./retouch-history.css";
 import "./block-manager.css";
@@ -33,8 +34,10 @@ import "./ui-audit-modal-isolation";
 import "./ui-audit-final-pass.css";
 import "./ui-audit-polish.css";
 
+const auditMode = new URLSearchParams(window.location.search).get("visual-audit") === "1";
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <App />
+    {auditMode ? <VisualAuditPage /> : <App />}
   </React.StrictMode>,
 );
