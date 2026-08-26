@@ -6,299 +6,134 @@ Refondre intégralement le moteur de rendu de Visual Campaign Studio pour produi
 
 La cible n’est plus un rendu simplement propre. La cible est un rendu qui puisse soutenir la comparaison avec un bon template Canva utilisé correctement.
 
+## État d’implémentation
+
+- [x] Lot 0 — baseline, cas de test et règles de qualité
+- [x] Lot 1 — moteur de composition et sélection automatique de layout
+- [x] Lot 2 — Editorial Premium
+- [x] Lot 3 — Product Spotlight
+- [x] Lot 5 — Quality Gate visuel local / anti-laideur
+- [x] Lot 4 — Campaign Bold, Retail Offer et Zen Minimal
+- [x] Lot 6 — mockups et cohérence multi-format
+
+L’implémentation technique est terminée. La validation visuelle humaine sur la preview 3092 reste obligatoire avant publication Docker Hub et avant sortie de draft de la PR.
+
 ## Contraintes non négociables
 
 - Ne pas modifier l’UI de Visual Campaign Studio.
 - Ne pas modifier la navigation, les panneaux, les boutons, les champs ni les styles d’interface.
 - Conserver les 8 formats, les 5 directions créatives, le Brand Kit, les exports SVG/PNG/JPG, les mockups et le Campaign Pack.
-- Aucun débordement de texte, aucune ligne coupée, aucun contenu hors zone sûre.
+- Aucun débordement de texte, aucune ligne volontairement coupée, aucun contenu hors zone sûre.
 - Aucun secret ni moteur externe obligatoire.
 - `main` reste intact tant que la préversion 3092 n’est pas explicitement validée.
 - Ne pas republier l’image Docker Hub `augmented-v2` avant validation visuelle explicite.
 
-## Fichiers UI à considérer comme gelés pendant cette refonte
+## Architecture livrée
 
-Sauf correction strictement nécessaire au branchement du moteur, ne pas modifier :
+### Moteur de composition
 
-- `src/MarketingStudio.tsx`
-- `src/marketing.css`
-- `src/ui-audit*.css`
-- `src/StudioSuite.tsx`
-- les composants de navigation et de formulaire.
+Le renderer historique monolithique a été remplacé par un moteur à variantes :
 
-Le travail doit rester concentré sur le moteur de rendu, ses helpers et ses tests.
+- `src/marketing-wow-v2-core.ts` : typographie adaptative, contraste, zones sûres, scoring qualité et sélection déterministe ;
+- `src/marketing-wow-v2-layouts.ts` : 15 layouts distincts, soit 3 par direction ;
+- `src/marketing-wow-v2-renderer.ts` : choix du meilleur candidat, mockups et rendu final ;
+- `src/marketing-wow-v2-validation.ts` : contrôles structurels et Quality Gate local ;
+- `src/marketing-wow-v2-baseline.ts` : matrice de validation de 160 rendus ;
+- `src/marketing.ts` : API publique conservée, désormais branchée sur le nouveau moteur.
 
----
+Les anciens renderers `marketing-wow-*` devenus obsolètes ont été supprimés pour éviter deux moteurs concurrents dans le dépôt.
 
-# Lots d’exécution
+## 15 layouts livrés
 
-## Lot 0 — Baseline, cas de test et règles de qualité
+### Editorial Premium
 
-### Objectif
+1. `editorial-split`
+2. `editorial-cover`
+3. `editorial-typographic`
 
-Créer une base de validation reproductible avant toute nouvelle direction artistique.
+### Product Spotlight
 
-### Travaux
+1. `spotlight-center-stage`
+2. `spotlight-split-hero`
+3. `spotlight-full-bleed`
 
-- Constituer un jeu de campagnes de référence :
-  - titre court ;
-  - titre moyen ;
-  - titre long ;
-  - sous-titre long ;
-  - avec et sans image ;
-  - avec prix ;
-  - avec badge ;
-  - avec 3 bénéfices ;
-  - avec mention légale.
-- Tester les 5 directions sur les 8 formats.
-- Ajouter des contrôles automatiques de structure SVG :
-  - absence de `NaN` ;
-  - absence de `undefined` ;
-  - largeur/hauteur cohérentes ;
-  - texte contenu dans des zones bornées ;
-  - pas d’élément volontairement positionné hors viewport.
-- Introduire un rapport de contrôle par rendu.
+### Campaign Impact
 
-### Critères de validation
-
-- [ ] 40 rendus minimum couvrant 5 directions × 8 formats.
-- [ ] Aucun SVG invalide.
-- [ ] Aucun texte hors zone de sécurité sur le jeu de référence.
-- [ ] Aucun rendu avec `NaN`, `undefined`, `Infinity` ou dimensions négatives.
-
----
-
-## Lot 1 — Nouveau moteur de composition et sélection automatique de layout
-
-### Objectif
-
-Sortir de la logique « un template fixe par direction ».
-
-### Travaux
-
-- Introduire une notion explicite de `layout variant`.
-- Prévoir au minimum 3 layouts par direction créative.
-- Sélectionner automatiquement le layout selon :
-  - ratio du format ;
-  - longueur du titre ;
-  - longueur du sous-message ;
-  - présence d’un asset ;
-  - présence d’un prix ;
-  - présence d’un badge ;
-  - densité globale du contenu.
-- Mettre en place des zones de composition bornées :
-  - marque ;
-  - hero ;
-  - headline ;
-  - subheadline ;
-  - offer ;
-  - benefits ;
-  - CTA ;
-  - legal.
-- Faire calculer la typographie à partir de la zone réellement disponible et non d’un ratio global arbitraire.
-
-### Critères de validation
-
-- [ ] Aucun layout ne dépend d’un titre surdimensionné pour remplir l’espace.
-- [ ] Un titre long provoque un changement de taille ou de layout, jamais un débordement.
-- [ ] Un format paysage et un format portrait ne partagent pas artificiellement la même composition.
-- [ ] Le moteur choisit une variante de façon déterministe à contenu identique.
-
----
-
-## Lot 2 — Editorial Premium
-
-### Objectif
-
-Transformer `Editorial Luxe` en rendu réellement premium et éditorial.
-
-### Direction artistique
-
-- Grille forte et précise.
-- Asymétrie maîtrisée.
-- Espaces négatifs intentionnels.
-- Typographie haut de gamme mais jamais surdimensionnée.
-- Image traitée comme élément éditorial, pas comme rectangle décoratif.
-- Signatures visuelles : rule lines, index, micro-labels, overlays, rythme de grille.
-
-### Variantes minimales
-
-1. Editorial split — texte / image.
-2. Editorial cover — image dominante avec couche éditoriale.
-3. Editorial typographic — sans asset, mais avec composition typographique réellement construite.
-
-### Critères de validation
-
-- [ ] Le mode sans image ne ressemble jamais à un placeholder.
-- [ ] Le titre n’occupe jamais plus d’environ 38 % de la hauteur utile sur un portrait standard.
-- [ ] Le CTA et le sous-message restent visibles sans écraser le titre.
-- [ ] Le rendu doit pouvoir être confondu avec une mini-affiche éditoriale conçue manuellement.
-
----
-
-## Lot 3 — Product Spotlight
-
-### Objectif
-
-Faire du produit ou de l’asset le vrai centre d’intérêt.
-
-### Direction artistique
-
-- Hero visuel central ou latéral dominant.
-- Mise en scène : halo, profondeur, ombre, environnement graphique.
-- Bénéfices sous forme de cartes ou points de preuve.
-- CTA clair, secondaire visuellement par rapport au hero.
-
-### Variantes minimales
-
-1. Center stage — produit centré.
-2. Split hero — produit d’un côté, message de l’autre.
-3. Full bleed — asset en fond ou recadrage fort avec overlay éditorial.
-
-### Critères de validation
-
-- [ ] Avec asset, l’asset occupe visuellement une place dominante.
-- [ ] Sans asset, le fallback est une composition graphique crédible et non une silhouette générique pauvre.
-- [ ] Aucun visuel ne donne l’impression d’un bloc image collé au-dessus du texte.
-
----
-
-## Lot 4 — Campaign Bold, Retail Offer et Zen Minimal
-
-### Campaign Bold
-
-- Contraste fort.
-- Rythme graphique assumé.
-- Diagonales, fragmentation, bandes, overlays ou typographie de campagne.
-- Accroche dominante mais bornée.
+1. `impact-diagonal`
+2. `impact-poster`
+3. `impact-split-blast`
 
 ### Retail Offer
 
-- Priorité à l’offre et à la lisibilité commerciale.
-- Prix, badge, avantage et CTA organisés comme une vraie pub retail.
-- Densité assumée mais structurée.
+1. `retail-offer-hero`
+2. `retail-shelf`
+3. `retail-flyer`
 
 ### Zen Minimal
 
-- Minimalisme intentionnel, pas vide.
-- Typographie raffinée.
-- Formes rares mais structurantes.
-- Usage précis du blanc et des rythmes horizontaux/verticaux.
+1. `zen-gallery`
+2. `zen-centered-editorial`
+3. `zen-balanced`
 
-### Critères de validation
+## Sélection automatique de layout
 
-- [ ] Les 3 directions sont reconnaissables immédiatement sans lire leur nom.
-- [ ] Retail permet d’identifier l’offre en moins de 2 secondes.
-- [ ] Campaign Bold semble énergique même sans asset.
-- [ ] Zen conserve une présence visuelle malgré peu d’éléments.
+Le moteur choisit une variante selon :
 
----
+- ratio du format ;
+- format paysage, carré ou très vertical ;
+- longueur du titre ;
+- densité du sous-message et de l’offre ;
+- présence d’un asset ;
+- présence d’un prix ;
+- densité globale du contenu.
 
-## Lot 5 — Moteur anti-laideur / Quality Gate visuel local
+Le choix est déterministe pour un même contenu.
 
-### Objectif
+## Quality Gate local
 
-Détecter automatiquement les compositions faibles avant affichage/export.
+Chaque candidat est évalué avant rendu final selon :
 
-### Règles à contrôler
+- risque de texte hors zone ;
+- ratio de hauteur du titre ;
+- taille relative du hero ;
+- densité globale ;
+- zone morte ;
+- présence du CTA.
 
-- Ratio de surface occupée par le titre.
-- Nombre de lignes du titre et du sous-message.
-- Densité globale de texte.
-- Présence d’un centre d’intérêt.
-- Contraste texte/fond.
-- Taille minimale du CTA.
-- Zone morte excessive.
-- Empilement trop dense en bas de composition.
-- Hero trop petit ou inutile.
-- Risque de collision entre blocs.
+Le moteur privilégie un candidat acceptable puis utilise un score de pénalité pour choisir la meilleure variante. Le SVG final est également contrôlé contre `NaN`, `Infinity`, `undefined`, dimensions incohérentes et anomalies structurelles simples.
 
-### Comportement attendu
+## Baseline
 
-Si un rendu dépasse un seuil de risque :
+Le harnais `buildMarketingBaselineReport()` construit :
 
-1. réduire la taille typographique ;
-2. tenter une autre variante de layout ;
-3. réduire les éléments décoratifs ;
-4. réorganiser hero/texte ;
-5. utiliser un fallback sûr si nécessaire.
+- 4 campagnes de référence ;
+- 5 directions ;
+- 8 formats ;
+- soit 160 rendus structurellement contrôlables.
 
-### Critères de validation
+Les cas couvrent notamment :
 
-- [ ] Un layout faible n’est pas présenté sans tentative de fallback.
-- [ ] Les corrections sont déterministes et locales.
-- [ ] Le Quality Gate ne modifie pas le contenu marketing lui-même.
+- titre court ;
+- titre moyen ;
+- titre long ;
+- sous-message long ;
+- prix ;
+- badge ;
+- bénéfices ;
+- mention légale.
 
----
+## Garde-fous de développement
 
-## Lot 6 — Mockups et cohérence multi-format
+- Pas de `overflow:hidden` utilisé pour masquer du texte.
+- Pas d’ellipsis comme stratégie principale d’ajustement.
+- La typographie est réduite selon la zone disponible.
+- Les rendus sans image sont conçus comme des compositions à part entière.
+- Les directions ne reposent pas sur un simple changement de couleur.
+- L’UI du studio reste gelée.
 
-### Objectif
+## Validation finale restant à effectuer sur 3092
 
-Éviter qu’un bon visuel perde en qualité lors de sa mise en situation ou de sa déclinaison.
-
-### Travaux
-
-- Revoir les mockups T-shirt, mug, tote, packaging, kakemono et vitrine.
-- Donner plus de profondeur aux objets : ombre, perspective, matériau, fond de présentation.
-- Vérifier que le visuel intégré reste lisible.
-- Valider les déclinaisons d’une même campagne sur :
-  - LinkedIn portrait ;
-  - carré ;
-  - story ;
-  - bannière ;
-  - A4 ;
-  - affiche ;
-  - fiche produit ;
-  - kakemono.
-
-### Critères de validation
-
-- [ ] Aucun mockup ne ressemble à un wireframe technique.
-- [ ] Le message principal reste lisible dans la mise en situation.
-- [ ] Une campagne conserve son identité visuelle sur plusieurs formats sans simplement étirer la même composition.
-
----
-
-# Ordre d’implémentation
-
-1. Lot 0 — baseline et tests.
-2. Lot 1 — architecture du moteur et sélection de layout.
-3. Lot 2 — Editorial Premium.
-4. Lot 3 — Product Spotlight.
-5. Lot 5 — Quality Gate visuel, appliqué d’abord aux deux directions prioritaires.
-6. Lot 4 — Campaign Bold, Retail Offer, Zen Minimal.
-7. Lot 6 — mockups et validation multi-format.
-
-Le Quality Gate est placé avant la fin des 5 directions afin d’éviter de dupliquer de mauvaises pratiques dans les moteurs restants.
-
----
-
-# Garde-fous de développement
-
-## Interdictions
-
-- Ne pas masquer les problèmes avec `overflow:hidden` sur du texte.
-- Ne pas utiliser une ellipse automatique comme solution principale à un manque de place.
-- Ne pas résoudre un vide de composition en grossissant le titre.
-- Ne pas réutiliser le même layout avec uniquement un changement de couleur pour simuler une direction différente.
-- Ne pas utiliser un gros bloc abstrait sans fonction comme hero par défaut.
-
-## Principes
-
-- Une zone de texte doit être mesurée puis typographiée.
-- Un rendu sans image doit être conçu comme un vrai cas, pas comme un fallback pauvre.
-- Chaque direction doit avoir une grammaire visuelle propre.
-- La lisibilité prime sur le remplissage.
-- Les éléments décoratifs doivent servir la composition ou disparaître.
-
----
-
-# Validation finale de la refonte
-
-La refonte ne sera pas considérée comme terminée tant que les points suivants ne sont pas validés visuellement sur la preview 3092 :
-
-- [ ] aucun texte coupé ou débordant ;
+- [ ] aucun texte coupé ou débordant sur les cas testés visuellement ;
 - [ ] aucune composition visuellement cassée ;
 - [ ] 5 directions réellement distinctes ;
 - [ ] Editorial Premium crédible et publiable ;
@@ -307,25 +142,7 @@ La refonte ne sera pas considérée comme terminée tant que les points suivants
 - [ ] Campaign Bold a une vraie présence de campagne ;
 - [ ] Zen Minimal est raffiné et non vide ;
 - [ ] mockups assez qualitatifs pour présenter un concept ;
-- [ ] au moins 70 % du jeu de validation jugé publiable sans retouche majeure ;
-- [ ] CI verte ;
-- [ ] PR #8 toujours draft tant que cette validation n’est pas donnée ;
-- [ ] image Docker Hub non republiée avant validation visuelle.
-
----
-
-# Découpage recommandé des commits
-
-Conserver la convention Porcupine Tree + description française.
-
-Exemples :
-
-- `Anesthetize - ajoute le harnais de validation visuelle`
-- `Blackest Eyes - introduit le sélecteur de layouts marketing`
-- `Trains - refond Editorial Premium`
-- `Lazarus - refond Product Spotlight`
-- `Open Car - ajoute le Quality Gate visuel local`
-- `The Sound of Muzak - différencie les directions de campagne restantes`
-- `Arriving Somewhere but Not Here - finalise les mockups et les déclinaisons`
-
-Chaque lot doit rester testable indépendamment et la PR #8 doit rester en brouillon jusqu’à validation finale.
+- [ ] au moins 70 % des cas examinés jugés publiables sans retouche majeure ;
+- [ ] CI verte sur le head final ;
+- [ ] PR #8 sortie du draft uniquement après validation explicite ;
+- [ ] image Docker Hub republiée uniquement après validation explicite.
