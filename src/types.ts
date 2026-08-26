@@ -10,7 +10,7 @@ export type InfographicStyle =
   | "minimal"
   | "tech";
 export type V1InfographicStyle = "clean" | "soft" | "dark" | "sketch" | "chalk";
-export type CustomVisualKind = "iceberg" | "cycle" | "sankey";
+export type CustomVisualKind = "iceberg" | "cycle" | "sankey" | "matrix" | "architecture" | "hub";
 
 export type InfographicIcon =
   | "idea"
