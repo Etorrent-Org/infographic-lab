@@ -20,7 +20,7 @@ import {
   impactCandidates,
   retailCandidates,
   spotlightCandidates,
-} from "./marketing-wow-v2-layouts";
+} from "./marketing-wow-v3-layouts";
 import { assertMarketingSvg, isCandidateAcceptable } from "./marketing-wow-v2-validation";
 
 function structuralScore(candidate: RenderCandidate) {
