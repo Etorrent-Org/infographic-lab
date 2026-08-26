@@ -10,6 +10,7 @@ export type MarketingBaselineRow = {
   valid: boolean;
   errors: string[];
   layout: string;
+  structureScore: number;
 };
 
 const templates: MarketingTemplate[] = ["editorial", "impact", "spotlight", "retail"];
@@ -18,9 +19,16 @@ function layoutName(svg: string) {
   return svg.match(/data-layout=\"([^\"]+)\"/)?.[1] ?? "unknown";
 }
 
+function structureScore(svg: string) {
+  const raw = svg.match(/data-structure-score=\"([^\"]+)\"/)?.[1];
+  const value = Number(raw);
+  return Number.isFinite(value) ? value : 0;
+}
+
 /**
- * Harnais local de validation visuelle/structurelle.
- * 4 campagnes x 4 directions x 8 formats = 128 rendus contrôlés.
+ * Harnais local de validation structurelle du studio Visuels.
+ * 4 campagnes x 4 directions x 8 formats = 128 rendus.
+ * Le score 8/10 est un gate heuristique de composition, pas une note artistique humaine.
  */
 export function buildMarketingBaselineReport(): MarketingBaselineRow[] {
   const brand = defaultBrands[0];
@@ -37,18 +45,19 @@ export function buildMarketingBaselineReport(): MarketingBaselineRow[] {
       valid: validation.valid,
       errors: validation.errors,
       layout: layoutName(svg),
+      structureScore: structureScore(svg),
     };
   })));
 }
 
 export function assertMarketingBaseline() {
   const rows = buildMarketingBaselineReport();
-  const failures = rows.filter((row) => !row.valid);
-  if (rows.length < 100) {
-    throw new Error(`Baseline marketing incomplète : ${rows.length} rendus.`);
+  const failures = rows.filter((row) => !row.valid || row.layout === "safe-composition" || row.structureScore < 8);
+  if (rows.length !== 128) {
+    throw new Error(`Baseline marketing incomplète : ${rows.length} rendus au lieu de 128.`);
   }
   if (failures.length) {
-    throw new Error(`Baseline marketing invalide : ${failures.map((row) => `${row.template}/${row.format}: ${row.errors.join(", ")}`).join(" | ")}`);
+    throw new Error(`Baseline marketing sous le seuil : ${failures.map((row) => `${row.template}/${row.format}/${row.layout}: ${row.errors.join(", ") || `score ${row.structureScore}`}`).join(" | ")}`);
   }
   return rows;
 }
