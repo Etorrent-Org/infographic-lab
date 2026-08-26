@@ -8,7 +8,7 @@ import {
   cleanVisualText,
   structuralScore as scoreCorePlan,
   wrapVisualText,
-} from "./visual-layout-core";
+} from "./visual-layout-core.ts";
 import type {
   CanvasSpec,
   IcebergClassification,
@@ -16,7 +16,7 @@ import type {
   LayoutBoxRole,
   VisualLayoutPlan,
   WrappedText,
-} from "./visual-layout-core";
+} from "./visual-layout-core.ts";
 import type { CanonicalInfographic, CustomVisualKind } from "./types";
 
 export {
