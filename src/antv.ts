@@ -121,6 +121,14 @@ export function getAntvVariants(value: CanonicalInfographic): AntvVisualVariant[
   return buildVariantCatalog(value);
 }
 
+function antvTitleFontSize(title: string) {
+  const length = title.trim().length;
+  if (length > 72) return 14;
+  if (length > 48) return 15;
+  if (length > 28) return 16;
+  return 19;
+}
+
 function resolveTheme(style: InfographicStyle, value: CanonicalInfographic) {
   const visual = styleThemes[style];
   const { accent, background } = getVisualColors(style, value);
@@ -138,6 +146,21 @@ function resolveTheme(style: InfographicStyle, value: CanonicalInfographic) {
     colorPrimary: accent,
     colorBg: background,
     palette: getVisualColors(style, value).palette,
+    // AntV 0.2.x calcule le bloc titre avec sa typo par défaut avant le rendu final.
+    // Un titre métier moyen peut alors se couper sur deux lignes et recouvrir le sous-titre.
+    // Une taille bornée garde le titre sur une ligne dans les gabarits exposés sans supprimer le sous-titre.
+    title: {
+      ...(visual.config.title ?? {}),
+      "font-size": antvTitleFontSize(value.title),
+      "line-height": "20px",
+      "font-family": family,
+    },
+    desc: {
+      ...(visual.config.desc ?? {}),
+      "font-size": 12,
+      "line-height": "16px",
+      "font-family": family,
+    },
     item: {
       ...(visual.config.item ?? {}),
       label: { ...(visual.config.item?.label ?? {}), ...densityTypography.label, "font-family": family },
