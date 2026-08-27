@@ -46,7 +46,6 @@ export const AUDITED_ANTV_TEMPLATES = [
   "list-grid-simple",
   "list-grid-horizontal-icon-arrow",
   "list-row-horizontal-icon-line",
-  "list-sector-simple",
   "list-grid-badge-card",
   "list-grid-compact-card",
   "list-pyramid-compact-card",
@@ -85,14 +84,6 @@ function supportsCompactCards(value: CanonicalInfographic) {
 
 function supportsTightGeometry(value: CanonicalInfographic) {
   return value.items.every((item) => item.title.trim().length <= 24 && item.description.trim().length <= 46);
-}
-
-function supportsSectorGeometry(value: CanonicalInfographic) {
-  return !value.subtitle?.trim()
-    && value.title.trim().length <= 24
-    && value.items.length >= 3
-    && value.items.length <= 4
-    && value.items.every((item) => item.title.trim().length <= 18 && item.description.trim().length <= 24);
 }
 
 function hasNumbers(value: CanonicalInfographic) {
@@ -169,7 +160,6 @@ export function buildVariantCatalog(value: CanonicalInfographic): VisualVariant[
       { label: "Icônes", template: "list-grid-horizontal-icon-arrow" },
     );
     if (value.items.length <= 4) variants.push({ label: "Ligne", template: "list-row-horizontal-icon-line" });
-    if (supportsSectorGeometry(value)) variants.push({ label: "Radial", template: "list-sector-simple" });
     if (compactCards) {
       variants.push(
         { label: "Cartes", template: "list-grid-badge-card" },
