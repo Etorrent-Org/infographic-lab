@@ -50,6 +50,13 @@ function safeName(value) {
   return value.replace(/[^a-zA-Z0-9_-]+/g, "-");
 }
 
+function expectedAntvLabels(template) {
+  const layout = layoutForTemplate(template);
+  const count = layout === "comparison" ? 2 : template === "list-pyramid-compact-card" ? 3 : 4;
+  const prefix = layout === "timeline" ? "Jalon" : "Axe";
+  return Array.from({ length: count }, (_, index) => `${prefix} ${index + 1}`);
+}
+
 async function waitForAudit(page) {
   await page.waitForFunction(() => (
     window.__VISUAL_AUDIT_READY__ === true &&
@@ -137,6 +144,52 @@ async function inspectRenderedVisual(page, mode) {
   }, mode);
 }
 
+async function inspectAntvSemantics(page, expectedLabels) {
+  return page.evaluate((labels) => {
+    const issues = [];
+    const container = document.querySelector("[data-antv-audit-canvas]");
+    const svg = container?.querySelector("svg");
+    if (!svg) return { issues: ["SVG AntV absent pour le contrôle sémantique"] };
+
+    const text = (svg.textContent ?? "").replace(/\s+/g, " ");
+    for (const label of labels) {
+      if (!text.includes(label)) issues.push(`élément source absent du rendu: ${label}`);
+    }
+
+    const visible = (node) => {
+      const rect = node.getBoundingClientRect();
+      const style = getComputedStyle(node);
+      return rect.width > 2 && rect.height > 2 && style.display !== "none" && style.visibility !== "hidden";
+    };
+    const overlap = (a, b) => {
+      const ra = a.getBoundingClientRect();
+      const rb = b.getBoundingClientRect();
+      const x = Math.max(0, Math.min(ra.right, rb.right) - Math.max(ra.left, rb.left));
+      const y = Math.max(0, Math.min(ra.bottom, rb.bottom) - Math.max(ra.top, rb.top));
+      return x > 2 && y > 2;
+    };
+
+    const title = svg.querySelector('[data-element-type="title"]');
+    if (title && visible(title)) {
+      const candidates = [...svg.querySelectorAll(
+        '[data-element-type="desc"], [data-element-type="item-label"], [data-element-type="item-desc"], [data-element-type="item-value"]'
+      )].filter((node) => node !== title && visible(node));
+      for (const node of candidates) {
+        if (overlap(title, node)) {
+          issues.push(`titre AntV chevauche ${node.getAttribute("data-element-type") ?? "un texte"}: ${(node.textContent ?? "").trim().slice(0, 36)}`);
+          break;
+        }
+      }
+    }
+
+    const desc = svg.querySelector('[data-element-type="desc"]');
+    if (title && desc && visible(title) && visible(desc) && overlap(title, desc)) {
+      issues.push("titre et sous-titre AntV se chevauchent");
+    }
+    return { issues };
+  }, expectedLabels);
+}
+
 async function inspectExports(page) {
   return page.evaluate(async () => {
     const issues = [];
@@ -205,20 +258,22 @@ test("audit navigateur de tous les gabarits AntV exposés", async ({ page }) => 
   for (const template of antvTemplates) {
     for (const style of ["clean", "dark"]) {
       browserErrors = [];
+      const layout = layoutForTemplate(template);
       const query = new URLSearchParams({
         "visual-audit": "1",
         mode: "antv",
         template,
-        layout: layoutForTemplate(template),
+        layout,
         style,
       });
       await page.goto(`/?${query.toString()}`, { waitUntil: "networkidle" });
       await waitForAudit(page);
       const report = await inspectRenderedVisual(page, "antv");
+      const semanticReport = await inspectAntvSemantics(page, expectedAntvLabels(template));
       const exportReport = await inspectExports(page);
       const name = `antv-${safeName(template)}-${style}`;
       await page.locator("[data-visual-audit-root]").screenshot({ path: join(outputDir, `${name}.png`) });
-      const caseIssues = [...browserErrors, ...report.issues, ...exportReport.issues];
+      const caseIssues = [...browserErrors, ...report.issues, ...semanticReport.issues, ...exportReport.issues];
       if (report.renderedCount < 5) caseIssues.push(`rendu AntV insuffisant (${report.renderedCount} éléments graphiques)`);
       if (exportReport.svgLength < 500) caseIssues.push(`SVG exporté trop court (${exportReport.svgLength})`);
       if (exportReport.pngLength < 1000) caseIssues.push(`PNG exporté trop court (${exportReport.pngLength})`);
