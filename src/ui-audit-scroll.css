@@ -1,0 +1,49 @@
+/* #26 — un seul défilement vertical pour les panneaux sur tablette et mobile */
+
+@media (max-width: 850px) {
+  html,
+  body,
+  #root {
+    min-height: 100%;
+    height: auto;
+  }
+
+  body {
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .suite-root,
+  .suite-content,
+  .studio-app,
+  .marketing-app,
+  .studio-workbench,
+  .marketing-workbench {
+    height: auto;
+    overflow: visible;
+  }
+
+  .studio-inspector,
+  .marketing-inspector {
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible;
+  }
+
+  .studio-inspector-scroll,
+  .marketing-inspector-scroll {
+    min-height: 0;
+    max-height: none;
+    overflow: visible;
+    overscroll-behavior: auto;
+  }
+
+  .studio-stage,
+  .marketing-stage {
+    min-height: 0 !important;
+  }
+
+  .studio-stage-scroll {
+    min-height: 0 !important;
+  }
+}

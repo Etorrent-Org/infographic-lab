@@ -1,0 +1,351 @@
+/* Bibliothèque de projets — audit UI/UX #7 */
+
+.studio-library-backdrop {
+  z-index: 120;
+}
+
+.studio-library-modal {
+  width: min(980px, 100%);
+}
+
+.studio-library-modal > header {
+  min-height: 70px;
+}
+
+.studio-library-modal > header span,
+.studio-library-action-copy > span {
+  color: var(--ui-accent-strong);
+  font-size: 9px;
+  font-weight: 820;
+  letter-spacing: 0.09em;
+}
+
+.studio-library-close:focus-visible,
+.studio-project-card-actions button:focus-visible,
+.studio-version-list button:focus-visible,
+.studio-library-action-dialog button:focus-visible,
+.studio-library-action-dialog input:focus-visible {
+  outline: 3px solid var(--ui-accent-soft);
+  outline-offset: 2px;
+}
+
+.studio-library-grid {
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 12px;
+  padding: 18px;
+}
+
+.studio-library-empty {
+  grid-column: 1 / -1;
+}
+
+.studio-project-card {
+  position: relative;
+  gap: 13px;
+  padding: 14px;
+  border-radius: 13px;
+  background: var(--ui-surface-2);
+  transition: border-color 150ms ease, background 150ms ease, box-shadow 150ms ease;
+}
+
+.studio-project-card:hover {
+  border-color: var(--ui-border-strong);
+  background: color-mix(in srgb, var(--ui-surface-2) 76%, var(--ui-surface));
+}
+
+.studio-project-card.active {
+  border-color: color-mix(in srgb, var(--ui-accent) 68%, var(--ui-border));
+  box-shadow: 0 0 0 3px var(--ui-accent-soft);
+}
+
+.studio-project-card-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.studio-project-card-heading strong {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--ui-text);
+  font-size: 13px;
+}
+
+.studio-project-card-heading > span {
+  flex: 0 0 auto;
+  border: 1px solid color-mix(in srgb, var(--ui-accent) 28%, var(--ui-border));
+  border-radius: 999px;
+  background: var(--ui-accent-soft);
+  color: var(--ui-accent-strong);
+  padding: 4px 7px;
+  font-size: 9px;
+  font-weight: 780;
+}
+
+.studio-project-card-copy small,
+.studio-project-versions summary {
+  color: var(--ui-muted);
+  font-size: 10px;
+}
+
+.studio-project-card-actions {
+  display: grid;
+  grid-template-columns: minmax(92px, 1fr) repeat(3, auto);
+  align-items: center;
+  gap: 6px;
+}
+
+.studio-project-card-actions button {
+  min-height: 36px;
+  border: 1px solid var(--ui-border);
+  border-radius: 9px;
+  padding: 0 10px;
+  cursor: pointer;
+  font-size: 10.5px;
+  font-weight: 740;
+  transition: 140ms ease;
+}
+
+.studio-project-open {
+  border-color: var(--ui-text) !important;
+  background: var(--ui-text) !important;
+  color: var(--ui-surface) !important;
+}
+
+.studio-project-open:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--ui-shadow-soft);
+}
+
+.studio-project-quiet {
+  background: var(--ui-surface);
+  color: var(--ui-muted);
+}
+
+.studio-project-quiet:hover {
+  border-color: var(--ui-border-strong);
+  background: var(--ui-surface-3);
+  color: var(--ui-text);
+}
+
+.studio-project-danger {
+  background: transparent;
+  color: var(--ui-muted);
+}
+
+.studio-project-danger:hover {
+  border-color: color-mix(in srgb, var(--ui-danger) 42%, var(--ui-border));
+  background: color-mix(in srgb, var(--ui-danger) 9%, var(--ui-surface));
+  color: var(--ui-danger);
+}
+
+.studio-project-versions {
+  border-top: 1px solid var(--ui-border);
+  padding-top: 10px;
+}
+
+.studio-project-versions summary {
+  width: fit-content;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.studio-project-versions summary:hover {
+  color: var(--ui-text);
+}
+
+.studio-version-list {
+  gap: 5px;
+  margin-top: 8px;
+}
+
+.studio-version-list button {
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-radius: 8px;
+  padding: 7px 9px;
+  font-size: 9.5px;
+}
+
+.studio-version-list button span {
+  color: var(--ui-muted);
+}
+
+.studio-version-list button strong {
+  color: var(--ui-accent-strong);
+  font-size: 9.5px;
+}
+
+.studio-library-action-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 140;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(4, 8, 15, 0.38);
+  backdrop-filter: blur(5px);
+}
+
+.studio-library-action-dialog {
+  width: min(460px, 100%);
+  display: grid;
+  gap: 18px;
+  border: 1px solid var(--ui-border);
+  border-radius: 16px;
+  background: var(--ui-surface);
+  color: var(--ui-text);
+  padding: 20px;
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.36);
+}
+
+.studio-library-action-copy {
+  display: grid;
+  gap: 5px;
+}
+
+.studio-library-action-copy h3 {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+
+.studio-library-action-copy p {
+  margin: 0;
+  color: var(--ui-muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.studio-library-action-dialog label {
+  display: grid;
+  gap: 7px;
+}
+
+.studio-library-action-dialog label > span {
+  color: var(--ui-muted);
+  font-size: 10px;
+  font-weight: 760;
+}
+
+.studio-library-action-dialog input {
+  width: 100%;
+  min-height: 42px;
+  border: 1px solid var(--ui-border);
+  border-radius: 10px;
+  background: var(--ui-surface-2);
+  color: var(--ui-text);
+  padding: 9px 11px;
+  outline: none;
+  font-size: 12px;
+}
+
+.studio-library-action-dialog input:focus {
+  border-color: var(--ui-accent);
+  box-shadow: 0 0 0 3px var(--ui-accent-soft);
+}
+
+.studio-library-action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.studio-library-action-buttons button {
+  min-height: 39px;
+  border-radius: 9px;
+  padding: 0 13px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 760;
+}
+
+.studio-dialog-secondary {
+  border: 1px solid var(--ui-border);
+  background: var(--ui-surface-2);
+  color: var(--ui-muted);
+}
+
+.studio-dialog-secondary:hover {
+  border-color: var(--ui-border-strong);
+  color: var(--ui-text);
+}
+
+.studio-dialog-primary {
+  border: 1px solid var(--ui-text);
+  background: var(--ui-text);
+  color: var(--ui-surface);
+}
+
+.studio-dialog-primary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.studio-library-delete-dialog {
+  grid-template-columns: auto minmax(0, 1fr);
+}
+
+.studio-library-delete-dialog .studio-library-action-buttons {
+  grid-column: 1 / -1;
+}
+
+.studio-library-danger-mark {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--ui-danger) 12%, var(--ui-surface));
+  color: var(--ui-danger);
+  font-size: 19px;
+  font-weight: 850;
+}
+
+.studio-dialog-danger {
+  border: 1px solid var(--ui-danger);
+  background: var(--ui-danger);
+  color: white;
+}
+
+.studio-dialog-danger:hover {
+  filter: brightness(0.96);
+}
+
+.studio-app[data-theme="dark"] .studio-project-card:hover {
+  background: color-mix(in srgb, var(--ui-surface-2) 84%, white 3%);
+}
+
+.studio-app[data-theme="dark"] .studio-library-action-layer {
+  background: rgba(0, 0, 0, 0.48);
+}
+
+@media (max-width: 720px) {
+  .studio-library-backdrop {
+    padding: 12px;
+  }
+
+  .studio-library-grid {
+    grid-template-columns: 1fr;
+    padding: 12px;
+  }
+
+  .studio-project-card-actions {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .studio-project-open {
+    grid-column: 1 / -1;
+  }
+
+  .studio-library-action-layer {
+    padding: 14px;
+  }
+}

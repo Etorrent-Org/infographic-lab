@@ -1,0 +1,550 @@
+/* Ajustements UI/UX validés pendant l'audit V2. */
+
+/* #1 — navigation principale Structure / Visuels */
+.suite-root {
+  grid-template-columns: 84px minmax(0, 1fr);
+}
+
+.suite-rail {
+  gap: 10px;
+  padding: 12px 6px 10px;
+}
+
+.suite-rail-brand {
+  width: 44px;
+  height: 44px;
+  margin-bottom: 12px;
+}
+
+.suite-rail button {
+  position: relative;
+  width: 70px;
+  min-height: 66px;
+  gap: 7px;
+  padding: 8px 6px;
+  border-radius: 14px;
+}
+
+.suite-icon {
+  width: 23px;
+  height: 23px;
+  display: grid;
+  place-items: center;
+}
+
+.suite-icon svg {
+  width: 23px;
+  height: 23px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.suite-rail button small {
+  font-size: 10px;
+  line-height: 1.1;
+  font-weight: 750;
+  letter-spacing: 0;
+}
+
+.suite-rail button.active {
+  background: color-mix(in srgb, #4f7df3 13%, white);
+  color: #274fbd;
+  border-color: color-mix(in srgb, #4f7df3 38%, transparent);
+  box-shadow: none;
+}
+
+.suite-rail button.active::before {
+  content: "";
+  position: absolute;
+  left: -7px;
+  top: 15px;
+  bottom: 15px;
+  width: 3px;
+  border-radius: 999px;
+  background: #4f7df3;
+}
+
+.suite-rail button:hover:not(.active) {
+  transform: translateY(-1px);
+}
+
+.suite-rail button:focus-visible {
+  outline: 3px solid color-mix(in srgb, #4f7df3 35%, transparent);
+  outline-offset: 2px;
+}
+
+.suite-root:has(.studio-app[data-theme="dark"]) .suite-rail button.active,
+.suite-root:has(.marketing-app[data-theme="dark"]) .suite-rail button.active {
+  background: rgba(79, 125, 243, 0.16);
+  color: #a9bfff;
+  border-color: rgba(109, 143, 235, 0.34);
+}
+
+.suite-root:has(.studio-app[data-theme="dark"]) .suite-rail button.active::before,
+.suite-root:has(.marketing-app[data-theme="dark"]) .suite-rail button.active::before {
+  background: #82a2ff;
+}
+
+/* Le branding principal est déjà porté par le rail : on évite de répéter le monogramme IL dans chaque header. */
+.studio-product-mark,
+.marketing-product-mark {
+  display: none;
+}
+
+.studio-product,
+.marketing-product {
+  gap: 0;
+}
+
+/* #2 — header cohérent entre Structure et Visuels */
+.marketing-header {
+  flex: 0 0 64px;
+  min-height: 64px;
+  grid-template-columns: 260px minmax(240px, 1fr) auto;
+  gap: 18px;
+  padding: 0 18px;
+  background: color-mix(in srgb, var(--mk-panel) 94%, transparent);
+  backdrop-filter: blur(16px);
+}
+
+.studio-product-copy,
+.marketing-product > div:last-child {
+  min-width: 0;
+  display: grid;
+  gap: 1px;
+}
+
+.studio-product-copy strong,
+.marketing-product strong {
+  font-size: 14px;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+}
+
+.studio-product-copy span,
+.marketing-product span {
+  font-size: 10px;
+  font-weight: 720;
+  letter-spacing: 0.09em;
+}
+
+.marketing-campaign-name {
+  justify-self: center;
+  width: min(520px, 100%);
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 9px;
+}
+
+.marketing-campaign-name > span {
+  font-size: 10px;
+  font-weight: 760;
+  letter-spacing: 0.08em;
+}
+
+.marketing-campaign-name input {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  padding: 7px 8px;
+  font-size: 13px;
+  font-weight: 730;
+  text-align: center;
+  outline: none;
+}
+
+.marketing-campaign-name input:hover,
+.marketing-campaign-name input:focus {
+  border-color: var(--mk-border);
+  background: var(--mk-panel-soft);
+}
+
+.marketing-header-actions {
+  gap: 7px;
+}
+
+.marketing-header-actions button {
+  min-height: 34px;
+  border-radius: 9px;
+  background: var(--mk-panel-soft);
+  color: var(--mk-muted);
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 720;
+}
+
+.marketing-header-actions button:hover {
+  border-color: color-mix(in srgb, var(--mk-border) 50%, var(--mk-text));
+  color: var(--mk-text);
+  background: color-mix(in srgb, var(--mk-panel-soft) 70%, var(--mk-panel));
+}
+
+.marketing-local-pill {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 10px;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+}
+
+/* #3 — navigation secondaire unifiée */
+.studio-inspector {
+  display: grid;
+  grid-template-columns: 82px minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+}
+
+.studio-inspector-tabs,
+.marketing-panel-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+  padding: 12px 8px;
+  border-right: 1px solid var(--ui-border, var(--mk-border-soft));
+  border-bottom: 0;
+  background: var(--ui-surface-2, var(--mk-panel-soft));
+}
+
+.studio-inspector-tabs {
+  flex: none;
+}
+
+.marketing-inspector {
+  grid-template-columns: 82px minmax(0, 1fr);
+}
+
+.studio-inspector-tabs button,
+.marketing-panel-tabs button {
+  position: relative;
+  min-width: 0;
+  min-height: 58px;
+  width: 100%;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 4px;
+  padding: 8px 5px;
+  border: 1px solid transparent;
+  border-radius: 11px;
+  background: transparent;
+  font-size: 10px;
+  line-height: 1.1;
+  font-weight: 760;
+  cursor: pointer;
+}
+
+.studio-inspector-tabs button > span,
+.marketing-panel-tabs button > span {
+  font-size: 9px;
+  font-weight: 820;
+  letter-spacing: 0.08em;
+  opacity: 0.72;
+}
+
+.studio-inspector-tabs button.active,
+.marketing-panel-tabs button.active {
+  border-color: color-mix(in srgb, var(--ui-accent, var(--mk-accent, #4f7df3)) 32%, var(--ui-border, var(--mk-border)));
+  background: color-mix(in srgb, var(--ui-accent, var(--mk-accent, #4f7df3)) 10%, var(--ui-surface, var(--mk-panel)));
+  color: var(--ui-accent-strong, var(--mk-accent, #4f7df3));
+}
+
+.studio-inspector-tabs button.active::before,
+.marketing-panel-tabs button.active::before {
+  content: "";
+  position: absolute;
+  left: -9px;
+  top: 13px;
+  bottom: 13px;
+  width: 3px;
+  border-radius: 999px;
+  background: var(--ui-accent, var(--mk-accent, #4f7df3));
+}
+
+.studio-inspector-tabs button:hover:not(.active),
+.marketing-panel-tabs button:hover:not(.active) {
+  background: var(--ui-surface-3, var(--mk-panel));
+  color: var(--ui-text, var(--mk-text));
+}
+
+.studio-inspector-tabs button:focus-visible,
+.marketing-panel-tabs button:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--ui-accent, var(--mk-accent, #4f7df3)) 30%, transparent);
+  outline-offset: 1px;
+}
+
+.studio-inspector-scroll,
+.marketing-inspector-scroll {
+  min-width: 0;
+}
+
+.studio-app[data-theme="dark"] .studio-inspector-tabs button.active,
+.marketing-app[data-theme="dark"] .marketing-panel-tabs button.active {
+  background: color-mix(in srgb, var(--ui-accent, var(--mk-accent, #82a2ff)) 14%, transparent);
+}
+
+/* #4 — sélecteur de vue du canvas unifié */
+.studio-stage-toolbar,
+.marketing-stage-toolbar {
+  min-width: 0;
+}
+
+.studio-view-tabs,
+.marketing-toolbar-actions {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px;
+  border: 1px solid var(--ui-border, var(--mk-border));
+  border-radius: 11px;
+  background: var(--ui-surface-2, var(--mk-panel-soft));
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.studio-view-tabs::-webkit-scrollbar,
+.marketing-toolbar-actions::-webkit-scrollbar {
+  display: none;
+}
+
+.studio-view-tabs button,
+.marketing-toolbar-actions button {
+  min-height: 36px;
+  flex: 0 0 auto;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ui-muted, var(--mk-muted));
+  padding: 0 11px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 740;
+  box-shadow: none;
+}
+
+.studio-view-tabs button > span {
+  width: 16px;
+  height: 16px;
+  overflow: hidden;
+  color: transparent;
+  font-size: 0;
+  display: grid;
+  place-items: center;
+}
+
+.studio-view-tabs button > span::before,
+.marketing-toolbar-actions button::before {
+  color: currentColor;
+  font-size: 15px;
+  line-height: 1;
+  font-weight: 650;
+}
+
+.studio-view-tabs button:nth-child(1) > span::before { content: "▦"; }
+.studio-view-tabs button:nth-child(2) > span::before { content: "⌁"; }
+.studio-view-tabs button:nth-child(3) > span::before { content: "⌘"; }
+.studio-view-tabs button:nth-child(4) > span::before { content: "≡"; }
+.marketing-toolbar-actions button:nth-child(1)::before { content: "▦"; }
+.marketing-toolbar-actions button:nth-child(2)::before { content: "▣"; }
+
+.studio-view-tabs button:hover:not(:disabled),
+.marketing-toolbar-actions button:hover {
+  border-color: var(--ui-border-strong, var(--mk-border));
+  color: var(--ui-text, var(--mk-text));
+  background: var(--ui-surface-3, var(--mk-panel));
+}
+
+.studio-view-tabs button.active,
+.marketing-toolbar-actions button.active {
+  border-color: color-mix(in srgb, var(--ui-accent, var(--mk-accent, #4f7df3)) 34%, var(--ui-border, var(--mk-border)));
+  background: color-mix(in srgb, var(--ui-accent, var(--mk-accent, #4f7df3)) 11%, var(--ui-surface, var(--mk-panel)));
+  color: var(--ui-accent-strong, var(--mk-accent, #4f7df3));
+  box-shadow: none;
+}
+
+.studio-view-tabs button.active > span::before,
+.marketing-toolbar-actions button.active::before {
+  color: inherit;
+}
+
+.studio-view-tabs button:focus-visible,
+.marketing-toolbar-actions button:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--ui-accent, var(--mk-accent, #4f7df3)) 30%, transparent);
+  outline-offset: 1px;
+}
+
+.studio-view-tabs button:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+.studio-app[data-theme="dark"] .studio-view-tabs button.active,
+.marketing-app[data-theme="dark"] .marketing-toolbar-actions button.active {
+  background: color-mix(in srgb, var(--ui-accent, var(--mk-accent, #82a2ff)) 15%, transparent);
+}
+
+/* #5 — lisibilité et confort des formulaires */
+.studio-app input,
+.studio-app textarea,
+.studio-app select,
+.marketing-panel input,
+.marketing-panel textarea,
+.marketing-panel select {
+  min-height: 40px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.studio-app textarea,
+.marketing-panel textarea {
+  padding-block: 10px;
+}
+
+.studio-field > span,
+.studio-file-field > span,
+.studio-field-label,
+.marketing-panel label > span,
+.marketing-format-section > span,
+.marketing-benefits > span {
+  font-size: 10.5px;
+  line-height: 1.25;
+}
+
+.studio-section-title p,
+.marketing-panel-title p,
+.studio-intent-grid small,
+.studio-provider-picker small,
+.marketing-template-grid button small,
+.marketing-format-grid button small,
+.marketing-pack-list small,
+.marketing-note span {
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.studio-primary,
+.studio-secondary,
+.marketing-primary,
+.marketing-secondary,
+.studio-header-button,
+.studio-theme-toggle,
+.marketing-header-actions button,
+.studio-view-tabs button,
+.marketing-toolbar-actions button,
+.marketing-export-actions button {
+  font-size: 11.5px;
+}
+
+.studio-primary,
+.studio-secondary,
+.marketing-primary,
+.marketing-secondary {
+  min-height: 42px;
+}
+
+.studio-block-editor-head button,
+.studio-link-button,
+.studio-block-list-head button,
+.studio-issues article > button {
+  font-size: 10px;
+}
+
+.studio-block-row-copy strong,
+.studio-provider-picker strong,
+.marketing-note strong {
+  font-size: 11px;
+}
+
+.studio-block-row-copy small,
+.studio-source-field > small,
+.marketing-color-grid small,
+.marketing-stage-caption small,
+.marketing-export-info {
+  font-size: 9.5px;
+}
+
+.studio-app[data-theme="dark"] .studio-section-title p,
+.studio-app[data-theme="dark"] .studio-intent-grid small,
+.studio-app[data-theme="dark"] .studio-provider-picker small,
+.marketing-app[data-theme="dark"] .marketing-panel-title p,
+.marketing-app[data-theme="dark"] .marketing-template-grid button small,
+.marketing-app[data-theme="dark"] .marketing-format-grid button small,
+.marketing-app[data-theme="dark"] .marketing-pack-list small,
+.marketing-app[data-theme="dark"] .marketing-note span {
+  color: color-mix(in srgb, currentColor 88%, white 12%);
+}
+
+@media (max-width: 1100px) {
+  .studio-header,
+  .marketing-header {
+    grid-template-columns: 210px minmax(180px, 1fr) auto;
+    gap: 12px;
+    padding-inline: 14px;
+  }
+}
+
+@media (max-width: 760px) {
+  .suite-root {
+    grid-template-columns: 70px minmax(0, 1fr);
+  }
+
+  .suite-rail button {
+    width: 58px;
+    min-height: 62px;
+  }
+
+  .suite-rail button small {
+    font-size: 9px;
+  }
+
+  .studio-header,
+  .marketing-header {
+    grid-template-columns: minmax(150px, 1fr) auto;
+  }
+
+  .studio-project-title,
+  .marketing-campaign-name {
+    display: none;
+  }
+
+  .studio-inspector,
+  .marketing-inspector {
+    grid-template-columns: 70px minmax(0, 1fr);
+  }
+
+  .studio-inspector-tabs,
+  .marketing-panel-tabs {
+    padding-inline: 6px;
+  }
+
+  .studio-inspector-tabs button,
+  .marketing-panel-tabs button {
+    min-height: 54px;
+    font-size: 9px;
+  }
+
+  .studio-view-tabs,
+  .marketing-toolbar-actions {
+    max-width: 100%;
+  }
+
+  .studio-view-tabs button,
+  .marketing-toolbar-actions button {
+    min-height: 36px;
+    padding-inline: 9px;
+  }
+}

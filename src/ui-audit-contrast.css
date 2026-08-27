@@ -1,0 +1,59 @@
+/* #29 — contraste lisible des petits textes secondaires en mode clair uniquement. */
+
+.studio-app[data-theme="light"] {
+  --ui-soft-readable: #687386;
+}
+
+.marketing-app[data-theme="light"] {
+  --mk-muted-readable: #5f697c;
+}
+
+/* Structure : on conserve la hiérarchie, mais les métadonnées ne doivent plus être trop pâles. */
+.studio-app[data-theme="light"] .studio-product-copy span,
+.studio-app[data-theme="light"] .studio-project-title > span,
+.studio-app[data-theme="light"] .studio-project-title small,
+.studio-app[data-theme="light"] .studio-source-field > small,
+.studio-app[data-theme="light"] .studio-intent-grid small,
+.studio-app[data-theme="light"] .studio-provider-picker small,
+.studio-app[data-theme="light"] .studio-block-row-copy small,
+.studio-app[data-theme="light"] .studio-score > span,
+.studio-app[data-theme="light"] .studio-footer-status,
+.studio-app[data-theme="light"] .studio-issues article > span,
+.studio-app[data-theme="light"] .studio-issues article > small,
+.studio-app[data-theme="light"] .studio-output-heading > small,
+.studio-app[data-theme="light"] .studio-source-details summary,
+.studio-app[data-theme="light"] .engine-loading {
+  color: var(--ui-soft-readable);
+}
+
+/* Visuels : même niveau de lisibilité pour labels, aides et métadonnées. */
+.marketing-app[data-theme="light"] .marketing-product span,
+.marketing-app[data-theme="light"] .marketing-campaign-name > span,
+.marketing-app[data-theme="light"] .marketing-stage-toolbar span,
+.marketing-app[data-theme="light"] .marketing-panel-title > span,
+.marketing-app[data-theme="light"] .marketing-panel-title p,
+.marketing-app[data-theme="light"] .marketing-field-label,
+.marketing-app[data-theme="light"] .marketing-panel label > span,
+.marketing-app[data-theme="light"] .marketing-format-section > span,
+.marketing-app[data-theme="light"] .marketing-benefits > span,
+.marketing-app[data-theme="light"] .marketing-template-grid button small,
+.marketing-app[data-theme="light"] .marketing-format-grid button small,
+.marketing-app[data-theme="light"] .marketing-pack-list small,
+.marketing-app[data-theme="light"] .marketing-color-grid small,
+.marketing-app[data-theme="light"] .marketing-stage-caption small,
+.marketing-app[data-theme="light"] .marketing-export-info,
+.marketing-app[data-theme="light"] .marketing-note span {
+  color: var(--mk-muted-readable);
+}
+
+/* Le rail global appartient à l'interface, pas au livrable : même confort de lecture. */
+.suite-root:has(.studio-app[data-theme="light"]) .suite-rail button:not(.active),
+.suite-root:has(.marketing-app[data-theme="light"]) .suite-rail button:not(.active) {
+  color: #5f697c;
+}
+
+/* #32 — Structure sombre : le niveau tertiaire reste distinct de --ui-muted,
+   mais gagne assez de contraste pour les textes de 9–10 px sur les surfaces sombres. */
+.studio-app[data-theme="dark"] {
+  --ui-soft: #8793a5;
+}

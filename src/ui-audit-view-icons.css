@@ -1,0 +1,13 @@
+/* #35 — les pictogrammes des vues Structure restent visibles quand les anciens codes VIS/MER/MAP/MD sont masqués. */
+
+.studio-view-tabs button > span::before {
+  color: var(--ui-muted);
+}
+
+.studio-view-tabs button:hover:not(:disabled) > span::before {
+  color: var(--ui-text);
+}
+
+.studio-view-tabs button.active > span::before {
+  color: var(--ui-accent-strong);
+}

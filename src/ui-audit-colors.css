@@ -1,0 +1,121 @@
+/* #18 — cartes couleur cohérentes entre Structure et Visuels */
+
+.studio-color-grid,
+.marketing-color-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  align-items: stretch;
+}
+
+.studio-color-grid label,
+.marketing-color-grid label {
+  min-width: 0;
+  display: grid;
+  grid-template-rows: auto 58px auto;
+  gap: 7px;
+  padding: 9px;
+  border: 1px solid var(--ui-border, var(--mk-border));
+  border-radius: 12px;
+  background: var(--ui-surface-2, var(--mk-panel-soft));
+  cursor: pointer;
+  transition: border-color 140ms ease, background 140ms ease, box-shadow 140ms ease;
+}
+
+.studio-color-grid label:hover,
+.marketing-color-grid label:hover {
+  border-color: var(--ui-border-strong, color-mix(in srgb, var(--mk-accent, #4f7df3) 34%, var(--mk-border)));
+  background: var(--ui-surface-3, var(--mk-panel));
+}
+
+.studio-color-grid label:focus-within,
+.marketing-color-grid label:focus-within {
+  border-color: var(--ui-accent, var(--mk-accent, #4f7df3));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ui-accent, var(--mk-accent, #4f7df3)) 18%, transparent);
+}
+
+.studio-color-grid label > span,
+.marketing-color-grid label > span {
+  color: var(--ui-muted, var(--mk-muted));
+  font-size: 10.5px;
+  font-weight: 780;
+  line-height: 1.2;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.studio-color-grid input[type="color"],
+.marketing-color-grid input[type="color"] {
+  width: 100%;
+  height: 58px;
+  min-height: 58px;
+  padding: 3px;
+  border: 1px solid var(--ui-border, var(--mk-border));
+  border-radius: 9px;
+  background: var(--ui-surface, var(--mk-panel));
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.studio-color-grid input[type="color"]::-webkit-color-swatch-wrapper,
+.marketing-color-grid input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.studio-color-grid input[type="color"]::-webkit-color-swatch,
+.marketing-color-grid input[type="color"]::-webkit-color-swatch {
+  border: 0;
+  border-radius: 6px;
+}
+
+.studio-color-grid input[type="color"]::-moz-color-swatch,
+.marketing-color-grid input[type="color"]::-moz-color-swatch {
+  border: 0;
+  border-radius: 6px;
+}
+
+.studio-color-grid small,
+.marketing-color-grid small {
+  min-width: 0;
+  color: var(--ui-soft, var(--mk-muted));
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 10px;
+  font-weight: 650;
+  line-height: 1.2;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.studio-app[data-theme="dark"] .studio-color-grid label,
+.marketing-app[data-theme="dark"] .marketing-color-grid label {
+  background: color-mix(in srgb, var(--ui-surface-2, var(--mk-panel-soft)) 94%, white 2%);
+}
+
+.studio-app[data-theme="dark"] .studio-color-grid input[type="color"],
+.marketing-app[data-theme="dark"] .marketing-color-grid input[type="color"] {
+  border-color: var(--ui-border-strong, var(--mk-border));
+  background: var(--ui-surface-2, var(--mk-panel-soft));
+}
+
+@media (max-width: 620px) {
+  .studio-color-grid,
+  .marketing-color-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .studio-color-grid label,
+  .marketing-color-grid label {
+    grid-template-columns: minmax(84px, .6fr) minmax(120px, 1fr) auto;
+    grid-template-rows: auto;
+    align-items: center;
+  }
+
+  .studio-color-grid input[type="color"],
+  .marketing-color-grid input[type="color"] {
+    height: 48px;
+    min-height: 48px;
+  }
+}

@@ -1,0 +1,47 @@
+/* #24 — focus clavier unifie sur tous les controles interactifs */
+
+.suite-root {
+  --audit-focus-color: #4f7df3;
+  --audit-focus-ring: color-mix(in srgb, var(--audit-focus-color) 34%, transparent);
+}
+
+.suite-root:has(.studio-app[data-theme="dark"]),
+.suite-root:has(.marketing-app[data-theme="dark"]) {
+  --audit-focus-color: #82a2ff;
+  --audit-focus-ring: color-mix(in srgb, var(--audit-focus-color) 42%, transparent);
+}
+
+/* Le clic souris ne reçoit pas de contour artificiel. */
+.suite-root button:focus:not(:focus-visible),
+.suite-root summary:focus:not(:focus-visible),
+.suite-root input[type="color"]:focus:not(:focus-visible),
+.suite-root input[type="file"]:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Même langage visuel pour les actions principales, secondaires et contextuelles. */
+.suite-root button:focus-visible,
+.suite-root summary:focus-visible,
+.suite-root input[type="color"]:focus-visible,
+.suite-root input[type="file"]:focus-visible {
+  outline: 3px solid var(--audit-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Les petits boutons ronds/carrés gardent un anneau lisible sans modifier leur géométrie. */
+.studio-variant-control button:focus-visible,
+.studio-library-close:focus-visible,
+.studio-notice-close:focus-visible,
+.studio-block-editor-head button:focus-visible,
+.studio-link-button:focus-visible,
+.studio-block-list-head button:focus-visible,
+.studio-issues article > button:focus-visible,
+.marketing-asset-preview button:focus-visible {
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--audit-focus-color) 14%, transparent);
+}
+
+/* Les contrôles de sélection dont le focus est porté par un input héritent du même anneau. */
+.marketing-pack-list label:has(input:focus-visible) {
+  outline: 3px solid var(--audit-focus-ring);
+  outline-offset: 2px;
+}
