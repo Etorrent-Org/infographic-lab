@@ -27,7 +27,6 @@ const antvTemplates = [
   "list-grid-simple",
   "list-grid-horizontal-icon-arrow",
   "list-row-horizontal-icon-line",
-  "list-sector-simple",
   "list-grid-badge-card",
   "list-grid-compact-card",
   "list-pyramid-compact-card",
