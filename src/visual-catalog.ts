@@ -166,9 +166,11 @@ export function buildVariantCatalog(value: CanonicalInfographic): VisualVariant[
       variants.push(
         { label: "Cartes", template: "list-grid-badge-card" },
         { label: "Compact", template: "list-grid-compact-card" },
-        { label: "Pyramide", template: "list-pyramid-compact-card" },
-        { label: "Waterfall visuel", template: "list-waterfall-compact-card" },
       );
+      // AntV 0.2.x peut perdre un élément sur ce gabarit à partir de quatre cartes.
+      // On préfère ne pas exposer une variante qui tronque silencieusement le contenu.
+      if (value.items.length <= 3) variants.push({ label: "Pyramide", template: "list-pyramid-compact-card" });
+      variants.push({ label: "Waterfall visuel", template: "list-waterfall-compact-card" });
     }
   }
 
