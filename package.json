@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "test": "npm run test:visual && npm run test:browser",
     "test:visual": "node --experimental-strip-types --test tests/visual-layouts.test.mjs",
-    "test:browser": "playwright test tests/visual-browser.spec.mjs",
+    "test:browser": "playwright test tests/visual-browser.spec.mjs tests/preview-visual-browser.spec.mjs",
     "start": "node server.mjs"
   },
   "dependencies": {
@@ -24,7 +24,6 @@
     "@playwright/test": "^1.55.0",
     "@types/react": "19.1.10",
     "@types/react-dom": "19.1.7",
-    "@vitejs/plugin-react": "5.0.2",
     "typescript": "5.9.2",
     "vite": "7.1.5"
   }
