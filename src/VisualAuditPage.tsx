@@ -2,6 +2,7 @@ import { Infographic } from "@antv/infographic";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { buildAntvOptions, getAntvVariants } from "./antv";
 import { CustomVisual } from "./CustomVisual";
+import { svgDataUrlToPng, svgElementToDataUrl } from "./project";
 import type { CanonicalInfographic, CustomVisualKind, InfographicItem, InfographicStyle, VisualOrientation } from "./types";
 
 const CUSTOM_KINDS: CustomVisualKind[] = [
@@ -19,6 +20,12 @@ const LONG_DESCRIPTIONS = [
   "Une information additionnelle utilisée pour tester la capacité du rendu à accueillir sept éléments.",
   "Un huitième bloc présent uniquement dans les familles capables de conserver une lecture confortable.",
 ];
+
+type AuditExport = { svg: string; png: string };
+type AuditWindow = Window & {
+  __VISUAL_AUDIT_READY__?: boolean;
+  __VISUAL_AUDIT_EXPORT__?: () => Promise<AuditExport>;
+};
 
 function textItem(index: number, extra: Partial<InfographicItem> = {}): InfographicItem {
   return {
@@ -114,7 +121,7 @@ function readOrientation(params: URLSearchParams): VisualOrientation {
 }
 
 function markReady(ready: boolean) {
-  (window as unknown as { __VISUAL_AUDIT_READY__?: boolean }).__VISUAL_AUDIT_READY__ = ready;
+  (window as AuditWindow).__VISUAL_AUDIT_READY__ = ready;
 }
 
 export function VisualAuditPage() {
@@ -189,6 +196,29 @@ export function VisualAuditPage() {
       instanceRef.current = null;
     };
   }, [mode, style, template, antvData]);
+
+  useEffect(() => {
+    const auditWindow = window as AuditWindow;
+    auditWindow.__VISUAL_AUDIT_EXPORT__ = async () => {
+      let svg: string;
+      if (mode === "custom") {
+        const node = document.querySelector("[data-visual-audit-root] svg");
+        if (!(node instanceof SVGSVGElement)) throw new Error("SVG custom indisponible pour l'export.");
+        svg = svgElementToDataUrl(node);
+      } else {
+        const instance = instanceRef.current;
+        if (!instance) throw new Error("Instance AntV indisponible pour l'export.");
+        svg = await instance.toDataURL({ type: "svg", embedResources: true });
+      }
+      if (!svg.startsWith("data:image/svg+xml")) throw new Error("Export SVG invalide.");
+      const png = await svgDataUrlToPng(svg, 1);
+      if (!png.startsWith("data:image/png")) throw new Error("Export PNG invalide.");
+      return { svg, png };
+    };
+    return () => {
+      auditWindow.__VISUAL_AUDIT_EXPORT__ = undefined;
+    };
+  }, [mode, ready]);
 
   const maxWidth = mode === "custom"
     ? orientation === "portrait" ? 860 : orientation === "square" ? 980 : 1200
