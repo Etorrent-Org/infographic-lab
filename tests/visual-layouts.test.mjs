@@ -1,5 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { normalizeInfographic } from "../src/augmented.ts";
+import { numericItems, numericValue } from "../src/visual-data.ts";
 import { auditVisualPlan, buildVisualPlan, cleanVisualText, structuralScore, wrapVisualText } from "../src/visual-layout.ts";
 import { AUDITED_ANTV_TEMPLATES, CUSTOM_VISUAL_KINDS, buildVariantCatalog } from "../src/visual-catalog.ts";
 
@@ -146,6 +149,35 @@ test("les graphiques ne sont exposés qu'avec des valeurs numériques explicites
   for (const kind of ["kpi", "chart-bar", "chart-column", "chart-line", "chart-donut", "chart-waterfall"]) {
     assert.ok(numericKinds.includes(kind), `rendu numérique absent : ${kind}`);
   }
+});
+
+test("une série numérique incomplète reste incomplète après normalisation", () => {
+  const source = {
+    title: "Série partielle",
+    layout: "list",
+    items: [
+      numericItem(0, 120),
+      item(1, { title: "Valeur non fournie", category: "T2" }),
+      numericItem(2, 155),
+    ],
+    appearance: { orientation: "landscape", visual: "bar" },
+  };
+  const normalized = normalizeInfographic(source);
+  assert.equal(normalized.items[1].value, undefined);
+  assert.equal(normalized.items[1].unit, undefined);
+  assert.equal(numericValue(normalized.items[1]), null);
+  assert.deepEqual(numericItems(normalized.items).map((entry) => numericValue(entry)), [120, 155]);
+  assert.equal(numericItems(normalized.items).length, 2);
+
+  const variants = buildVariantCatalog(normalized);
+  assert.ok(variants.some((variant) => variant.customKind === "chart-bar"), "le graphique reste disponible avec les deux valeurs explicites");
+});
+
+test("les garde-fous du prompt interdisent explicitement d'inventer une valeur manquante", () => {
+  const server = readFileSync(new URL("../server.mjs", import.meta.url), "utf8");
+  assert.match(server, /Ne déduis jamais une valeur numérique/);
+  assert.match(server, /ne complète jamais une série incomplète par invention/);
+  assert.match(server, /N'invente jamais une valeur manquante/);
 });
 
 test("le visuel demandé passe en première position lorsqu'il est compatible", () => {
