@@ -18,6 +18,7 @@ function capturePreview(): PreviewSnapshot | null {
   const clone = svg.cloneNode(true) as SVGSVGElement;
   clone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
   clone.setAttribute("preserveAspectRatio", clone.getAttribute("preserveAspectRatio") || "xMidYMid meet");
+  clone.style.fontFamily = window.getComputedStyle(frame).fontFamily;
 
   const source = new XMLSerializer().serializeToString(clone);
   const title = document.querySelector<HTMLElement>(".studio-output-heading h1")?.textContent?.trim() || "Aperçu de l’infographie";
