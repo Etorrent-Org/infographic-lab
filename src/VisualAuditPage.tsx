@@ -93,14 +93,15 @@ function customFixture(kind: CustomVisualKind, orientation: VisualOrientation): 
 }
 
 function antvFixture(layout: CanonicalInfographic["layout"], template: string): CanonicalInfographic {
+  const sector = template === "list-sector-simple";
   const count = layout === "comparison" ? 2 : template === "list-pyramid-compact-card" ? 3 : 4;
   return {
-    title: "Programme de transformation numérique",
-    subtitle: layout === "list" ? undefined : "Structure claire et compacte.",
+    title: sector ? "Axes prioritaires" : "Programme de transformation numérique",
+    subtitle: sector || layout === "list" ? undefined : "Structure claire et compacte.",
     layout,
     items: Array.from({ length: count }, (_, index) => textItem(index, {
       title: layout === "timeline" ? `Jalon ${index + 1}` : `Axe ${index + 1}`,
-      description: "Texte court et lisible pour ce gabarit.",
+      description: sector ? "Point synthétique." : "Texte court et lisible pour ce gabarit.",
     })),
     appearance: { orientation: "landscape" },
   };
