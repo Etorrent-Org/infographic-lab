@@ -137,6 +137,22 @@ async function inspectRenderedVisual(page, mode) {
   }, mode);
 }
 
+async function inspectExports(page) {
+  return page.evaluate(async () => {
+    const issues = [];
+    const exporter = window.__VISUAL_AUDIT_EXPORT__;
+    if (typeof exporter !== "function") return { issues: ["exporteur visuel absent"], svgLength: 0, pngLength: 0 };
+    try {
+      const output = await exporter();
+      if (!output?.svg?.startsWith("data:image/svg+xml")) issues.push("export SVG non conforme");
+      if (!output?.png?.startsWith("data:image/png")) issues.push("export PNG non conforme");
+      return { issues, svgLength: output?.svg?.length ?? 0, pngLength: output?.png?.length ?? 0 };
+    } catch (error) {
+      return { issues: [`export impossible: ${error instanceof Error ? error.message : String(error)}`], svgLength: 0, pngLength: 0 };
+    }
+  });
+}
+
 test("audit navigateur de tous les rendus custom", async ({ page }) => {
   const failures = [];
   let browserErrors = [];
@@ -162,13 +178,16 @@ test("audit navigateur de tous les rendus custom", async ({ page }) => {
     await page.goto(`/?${query.toString()}`, { waitUntil: "networkidle" });
     await waitForAudit(page);
     const report = await inspectRenderedVisual(page, "custom");
+    const exportReport = await inspectExports(page);
     const name = `custom-${safeName(entry.kind)}-${entry.orientation}-${entry.style}`;
     await page.locator("[data-visual-audit-root]").screenshot({ path: join(outputDir, `${name}.png`) });
-    const caseIssues = [...browserErrors, ...report.issues];
+    const caseIssues = [...browserErrors, ...report.issues, ...exportReport.issues];
     if (report.layoutIssues !== 0) caseIssues.push(`layout issues=${report.layoutIssues}`);
     if (report.score < 9) caseIssues.push(`score structurel=${report.score}`);
     if (report.textCount < 2) caseIssues.push("contenu texte insuffisant");
     if (report.renderedCount < 8) caseIssues.push("rendu SVG insuffisamment matérialisé");
+    if (exportReport.svgLength < 500) caseIssues.push(`SVG exporté trop court (${exportReport.svgLength})`);
+    if (exportReport.pngLength < 1000) caseIssues.push(`PNG exporté trop court (${exportReport.pngLength})`);
     if (caseIssues.length) failures.push(`${name}: ${caseIssues.join(" | ")}`);
   }
 
@@ -196,10 +215,13 @@ test("audit navigateur de tous les gabarits AntV exposés", async ({ page }) => 
       await page.goto(`/?${query.toString()}`, { waitUntil: "networkidle" });
       await waitForAudit(page);
       const report = await inspectRenderedVisual(page, "antv");
+      const exportReport = await inspectExports(page);
       const name = `antv-${safeName(template)}-${style}`;
       await page.locator("[data-visual-audit-root]").screenshot({ path: join(outputDir, `${name}.png`) });
-      const caseIssues = [...browserErrors, ...report.issues];
+      const caseIssues = [...browserErrors, ...report.issues, ...exportReport.issues];
       if (report.renderedCount < 5) caseIssues.push(`rendu AntV insuffisant (${report.renderedCount} éléments graphiques)`);
+      if (exportReport.svgLength < 500) caseIssues.push(`SVG exporté trop court (${exportReport.svgLength})`);
+      if (exportReport.pngLength < 1000) caseIssues.push(`PNG exporté trop court (${exportReport.pngLength})`);
       if (caseIssues.length) failures.push(`${name}: ${caseIssues.join(" | ")}`);
     }
   }
