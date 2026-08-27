@@ -92,8 +92,8 @@ function customFixture(kind: CustomVisualKind, orientation: VisualOrientation): 
   };
 }
 
-function antvFixture(layout: CanonicalInfographic["layout"]): CanonicalInfographic {
-  const count = layout === "comparison" ? 2 : 4;
+function antvFixture(layout: CanonicalInfographic["layout"], template: string): CanonicalInfographic {
+  const count = layout === "comparison" ? 2 : template === "list-pyramid-compact-card" ? 3 : 4;
   return {
     title: "Programme de transformation numérique",
     subtitle: layout === "list" ? undefined : "Structure claire et compacte.",
@@ -137,7 +137,7 @@ export function VisualAuditPage() {
     : "list";
   const template = params.get("template") ?? "";
   const customData = useMemo(() => customFixture(kind, orientation), [kind, orientation]);
-  const antvData = useMemo(() => antvFixture(layout), [layout]);
+  const antvData = useMemo(() => antvFixture(layout, template), [layout, template]);
   const antvRef = useRef<HTMLDivElement>(null);
   const instanceRef = useRef<Infographic | null>(null);
   const [ready, setReady] = useState(false);
