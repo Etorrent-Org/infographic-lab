@@ -1,16 +1,14 @@
 # Infographic Lab Augmented — périmètre validé
 
-Branche de travail : `feature/infographic-lab-augmented`.
-
-La version stable `main` reste la référence publique 1.0.0. Le studio Augmented est une préversion isolée destinée aux tests sur le port 3092.
+Augmented V2 est désormais intégré à `main`. La stable 1.0.0 reste disponible séparément sur le port `3091` ; Augmented reste un parcours distinct sur `3092`.
 
 ## Positionnement
 
-Infographic Lab est recentré sur un flux simple :
+Infographic Lab suit un flux simple :
 
 **texte / idée → modèle structuré → représentation exploitable**.
 
-L'objectif n'est pas de reproduire un éditeur graphique généraliste. Le produit doit couvrir les représentations business et pédagogiques les plus utiles, rester local-first et permettre de passer d'une vue à l'autre sans nouvel appel IA.
+L'objectif n'est pas de reproduire un éditeur graphique généraliste. Le produit couvre les représentations business et pédagogiques utiles, reste local-first et permet de passer d'une vue à l'autre sans nouvel appel IA.
 
 ## Fonctionnalités retenues
 
@@ -22,9 +20,9 @@ L'objectif n'est pas de reproduire un éditeur graphique généraliste. Le produ
 
 2. **Modèle d'idée commun**
    - une seule structure sémantique ;
-   - quatre représentations : Infographie, Mermaid, Mindmap et Markdown ;
+   - Infographie, Mermaid, Mindmap et Markdown ;
    - changement de vue sans nouvel appel IA ;
-   - métadonnées numériques optionnelles `value`, `unit`, `category`, `series` pour les graphiques et KPI.
+   - métadonnées numériques optionnelles `value`, `unit`, `category`, `series`.
 
 3. **Espace de composition structuré**
    - brief ;
@@ -39,60 +37,41 @@ L'objectif n'est pas de reproduire un éditeur graphique généraliste. Le produ
    - Former ;
    - Synthétiser.
 
-5. **Préférences de génération inspirées des usages Napkin**
+5. **Préférences de génération**
    - visuel cible explicite ;
    - orientation Auto / Portrait / Paysage / Carré ;
    - détail Synthétique / Équilibré / Détaillé ;
    - Reformuler intelligemment / Rester proche du texte source.
 
-6. **Blocs intelligents**
-   - Process ;
-   - Timeline ;
-   - Comparaison ;
-   - Liste ;
-   - Cycle ;
-   - Matrice ;
-   - Architecture ;
-   - Synthèse.
-
-7. **Preuves & sources**
+6. **Preuves & sources**
    - distinction Fait / Interprétation / Suggestion IA ;
    - preuve textuelle attachée à un bloc ;
-   - un fait est revalidé côté serveur contre le texte source ;
+   - validation côté serveur des faits contre le texte source ;
    - export `sources.md` ;
-   - aucune valeur numérique absente de la source n'est inventée pour compléter un graphique.
+   - aucune valeur numérique absente de la source n'est inventée.
 
-8. **Identité visuelle persistante**
+7. **Identité visuelle persistante**
    - profils locaux ;
    - palette, logo, typographie et footer ;
    - application au rendu et aux exports.
 
-9. **Quality Gate**
+8. **Quality Gate**
    - contrôle local instantané ;
    - analyse IA optionnelle ;
-   - score UX, problèmes ciblés et corrections textuelles proposées ;
+   - problèmes ciblés et corrections textuelles proposées ;
    - aucune correction appliquée sans action utilisateur.
 
-10. **Publication Pack**
-    - SVG ;
-    - PNG ;
-    - HTML autonome ;
-    - Markdown ;
-    - Mermaid `.mmd` ;
-    - Mindmap JSON ;
-    - sources ;
-    - projet JSON ;
-    - ZIP généré localement dans le navigateur.
+9. **Publication Pack**
+   - SVG, PNG, HTML autonome, Markdown, Mermaid `.mmd`, Mindmap JSON, sources, projet JSON ;
+   - ZIP généré localement.
 
-11. **Bibliothèque locale de projets**
+10. **Bibliothèque locale de projets**
     - autosave ;
     - ouvrir, dupliquer, renommer, supprimer ;
-    - huit snapshots maximum par projet ;
+    - snapshots ;
     - restauration locale.
 
-## Catalogue d'infographies finalisé
-
-Le catalogue privilégie des **familles utilisateur** plutôt qu'une liste interminable de templates.
+## Catalogue finalisé
 
 ### Structures standard AntV
 
@@ -105,7 +84,7 @@ Le catalogue privilégie des **familles utilisateur** plutôt qu'une liste inter
 
 ### Représentations spécialisées locales
 
-- Iceberg — désormais sélectionnable explicitement ;
+- Iceberg ;
 - Cycle ;
 - Sankey narratif ;
 - Matrix 2×2 ;
@@ -125,31 +104,24 @@ Le catalogue privilégie des **familles utilisateur** plutôt qu'une liste inter
 - Donut ;
 - Waterfall chiffré.
 
-Les graphiques chiffrés ne sont proposés comme variantes que lorsque le modèle contient au moins deux valeurs numériques exploitables.
+Les graphiques chiffrés ne sont proposés que lorsque le modèle contient au moins deux valeurs numériques exploitables.
 
-## Règle de compatibilité
+## Compatibilité
 
 Les nouveaux champs sont optionnels. Un ancien projet sans `value`, `unit`, `category`, `series`, orientation ou visuel cible reste lisible.
 
 ## Module extrait : Visual Campaign Studio
 
-Visual Campaign Studio ne fait plus partie de cette version Augmented.
+Visual Campaign Studio ne fait pas partie d'Augmented.
 
 - branche dédiée : `feature/visual-campaign-studio` ;
 - architecture dédiée autour d'un vrai canvas éditable ;
 - aucune dépendance du planning Infographic Lab à ce chantier ;
-- aucune réintégration avant validation autonome.
+- aucune réintégration sans validation autonome.
 
-## Hors périmètre de cette version
+## Hors périmètre actuel
 
-Voir `ROADMAP.md` :
-
-- import intelligent multi-source ;
-- comparaison simultanée de plusieurs variantes ;
-- Provider & Model Control Center ;
-- Ollama / LM Studio / ComfyUI et providers configurables par l'utilisateur ;
-- Slides et édition graphique libre ;
-- génération d'images décoratives.
+Voir `ROADMAP.md` : import intelligent multi-source, comparaison simultanée de variantes, Provider & Model Control Center, providers configurables supplémentaires, Slides et édition graphique libre, génération d'images décoratives.
 
 ## Principes de conception
 
@@ -159,5 +131,4 @@ Voir `ROADMAP.md` :
 - pas de compte utilisateur ;
 - l'IA structure et propose, le moteur local représente ;
 - priorité au couple **structure → représentation** ;
-- ne pas réimplémenter localement ce qu'une brique open source fiable couvre déjà ;
-- la version stable n'est pas modifiée tant que la préversion Augmented n'est pas validée.
+- ne pas réimplémenter localement ce qu'une brique open source fiable couvre déjà.
