@@ -1,6 +1,6 @@
-# Infographic Lab — Augmented Preview
+# Infographic Lab — Augmented V2
 
-Cette branche contient la préversion augmentée d'Infographic Lab. Elle fonctionne en parallèle de la version stable 1.0.0.
+Augmented V2 est désormais **intégré à `main`** aux côtés de la stable 1.0.0. Les deux parcours restent séparés au runtime : stable sur `3091`, Augmented sur `3092`.
 
 ## URL de test
 
@@ -8,7 +8,7 @@ Cette branche contient la préversion augmentée d'Infographic Lab. Elle fonctio
 http://127.0.0.1:3092
 ```
 
-La version stable conserve son port 3091.
+La version stable conserve son port `3091`.
 
 Pour une adresse LAN ou WireGuard, utilisez `AUGMENTED_BIND` dans `.env.augmented` plutôt qu'une exposition publique.
 
@@ -18,7 +18,7 @@ Infographic Lab Augmented se concentre sur le cœur **structure → représentat
 
 Le produit vise un positionnement de type **Napkin light local-first**, pas un éditeur graphique généraliste.
 
-Visual Campaign Studio n'est plus inclus dans cette version. Son code et son redémarrage sont isolés sur `feature/visual-campaign-studio`.
+Visual Campaign Studio n'est pas inclus dans Augmented. Son chantier reste isolé sur `feature/visual-campaign-studio`.
 
 ## Studio Structure
 
@@ -33,117 +33,28 @@ Visual Campaign Studio n'est plus inclus dans cette version. Son code et son red
 
 ## Préférences de génération
 
-Un panneau flottant **Génération** permet de guider le modèle avant reconstruction :
+Le panneau **Génération** permet de guider le modèle avant reconstruction :
 
-### Visuel cible
-
-- Automatique ;
-- Iceberg ;
-- Cycle ;
-- Sankey narratif ;
-- Matrice 2×2 ;
-- SWOT ;
-- Impact / Effort ;
-- Eisenhower ;
-- Matrice de risque ;
-- Architecture ;
-- Hub / radial ;
-- Hiérarchie / arbre ;
-- Venn ;
-- Table visuelle ;
-- KPI ;
-- Barres ;
-- Colonnes ;
-- Courbe ;
-- Donut ;
-- Waterfall chiffré.
-
-Le visuel demandé est placé en tête des variantes lorsqu'il est compatible avec le modèle généré.
-
-### Orientation
-
-- Auto ;
-- Portrait ;
-- Paysage ;
-- Carré.
-
-Les rendus SVG spécialisés utilisent réellement le ratio demandé. Pour les familles AntV, l'orientation influence la priorité des variantes adaptées, par exemple Roadmap verticale en portrait.
-
-### Niveau de détail
-
-- Synthétique ;
-- Équilibré ;
-- Détaillé.
-
-### Wording
-
-- Reformuler intelligemment ;
-- Rester proche du texte source.
+- visuel cible : Automatique, Iceberg, Cycle, Sankey narratif, Matrice 2×2, SWOT, Impact / Effort, Eisenhower, Matrice de risque, Architecture, Hub / radial, Hiérarchie / arbre, Venn, Table visuelle, KPI, Barres, Colonnes, Courbe, Donut, Waterfall ;
+- orientation : Auto / Portrait / Paysage / Carré ;
+- niveau de détail : Synthétique / Équilibré / Détaillé ;
+- wording : Reformuler intelligemment / Rester proche du texte source.
 
 ## Catalogue d'infographies
 
 ### AntV
 
-AntV reste le moteur open source principal pour :
-
-- processus et étapes ;
-- roadmap / timeline ;
-- listes / checklist ;
-- comparaison ;
-- entonnoir ;
-- pyramide ;
-- cartes et variantes compactes.
+AntV reste le moteur open source principal pour les processus, timelines, listes, comparaisons, entonnoirs, pyramides et cartes.
 
 ### SVG spécialisés
 
-Infographic Lab complète AntV avec :
-
-- Iceberg ;
-- Cycle ;
-- Sankey narratif ;
-- Matrix 2×2 ;
-- SWOT ;
-- Impact / Effort ;
-- Eisenhower ;
-- Matrice de risque ;
-- Architecture en couches ;
-- Hub / radial ;
-- Hiérarchie / arbre ;
-- Venn ;
-- Table visuelle ;
-- KPI ;
-- Barres ;
-- Colonnes ;
-- Courbe ;
-- Donut ;
-- Waterfall chiffré.
+Infographic Lab complète AntV avec Iceberg, Cycle, Sankey narratif, Matrix 2×2, SWOT, Impact / Effort, Eisenhower, Matrice de risque, Architecture en couches, Hub / radial, Hiérarchie / arbre, Venn, Table visuelle, KPI, Barres, Colonnes, Courbe, Donut et Waterfall chiffré.
 
 ### Données chiffrées
 
-Le modèle canonique accepte désormais, de façon optionnelle et rétrocompatible :
+Le modèle canonique accepte de façon optionnelle `value`, `unit`, `category` et `series`. Ces champs ne sont renseignés que lorsqu'ils sont explicitement justifiés par la source.
 
-```text
-value
-unit
-category
-series
-```
-
-Le provider ne doit renseigner ces champs que lorsqu'ils sont explicitement justifiés par le texte source.
-
-Les variantes KPI et graphiques chiffrés ne sont affichées que lorsqu'au moins deux valeurs numériques exploitables sont présentes. Si une série est incomplète, Infographic Lab préfère ne pas afficher le graphique demandé plutôt que d'inventer les valeurs manquantes.
-
-## Presets business
-
-Les matrices utilisent un même moteur local avec plusieurs lectures métier :
-
-- Matrice libre ;
-- SWOT ;
-- Impact / Effort ;
-- Eisenhower ;
-- Risque.
-
-Cela évite de multiplier des moteurs qui ne diffèrent que par leur sémantique.
+Les variantes KPI et graphiques chiffrés ne sont affichées que lorsqu'au moins deux valeurs numériques exploitables sont présentes. Une série incomplète reste incomplète : aucune donnée n'est inventée pour rendre un graphique possible.
 
 ## Exports
 
@@ -159,34 +70,24 @@ Cela évite de multiplier des moteurs qui ne diffèrent que par leur sémantique
 
 ## Déploiement Augmented
 
-Le compose Augmented peut utiliser les images Docker Hub ou des images construites localement selon `AUGMENTED_APP_IMAGE`, `AUGMENTED_CODEX_IMAGE` et `AUGMENTED_PULL_POLICY`.
+Créer `.env.augmented` depuis `.env.augmented.example`, puis :
 
-Pour tester le code de la branche avant republication Docker Hub, utilisez un build local.
+```powershell
+docker compose -f docker-compose.augmented.yml up -d --build
+```
+
+Le compose peut utiliser des images construites localement ou configurées via les variables Augmented. Le navigateur ne reçoit aucun secret provider.
 
 ## Visual Campaign Studio
 
 Branche : `feature/visual-campaign-studio`.
 
-Le chantier marketing repart séparément autour d'un vrai canvas éditable. Il ne doit pas être réintroduit dans Augmented tant qu'il n'est pas validé de façon autonome.
-
-## Hors périmètre immédiat
-
-- Slides ;
-- génération d'images décoratives ;
-- collaboration temps réel ;
-- éditeur graphique libre ;
-- import intelligent multi-source ;
-- Provider & Model Control Center.
-
-Voir `ROADMAP.md`.
+Le chantier marketing évolue séparément autour d'un vrai canvas éditable. Il ne doit pas être réintroduit dans Augmented sans validation autonome.
 
 ## Validation
 
-La PR Augmented reste en brouillon tant que :
+La branche Augmented a été fusionnée après une passe comprenant 297 tests structurels et d'intégrité, 116 rendus Chromium, des contrôles SVG/PNG, la compilation des runners Vibe/Codex et la validation des deux Docker Compose.
 
-- la preview 3092 n'est pas validée fonctionnellement ;
-- les nouvelles représentations n'ont pas été vérifiées visuellement ;
-- les exports n'ont pas été vérifiés ;
-- l'absence d'invention de valeurs chiffrées n'a pas été confirmée sur les cas de test.
+La fusion dans `main` signifie que le code est intégré ; elle ne transforme pas automatiquement Augmented en nouvelle stable publique ni en image Docker Hub de production.
 
-L'image Docker Hub Augmented ne doit pas être republiée avant validation explicite.
+Voir également `AUGMENTED_SCOPE.md`, `ARCHITECTURE.md`, `ROADMAP.md` et `CHANGELOG.md`.
