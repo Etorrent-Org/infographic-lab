@@ -1,0 +1,25 @@
+/* #31 — le thème actif couvre aussi la racine de l'application. */
+
+html,
+body,
+#root,
+.suite-root {
+  background: #eef1f5;
+  color-scheme: light;
+}
+
+html:has(.studio-app[data-theme="dark"]),
+html:has(.marketing-app[data-theme="dark"]),
+body:has(.studio-app[data-theme="dark"]),
+body:has(.marketing-app[data-theme="dark"]),
+#root:has(.studio-app[data-theme="dark"]),
+#root:has(.marketing-app[data-theme="dark"]),
+.suite-root:has(.studio-app[data-theme="dark"]),
+.suite-root:has(.marketing-app[data-theme="dark"]) {
+  background: #0e1117;
+  color-scheme: dark;
+}
+
+.suite-content {
+  background: transparent;
+}

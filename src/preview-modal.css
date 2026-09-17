@@ -1,0 +1,293 @@
+.studio-visual-frame {
+  position: relative;
+  width: min(920px, 100%);
+  margin: 0 auto;
+}
+
+.studio-visual-meta {
+  gap: 8px;
+}
+
+.studio-brand-lockup {
+  margin-right: auto;
+}
+
+.studio-preview-expand-button {
+  flex: 0 0 auto;
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid var(--ui-border);
+  border-radius: 9px;
+  background: var(--ui-surface-2);
+  color: var(--ui-muted);
+  padding: 0 10px;
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 780;
+}
+
+.studio-preview-expand-button:hover:not(:disabled) {
+  border-color: var(--ui-border-strong);
+  background: var(--ui-surface-3);
+  color: var(--ui-text);
+}
+
+.studio-preview-expand-button > span {
+  font-size: 15px;
+  line-height: 1;
+}
+
+.studio-preview-expand-button:disabled {
+  cursor: wait;
+  opacity: 0.45;
+}
+
+.studio-infographic-canvas {
+  min-height: 0 !important;
+  height: clamp(300px, 46vh, 430px) !important;
+  overflow: hidden !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px !important;
+}
+
+.studio-infographic-canvas .antv-canvas,
+.studio-infographic-canvas .custom-visual-host {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.studio-infographic-canvas .antv-canvas > *,
+.studio-infographic-canvas .custom-visual-host > * {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.studio-infographic-canvas svg {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  display: block;
+}
+
+.studio-preview-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 220;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(10, 15, 25, 0.74);
+  backdrop-filter: blur(14px);
+}
+
+.studio-preview-modal {
+  width: min(1500px, 96vw);
+  height: min(1040px, 94vh);
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 20px;
+  background: #f5f7fb;
+  box-shadow: 0 32px 90px rgba(0, 0, 0, 0.42);
+}
+
+.preview-theme-dark .studio-preview-modal {
+  background: #111720;
+  color: #edf2f8;
+}
+
+.studio-preview-modal-header {
+  flex: 0 0 auto;
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 14px 16px 14px 20px;
+  border-bottom: 1px solid rgba(90, 103, 125, 0.18);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.preview-theme-dark .studio-preview-modal-header {
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+  background: rgba(23, 28, 36, 0.96);
+}
+
+.studio-preview-modal-header > div {
+  min-width: 0;
+}
+
+.studio-preview-modal-header span {
+  display: block;
+  color: #7a8496;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.preview-theme-dark .studio-preview-modal-header span {
+  color: #93a0b2;
+}
+
+.studio-preview-modal-header h2 {
+  margin: 4px 0 0;
+  overflow: hidden;
+  color: #172033;
+  font-size: 17px;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.preview-theme-dark .studio-preview-modal-header h2 {
+  color: #f4f7fb;
+}
+
+.studio-preview-modal-close {
+  flex: 0 0 auto;
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid #dce2ea;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #4f5c70;
+  padding: 0 12px;
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 780;
+}
+
+.preview-theme-dark .studio-preview-modal-close {
+  border-color: #354151;
+  background: #1d2530;
+  color: #dce4ef;
+}
+
+.studio-preview-modal-close:hover {
+  transform: translateY(-1px);
+}
+
+.studio-preview-modal-close > span {
+  color: inherit;
+  font-size: 19px;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1;
+  text-transform: none;
+}
+
+.studio-preview-modal-canvas {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+  padding: 22px;
+  background:
+    linear-gradient(45deg, rgba(114, 126, 148, 0.045) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(114, 126, 148, 0.045) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(114, 126, 148, 0.045) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(114, 126, 148, 0.045) 75%),
+    #e9edf4;
+  background-size: 24px 24px;
+  background-position: 0 0, 0 12px, 12px -12px, -12px 0;
+}
+
+.preview-theme-dark .studio-preview-modal-canvas {
+  background:
+    linear-gradient(45deg, rgba(255, 255, 255, 0.025) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(255, 255, 255, 0.025) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, 0.025) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(255, 255, 255, 0.025) 75%),
+    #0d1219;
+  background-size: 24px 24px;
+  background-position: 0 0, 0 12px, 12px -12px, -12px 0;
+}
+
+.studio-preview-modal-canvas img {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 18px 30px rgba(22, 31, 48, 0.14));
+}
+
+.preview-theme-dark .studio-preview-modal-canvas img {
+  filter: drop-shadow(0 22px 38px rgba(0, 0, 0, 0.32));
+}
+
+@media (max-width: 900px) {
+  .studio-visual-frame {
+    width: 100%;
+  }
+
+  .studio-infographic-canvas {
+    height: clamp(260px, 42vh, 360px) !important;
+  }
+
+  .studio-preview-expand-button {
+    width: 34px;
+    padding: 0;
+  }
+
+  .studio-preview-expand-button:not(:hover) {
+    font-size: 0;
+  }
+
+  .studio-preview-expand-button > span {
+    font-size: 15px;
+  }
+
+  .studio-preview-modal-backdrop {
+    padding: 10px;
+  }
+
+  .studio-preview-modal {
+    width: 100%;
+    height: 96vh;
+    border-radius: 14px;
+  }
+
+  .studio-preview-modal-header {
+    min-height: 62px;
+    padding: 11px 12px;
+  }
+
+  .studio-preview-modal-header h2 {
+    font-size: 14px;
+  }
+
+  .studio-preview-modal-close {
+    width: 38px;
+    padding: 0;
+    justify-content: center;
+    font-size: 0;
+  }
+
+  .studio-preview-modal-close > span {
+    font-size: 20px;
+  }
+
+  .studio-preview-modal-canvas {
+    padding: 10px;
+  }
+}

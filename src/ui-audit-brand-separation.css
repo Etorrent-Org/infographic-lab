@@ -1,0 +1,40 @@
+/* #30 — les couleurs du Brand Kit ne pilotent plus l'interface du studio. */
+
+.studio-app {
+  --ui-accent: #315fce !important;
+  --ui-accent-soft: color-mix(in srgb, #315fce 10%, transparent) !important;
+  --ui-accent-strong: #274fae !important;
+}
+
+.studio-app[data-theme="dark"] {
+  --ui-accent: #82a2ff !important;
+  --ui-accent-soft: color-mix(in srgb, #82a2ff 16%, transparent) !important;
+  --ui-accent-strong: #a9bfff !important;
+}
+
+.marketing-app {
+  --mk-accent: #315fce !important;
+  --mk-primary: #172033 !important;
+}
+
+.marketing-app[data-theme="dark"] {
+  --mk-accent: #82a2ff !important;
+  --mk-primary: #3f6fe5 !important;
+}
+
+/* #33 — même convention d'action principale dans les deux studios en sombre. */
+.studio-app[data-theme="dark"] .studio-primary,
+.marketing-app[data-theme="dark"] .marketing-primary {
+  border: 1px solid #3f6fe5;
+  background: #3f6fe5;
+  color: #fff;
+  box-shadow: 0 9px 20px rgba(63, 111, 229, 0.22);
+}
+
+.studio-app[data-theme="dark"] .studio-primary:hover:not(:disabled),
+.marketing-app[data-theme="dark"] .marketing-primary:hover:not(:disabled) {
+  border-color: #527ff0;
+  background: #527ff0;
+  color: #fff;
+  transform: translateY(-1px);
+}

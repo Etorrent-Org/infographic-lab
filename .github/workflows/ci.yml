@@ -21,11 +21,35 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Install Chromium for visual audit
+        run: npx playwright install --with-deps chromium
+
       - name: Build frontend
         run: npm run build
+
+      - name: Audit every visual layout
+        run: npm run test:visual
+
+      - name: Audit rendered visuals in Chromium
+        run: npm run test:browser
+
+      - name: Upload visual audit screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-audit-screenshots
+          path: artifacts/visual-audit
+          if-no-files-found: warn
+          retention-days: 7
 
       - name: Check Vibe runner syntax
         run: python -m py_compile runners/vibe/server.py
 
-      - name: Validate Docker Compose
+      - name: Check Codex runner syntax
+        run: python -m py_compile runners/codex/server.py
+
+      - name: Validate stable Docker Compose
         run: docker compose config --quiet
+
+      - name: Validate Augmented Docker Compose
+        run: docker compose -f docker-compose.augmented.yml config --quiet

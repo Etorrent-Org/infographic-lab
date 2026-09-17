@@ -1,0 +1,117 @@
+/* #6 — hiérarchie cohérente des actions */
+
+.studio-primary,
+.marketing-primary,
+.marketing-pack-button {
+  border-color: transparent;
+  box-shadow: var(--ui-shadow-soft, var(--mk-shadow));
+}
+
+.studio-secondary,
+.marketing-secondary {
+  border: 1px solid var(--ui-border, var(--mk-border));
+  background: var(--ui-surface-2, var(--mk-panel-soft));
+  color: var(--ui-text, var(--mk-text));
+  box-shadow: none;
+}
+
+.studio-secondary:hover:not(:disabled),
+.marketing-secondary:hover:not(:disabled) {
+  border-color: var(--ui-border-strong, var(--mk-border));
+  background: var(--ui-surface-3, var(--mk-panel));
+}
+
+.studio-link-button,
+.studio-block-list-head button,
+.studio-issues article > button {
+  border-radius: 7px;
+  padding: 5px 7px;
+}
+
+.studio-block-editor-head > div {
+  align-items: center;
+  gap: 6px;
+}
+
+.studio-block-editor-head > div > button {
+  min-width: 32px;
+  min-height: 32px;
+  border-radius: 8px;
+  padding: 0 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 760;
+}
+
+.studio-block-editor-head > div > button:nth-child(1),
+.studio-block-editor-head > div > button:nth-child(2) {
+  width: 32px;
+  padding: 0;
+}
+
+.studio-block-editor-head > div > button:last-child {
+  min-width: 76px;
+  border-color: color-mix(in srgb, var(--ui-danger) 28%, var(--ui-border));
+  color: var(--ui-danger);
+  background: color-mix(in srgb, var(--ui-danger) 5%, var(--ui-surface-2));
+  font-size: 0;
+}
+
+.studio-block-editor-head > div > button:last-child::before {
+  content: "Supprimer";
+  font-size: 10px;
+}
+
+.studio-block-editor-head > div > button:last-child:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--ui-danger) 55%, var(--ui-border));
+  background: color-mix(in srgb, var(--ui-danger) 11%, var(--ui-surface));
+}
+
+.marketing-asset-preview button {
+  border: 1px solid rgba(255, 255, 255, .22);
+  background: rgba(17, 24, 39, .78);
+  color: #fff;
+  font-weight: 760;
+  backdrop-filter: blur(8px);
+}
+
+.marketing-asset-preview button:hover {
+  background: #b42318;
+  border-color: #b42318;
+}
+
+.studio-primary:focus-visible,
+.studio-secondary:focus-visible,
+.marketing-primary:focus-visible,
+.marketing-secondary:focus-visible,
+.studio-block-editor-head button:focus-visible,
+.marketing-asset-preview button:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--ui-accent, var(--mk-accent, #4f7df3)) 30%, transparent);
+  outline-offset: 2px;
+}
+
+.studio-block-editor-head button:disabled,
+.studio-primary:disabled,
+.studio-secondary:disabled,
+.marketing-primary:disabled,
+.marketing-secondary:disabled {
+  opacity: .42;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.studio-app[data-theme="dark"] .studio-block-editor-head > div > button:last-child {
+  background: color-mix(in srgb, var(--ui-danger) 9%, var(--ui-surface-2));
+}
+
+.marketing-app[data-theme="dark"] .marketing-asset-preview button {
+  border-color: rgba(255, 255, 255, .14);
+  background: rgba(8, 12, 18, .82);
+}
+
+.marketing-app[data-theme="dark"] .marketing-asset-preview button:hover {
+  background: #9f2d27;
+  border-color: #9f2d27;
+}

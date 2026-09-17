@@ -1,0 +1,31 @@
+/* #36 — placeholders cohérents et lisibles dans les deux studios. */
+
+.studio-app[data-theme="light"] input::placeholder,
+.studio-app[data-theme="light"] textarea::placeholder,
+.marketing-app[data-theme="light"] input::placeholder,
+.marketing-app[data-theme="light"] textarea::placeholder {
+  color: #707a8d;
+  opacity: 1;
+}
+
+.studio-app[data-theme="dark"] input::placeholder,
+.studio-app[data-theme="dark"] textarea::placeholder,
+.marketing-app[data-theme="dark"] input::placeholder,
+.marketing-app[data-theme="dark"] textarea::placeholder {
+  color: #8f9caf;
+  opacity: 1;
+}
+
+.studio-app[data-theme="light"] input:disabled::placeholder,
+.studio-app[data-theme="light"] textarea:disabled::placeholder,
+.marketing-app[data-theme="light"] input:disabled::placeholder,
+.marketing-app[data-theme="light"] textarea:disabled::placeholder {
+  color: #98a2b3;
+}
+
+.studio-app[data-theme="dark"] input:disabled::placeholder,
+.studio-app[data-theme="dark"] textarea:disabled::placeholder,
+.marketing-app[data-theme="dark"] input:disabled::placeholder,
+.marketing-app[data-theme="dark"] textarea:disabled::placeholder {
+  color: #6f7b8c;
+}

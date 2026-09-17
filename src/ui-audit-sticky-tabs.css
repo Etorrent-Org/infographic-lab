@@ -1,0 +1,17 @@
+/* #28 — garder la navigation de configuration accessible pendant le scroll */
+
+@media (max-width: 850px) {
+  .studio-inspector-tabs,
+  .marketing-panel-tabs {
+    position: sticky;
+    top: 110px;
+    z-index: 80;
+    background: var(--ui-surface-2, var(--mk-panel-soft));
+    box-shadow: 0 7px 18px color-mix(in srgb, var(--ui-text, var(--mk-text)) 7%, transparent);
+  }
+
+  .studio-app[data-theme="dark"] .studio-inspector-tabs,
+  .marketing-app[data-theme="dark"] .marketing-panel-tabs {
+    box-shadow: 0 7px 20px rgba(0, 0, 0, .22);
+  }
+}

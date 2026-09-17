@@ -1,17 +1,22 @@
 # Architecture
 
-## Baseline
+## Deux lignes de produit
 
-Infographic Lab **1.0.0** est une application locale distribuée avec Docker Compose.
+Le dépôt conserve deux états clairement séparés :
+
+- `main` : **Infographic Lab 1.0.0**, version stable publique sur le port 3091 ;
+- `feature/infographic-lab-augmented` : préversion Augmented sur le port 3092.
+
+Visual Campaign Studio n'appartient plus au périmètre Augmented. Son chantier est isolé sur `feature/visual-campaign-studio`.
+
+## Architecture stable 1.0.0
 
 - interface : React + Vite ;
 - passerelle locale : Node.js ;
 - structuration IA : Mistral Vibe dans un runner Docker dédié ;
 - rendu : AntV Infographic ou moteur SVG local ;
-- stockage : fichiers JSON et exports locaux ;
+- stockage : projets et exports locaux ;
 - base de données : aucune.
-
-## Vue simple
 
 ```mermaid
 flowchart LR
@@ -28,35 +33,89 @@ flowchart LR
     UI --> F[Fichiers et exports locaux]
 ```
 
-## Conteneurs
+## Architecture Augmented
+
+La préversion étend le cœur **structure → représentation** sans introduire de SaaS obligatoire.
 
 ```mermaid
-flowchart TB
-    H[Hôte local] -->|127.0.0.1:3091| APP[infographic-lab]
-    APP -->|réseau Docker interne| RUNNER[infographic-vibe-runner:7020]
-    RUNNER --> V[(Volume Vibe)]
-    RUNNER --> M[Mistral]
+flowchart LR
+    U[Utilisateur] --> UI[Augmented Studio]
+    UI --> PREF[Préférences de génération]
+    UI --> APP[Gateway Node local]
+    APP --> AUTO{Provider auto}
+    AUTO --> V[Vibe runner]
+    AUTO --> C[Codex runner]
+    V --> APP
+    C --> APP
+    APP --> MODEL[Modèle d'idée canonique]
+    MODEL --> ANT[AntV Infographic]
+    MODEL --> SVG[SVG spécialisés]
+    MODEL --> MER[Mermaid]
+    MODEL --> MAP[Mindmap]
+    MODEL --> MD[Markdown]
+    UI --> LIB[LocalStorage + snapshots]
+    UI --> PACK[Publication Pack]
 ```
 
-Le port `7020` du runner n'est pas publié sur l'hôte. La communication entre l'application et le runner utilise un token interne.
+### Modèle canonique
 
-## Organisation
+Le modèle reste rétrocompatible avec les projets existants. Un item conserve `title` et `description` et peut désormais porter, de façon optionnelle :
 
-- `src` : interface et logique frontend ;
-- `server.mjs` : passerelle Node locale ;
-- `runners/vibe` : runner Mistral Vibe ;
-- `docker-compose.yml` : orchestration locale ;
-- `Dockerfile` : image de l'application ;
-- `.github/workflows` : CI, Release GitHub et publication Docker Hub ;
+- `value` : valeur numérique explicitement présente dans la source ;
+- `unit` : unité associée ;
+- `category` : catégorie ;
+- `series` : série.
+
+Ces champs servent aux graphiques de données et aux KPI. Ils ne doivent jamais être inventés pour compléter artificiellement une série.
+
+L'apparence peut aussi mémoriser :
+
+- orientation `auto`, `portrait`, `landscape` ou `square` ;
+- visuel cible demandé par l'utilisateur.
+
+### Moteurs de rendu
+
+- **AntV Infographic** : processus, timelines, comparaisons, listes, pyramides, entonnoirs, cartes et variantes standard ;
+- **SVG local spécialisé** : Iceberg, Cycle, Sankey narratif, Matrix, SWOT, Impact/Effort, Eisenhower, Risk Matrix, Architecture, Hub, Hiérarchie, Venn, Table, KPI et graphiques chiffrés ;
+- **Mermaid.js** : diagrammes ;
+- **Mindmap** : représentation structurée du même modèle ;
+- **react-markdown + GFM** : document Markdown.
+
+## Préférences de génération
+
+Les préférences sont locales au navigateur et guident la structuration :
+
+- visuel cible ;
+- orientation ;
+- niveau `Synthétique / Équilibré / Détaillé` ;
+- reformulation libre ou conservation du wording source.
+
+Le provider ne produit pas le SVG. Il produit toujours un modèle JSON validé par la passerelle.
+
+## Conteneurs Augmented
+
+Le compose Augmented ajoute le runner Codex au runner Vibe. Les runners restent sur le réseau Docker interne et utilisent des tokens partagés distincts ou hérités de `RUNNER_SHARED_TOKEN`.
+
+Le navigateur ne reçoit aucun secret de provider.
+
+## Organisation du dépôt
+
+- `src` : interface, modèle, validation et moteurs de représentation ;
+- `server.mjs` : gateway locale, validation et routage multi-provider ;
+- `runners/vibe` : runner Vibe ;
+- `runners/codex` : runner Codex ;
+- `docker-compose.yml` : stable 1.0.0 ;
+- `docker-compose.augmented.yml` : préversion Augmented ;
+- `.github/workflows` : validation CI et chaîne de release ;
 - `docs/images` : visuels de documentation.
 
 ## Distribution
 
-Les images officielles sont publiées sur Docker Hub pour `linux/amd64` et `linux/arm64` :
+La stable 1.0.0 reste distribuée avec :
 
 ```text
 erwanntorrent/infographic-lab:1.0.0
 erwanntorrent/infographic-vibe-runner:1.0.0
 ```
 
-Le fichier `docker-compose.yml` consomme directement ces images publiées.
+L'image Augmented ne doit pas être republiée tant que la préversion n'est pas explicitement validée.

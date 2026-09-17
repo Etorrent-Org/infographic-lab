@@ -1,0 +1,67 @@
+/* #8 — chrome de prévisualisation cohérent en clair / sombre.
+   Le thème de l'application ne doit jamais modifier le contenu exporté. */
+
+.studio-visual-meta,
+.studio-visual-footer {
+  background: color-mix(in srgb, var(--ui-surface) 94%, transparent);
+  color: var(--ui-muted);
+  border-color: var(--ui-border);
+}
+
+.studio-brand-lockup,
+.studio-variant-control {
+  color: inherit;
+}
+
+.studio-variant-control button {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--ui-border);
+  border-radius: 8px;
+  background: var(--ui-surface-2);
+  color: var(--ui-muted);
+  cursor: pointer;
+  transition: border-color 120ms ease, background 120ms ease, color 120ms ease, transform 120ms ease;
+}
+
+.studio-variant-control button:hover {
+  border-color: var(--ui-border-strong);
+  background: var(--ui-surface-3);
+  color: var(--ui-text);
+  transform: translateY(-1px);
+}
+
+.studio-variant-control button:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--ui-accent) 30%, transparent);
+  outline-offset: 2px;
+}
+
+.studio-variant-control button:active {
+  transform: translateY(0);
+}
+
+.studio-app[data-theme="dark"] .studio-visual-meta,
+.studio-app[data-theme="dark"] .studio-visual-footer {
+  background: color-mix(in srgb, var(--ui-surface-2) 96%, transparent);
+  color: var(--ui-muted);
+  border-color: var(--ui-border);
+}
+
+.studio-app[data-theme="dark"] .studio-variant-control button {
+  background: var(--ui-surface-3);
+  color: var(--ui-muted);
+  border-color: var(--ui-border);
+}
+
+.studio-app[data-theme="dark"] .studio-variant-control button:hover {
+  background: color-mix(in srgb, var(--ui-accent) 10%, var(--ui-surface-3));
+  color: var(--ui-text);
+  border-color: color-mix(in srgb, var(--ui-accent) 34%, var(--ui-border));
+}
+
+/* Le canvas garde volontairement son Brand Kit, indépendamment du thème UI. */
+.studio-infographic-canvas,
+.studio-infographic-canvas .antv-canvas,
+.studio-infographic-canvas .custom-visual-host {
+  color-scheme: normal;
+}
