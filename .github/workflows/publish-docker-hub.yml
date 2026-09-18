@@ -1,7 +1,6 @@
-name: Publish Docker Hub images
+name: Publish Docker Hub stable images
 
 on:
-  workflow_dispatch:
   push:
     tags:
       - "v*"
@@ -9,9 +8,13 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: docker-hub-stable-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   build:
-    name: Build ${{ matrix.arch }} images
+    name: Build ${{ matrix.arch }} stable images
     strategy:
       fail-fast: false
       matrix:
@@ -27,11 +30,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Resolve version
+      - name: Resolve and validate version
         id: meta
         shell: bash
         run: |
           VERSION="$(node -p "require('./package.json').version")"
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          if [ "$VERSION" != "$TAG_VERSION" ]; then
+            echo "package.json version ($VERSION) does not match tag ($GITHUB_REF_NAME)" >&2
+            exit 1
+          fi
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Set up Docker Buildx
@@ -49,10 +57,12 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
+          pull: true
           platforms: ${{ matrix.platform }}
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/infographic-lab:${{ steps.meta.outputs.version }}-${{ matrix.arch }}
           labels: |
             org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.version=${{ steps.meta.outputs.version }}
 
       - name: Build and push Vibe runner
@@ -61,27 +71,34 @@ jobs:
           context: ./runners/vibe
           file: ./runners/vibe/Dockerfile
           push: true
+          pull: true
           platforms: ${{ matrix.platform }}
           build-args: |
             VIBE_VERSION=2.21.0
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/infographic-vibe-runner:${{ steps.meta.outputs.version }}-${{ matrix.arch }}
           labels: |
             org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.version=${{ steps.meta.outputs.version }}
 
   manifest:
-    name: Publish multi-architecture manifests
+    name: Publish stable multi-architecture manifests
     needs: build
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Resolve version
+      - name: Resolve and validate version
         id: meta
         shell: bash
         run: |
           VERSION="$(node -p "require('./package.json').version")"
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          if [ "$VERSION" != "$TAG_VERSION" ]; then
+            echo "package.json version ($VERSION) does not match tag ($GITHUB_REF_NAME)" >&2
+            exit 1
+          fi
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Set up Docker Buildx

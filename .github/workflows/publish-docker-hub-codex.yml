@@ -1,0 +1,53 @@
+name: Publish Docker Hub Codex runner
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "runners/codex/**"
+      - ".github/workflows/publish-docker-hub-codex.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docker-hub-codex-runner
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    name: Publish Codex runner augmented-v2 (linux/amd64)
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push Codex runner
+        uses: docker/build-push-action@v7
+        with:
+          context: ./runners/codex
+          file: ./runners/codex/Dockerfile
+          push: true
+          pull: true
+          no-cache: true
+          platforms: linux/amd64
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/infographic-codex-runner:augmented-v2
+          labels: |
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.version=augmented-v2
+
+      - name: Verify published image
+        shell: bash
+        run: docker buildx imagetools inspect "${{ secrets.DOCKERHUB_USERNAME }}/infographic-codex-runner:augmented-v2"
