@@ -14,20 +14,20 @@ import type {
   RepresentationKind,
 } from "./types";
 
-type ThemeMode = "light" | "dark";
-type InspectorPanel = "brief" | "structure" | "brand" | "quality";
+export type ThemeMode = "light" | "dark";
+export type InspectorPanel = "brief" | "structure" | "brand" | "quality";
 
-type VisualExporter = {
+export type VisualExporter = {
   getSvg: () => Promise<string>;
   getPng: () => Promise<string>;
 };
 
-type RetouchHistory = {
+export type RetouchHistory = {
   itemIndex: number;
   before: InfographicItem;
 };
 
-const layoutOptions: { value: InfographicKind; label: string }[] = [
+export const layoutOptions: { value: InfographicKind; label: string }[] = [
   { value: "auto", label: "Auto" },
   { value: "process", label: "Processus" },
   { value: "comparison", label: "Comparaison" },
@@ -35,14 +35,14 @@ const layoutOptions: { value: InfographicKind; label: string }[] = [
   { value: "list", label: "Liste" },
 ];
 
-const resultLayoutOptions: { value: CanonicalInfographic["layout"]; label: string }[] = [
+export const resultLayoutOptions: { value: CanonicalInfographic["layout"]; label: string }[] = [
   { value: "process", label: "Processus" },
   { value: "comparison", label: "Comparaison" },
   { value: "timeline", label: "Timeline" },
   { value: "list", label: "Liste" },
 ];
 
-const styleOptions: { value: InfographicStyle; label: string }[] = [
+export const styleOptions: { value: InfographicStyle; label: string }[] = [
   { value: "clean", label: "Clean" },
   { value: "soft", label: "Soft" },
   { value: "dark", label: "Dark" },
@@ -50,14 +50,14 @@ const styleOptions: { value: InfographicStyle; label: string }[] = [
   { value: "chalk", label: "Chalk" },
 ];
 
-const viewOptions: { value: RepresentationKind; label: string; short: string }[] = [
+export const viewOptions: { value: RepresentationKind; label: string; short: string }[] = [
   { value: "infographic", label: "Infographie", short: "VIS" },
   { value: "mermaid", label: "Diagramme", short: "MER" },
   { value: "mindmap", label: "Mindmap", short: "MAP" },
   { value: "markdown", label: "Document", short: "MD" },
 ];
 
-const panelOptions: { value: InspectorPanel; label: string; number: string }[] = [
+export const panelOptions: { value: InspectorPanel; label: string; number: string }[] = [
   { value: "brief", label: "Brief", number: "01" },
   { value: "structure", label: "Structure", number: "02" },
   { value: "brand", label: "Identité", number: "03" },
@@ -70,13 +70,13 @@ const fontStacks: Record<BrandProfile["fontFamily"], string> = {
   mono: "'SFMono-Regular', Consolas, 'Liberation Mono', monospace",
 };
 
-function getInitialTheme(): ThemeMode {
+export function getInitialTheme(): ThemeMode {
   const stored = localStorage.getItem("infographic-lab-augmented-theme");
   if (stored === "light" || stored === "dark") return stored;
   return window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }
 
-function formatDate(value: string) {
+export function formatDate(value: string) {
   try {
     return new Intl.DateTimeFormat("fr-FR", { dateStyle: "short", timeStyle: "short" }).format(new Date(value));
   } catch {
@@ -131,7 +131,7 @@ function brandSvgDataUrl(dataUrl: string, brand: BrandProfile) {
   return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(serialized)}`;
 }
 
-function InfographicPreview({
+export function InfographicPreview({
   data,
   style,
   brand,
@@ -234,7 +234,7 @@ function InfographicPreview({
   );
 }
 
-function ProviderPicker({ value, onChange, providers }: { value: AIProvider; onChange: (value: AIProvider) => void; providers: ProviderStatus[] }) {
+export function ProviderPicker({ value, onChange, providers }: { value: AIProvider; onChange: (value: AIProvider) => void; providers: ProviderStatus[] }) {
   const options: { value: AIProvider; label: string }[] = [
     { value: "auto", label: "Auto" },
     { value: "vibe", label: "Vibe" },
