@@ -19,7 +19,7 @@ jobs:
           node-version: 22
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Install Chromium for visual audit
         run: npx playwright install --with-deps chromium
