@@ -103,10 +103,14 @@ export function buildVariantCatalog(value: CanonicalInfographic): VisualVariant[
   const compactCards = supportsCompactCards(value);
   const tightGeometry = supportsTightGeometry(value);
   const orientation = value.appearance?.orientation ?? "auto";
+  // Horizontal step templates draw connectors between narrow columns.
+  // For detailed copy, favor the vertical roadmap to keep text away from arrows.
+  const denseProcess = value.layout === "process" && value.items.length >= 3 &&
+    value.items.some((item) => item.description.trim().length > 72);
   const variants: VisualVariant[] = [];
 
   if (value.layout === "process") {
-    if (orientation === "portrait") {
+    if (orientation === "portrait" || denseProcess) {
       variants.push(
         { label: "Roadmap", template: "sequence-roadmap-vertical-simple" },
         { label: "Étapes", template: "sequence-steps-simple" },
