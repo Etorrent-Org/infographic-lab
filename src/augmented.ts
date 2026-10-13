@@ -1,3 +1,4 @@
+import { createUniqueId } from "./unique-id";
 import type {
   AIProvider,
   BlockKind,
@@ -249,7 +250,7 @@ export function upsertLocalProject(project: AugmentedProjectState, snapshotLabel
   const snapshots = previous?.snapshots ? [...previous.snapshots] : [];
   if (previous && projectFingerprint(previous) !== projectFingerprint(project)) {
     snapshots.unshift({
-      id: crypto.randomUUID(),
+      id: createUniqueId(),
       savedAt: new Date().toISOString(),
       label: snapshotLabel,
       state: {
@@ -283,7 +284,7 @@ export function duplicateLocalProject(id: string) {
   const now = new Date().toISOString();
   const copy: LocalProjectRecord = {
     ...source,
-    id: crypto.randomUUID(),
+    id: createUniqueId(),
     name: `${source.name} — copie`,
     createdAt: now,
     updatedAt: now,
