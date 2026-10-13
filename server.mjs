@@ -7,12 +7,14 @@ const PORT = Number(process.env.PORT ?? 3091);
 const RUNNER_SHARED_TOKEN = String(process.env.RUNNER_SHARED_TOKEN ?? "");
 const VIBE_RUNNER_URL = String(process.env.VIBE_RUNNER_URL ?? "http://vibe-runner:7020").replace(/\/$/, "");
 const CODEX_RUNNER_URL = String(process.env.CODEX_RUNNER_URL ?? "").replace(/\/$/, "");
+const OLLAMA_URL = String(process.env.OLLAMA_URL ?? "").replace(/\/$/, "");
+const OLLAMA_MODEL = String(process.env.OLLAMA_MODEL ?? "qwen3.5:4b-q4_K_M").trim();
 const VIBE_RUNNER_TOKEN = String(process.env.VIBE_RUNNER_TOKEN ?? RUNNER_SHARED_TOKEN);
 const CODEX_RUNNER_TOKEN = String(process.env.CODEX_RUNNER_TOKEN ?? RUNNER_SHARED_TOKEN);
-const AI_PROVIDER_ORDER = String(process.env.AI_PROVIDER_ORDER ?? "vibe,codex")
+const AI_PROVIDER_ORDER = String(process.env.AI_PROVIDER_ORDER ?? "ollama,vibe,codex")
   .split(",")
   .map((value) => value.trim().toLowerCase())
-  .filter((value) => value === "vibe" || value === "codex");
+  .filter((value) => value === "ollama" || value === "vibe" || value === "codex");
 const DIST_DIR = fileURLToPath(new URL("./dist/", import.meta.url));
 const MAX_INPUT_BYTES = 96_000;
 const PROMPT_PROTOCOL = "h9-json-envelope-v1";
@@ -20,7 +22,7 @@ const PROMPT_PROTOCOL = "h9-json-envelope-v1";
 const blockTypes = ["process", "timeline", "comparison", "list", "cycle", "matrix", "architecture", "summary"];
 const claimTypes = ["fact", "interpretation", "suggestion"];
 const intentTypes = ["explain", "decide", "convince", "train", "summarize"];
-const providerTypes = ["auto", "vibe", "codex"];
+const providerTypes = ["auto", "ollama", "vibe", "codex"];
 const orientations = ["auto", "portrait", "landscape", "square"];
 const detailLevels = ["summary", "balanced", "detailed"];
 const wordingModes = ["rephrase", "close"];
@@ -144,6 +146,7 @@ async function readJson(req) {
 }
 
 function providerConfig(id) {
+  if (id === "ollama") return { id, label: "Ollama (Qwen local)", url: OLLAMA_URL, model: OLLAMA_MODEL };
   if (id === "vibe") return { id, label: "Mistral Vibe", url: VIBE_RUNNER_URL, token: VIBE_RUNNER_TOKEN };
   if (id === "codex") return { id, label: "OpenAI Codex", url: CODEX_RUNNER_URL, token: CODEX_RUNNER_TOKEN };
   return null;
@@ -151,13 +154,25 @@ function providerConfig(id) {
 
 function providerConfigured(id) {
   const provider = providerConfig(id);
-  return Boolean(provider?.url && provider?.token);
+  return Boolean(provider?.url && (id === "ollama" ? provider.model : provider.token));
 }
 
 async function providerHealth(id) {
   const provider = providerConfig(id);
   if (!providerConfigured(id) || !provider) return { configured: false, available: false, detail: "Non configuré" };
   try {
+    if (id === "ollama") {
+      const response = await fetch(`${provider.url}/api/tags`, { signal: AbortSignal.timeout(3500) });
+      const body = await response.json().catch(() => ({}));
+      const installed = response.ok && Array.isArray(body.models) && body.models.some((model) =>
+        model?.name === provider.model || model?.model === provider.model
+      );
+      return {
+        configured: true,
+        available: Boolean(installed),
+        detail: response.ok ? (installed ? "Prêt" : "Modèle Ollama absent") : "Indisponible",
+      };
+    }
     const response = await fetch(`${provider.url}/health`, { signal: AbortSignal.timeout(1800) });
     const body = await response.json().catch(() => ({}));
     return {
@@ -171,7 +186,7 @@ async function providerHealth(id) {
 }
 
 async function providersStatus(_req, res) {
-  const ids = ["vibe", "codex"];
+  const ids = ["ollama", "vibe", "codex"];
   const providers = await Promise.all(ids.map(async (id) => {
     const config = providerConfig(id);
     const health = await providerHealth(id);
@@ -182,13 +197,44 @@ async function providersStatus(_req, res) {
 
 function providerCandidates(requested) {
   if (requested !== "auto") return [requested];
-  const ordered = [...AI_PROVIDER_ORDER, "vibe", "codex"];
+  const ordered = [...AI_PROVIDER_ORDER, "ollama", "vibe", "codex"];
   return [...new Set(ordered)].filter((id) => providerConfigured(id));
 }
 
 async function callProvider(id, prompt, schema, timeoutMs = 120000) {
   const provider = providerConfig(id);
   if (!provider || !providerConfigured(id)) throw new Error(`Moteur ${id} non configuré.`);
+  if (id === "ollama") {
+    const started = Date.now();
+    const response = await fetch(`${provider.url}/api/generate`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        model: provider.model,
+        prompt,
+        format: schema,
+        stream: false,
+        think: false,
+        keep_alive: "1m",
+        options: { temperature: 0, num_ctx: 4096, num_predict: 1600 },
+      }),
+      signal: AbortSignal.timeout(timeoutMs + 5000),
+    });
+    const body = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(body.error ?? `Ollama a répondu HTTP ${response.status}.`);
+    if (typeof body.response !== "string") throw new Error("Réponse Ollama manquante.");
+    let data;
+    try {
+      data = JSON.parse(body.response);
+    } catch {
+      throw new Error("Ollama n'a pas retourné un JSON valide.");
+    }
+    return {
+      data,
+      provider: id,
+      durationMs: Number.isFinite(body.total_duration) ? Math.round(body.total_duration / 1e6) : Date.now() - started,
+    };
+  }
   const requestId = crypto.randomUUID();
   const response = await fetch(`${provider.url}/generate`, {
     method: "POST",
