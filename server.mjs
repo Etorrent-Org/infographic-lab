@@ -255,7 +255,10 @@ async function runWithProvider(requested, prompt, schema, timeoutMs = 120000) {
     try {
       return await callProvider(id, prompt, schema, timeoutMs);
     } catch (error) {
-      errors.push(`${id}: ${String(error?.message ?? error)}`);
+      const detail = (id === "ollama" && (error?.name === "TimeoutError" || error?.name === "AbortError"))
+        ? "délai de 360 secondes dépassé ; essayez un texte plus court ou un modèle plus léger."
+        : String(error?.message ?? error);
+      errors.push(`${id}: ${detail}`);
       if (requested !== "auto") break;
     }
   }
