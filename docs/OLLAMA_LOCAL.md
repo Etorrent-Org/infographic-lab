@@ -31,6 +31,6 @@ Le `docker-compose.augmented.yml` rattache **seulement le service app** au resea
 ## Limites actuelles
 
 - Generation CPU : environ 39 s pour un petit exemple, 8 tokens/s sur i5-1335U (benchmark utilisateur, pas garantie).
-- Les demandes complexes et les schemas longs peuvent depasser le timeout actuel (120 s) ou echouer. Un test reel de bout en bout reste indispensable.
+- Delai pour la generation Ollama porte a 360 s sur CPU (les autres moteurs conservent leur reglage). Les schemas longs peuvent rester lents ou echouer : effectuer un essai reel avant toute suppression des runners.
 - Le mode Auto inclut encore Vibe et Codex comme fallback pour la compatibilite.
 - Cette branche ne modifie ni n8n ni les applications autres qu'Infographic Lab.
