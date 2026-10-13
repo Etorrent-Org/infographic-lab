@@ -1,3 +1,4 @@
+import { createUniqueId } from "./unique-id.ts";
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { generateInfographic, getProviders, regenerateInfographicItem, reviewInfographic } from "./api";
 import {
@@ -199,7 +200,7 @@ export function AugmentedStudioV2() {
       const seconds = response.durationMs ? `${(response.durationMs / 1000).toFixed(1)} s` : null;
       setMeta([response.provider ?? provider, seconds].filter(Boolean).join(" · "));
       if (!projectId) {
-        setProjectId(crypto.randomUUID());
+        setProjectId(createUniqueId());
         setCreatedAt(new Date().toISOString());
       }
       if (projectName === "Sans titre") setProjectName(next.title);
@@ -308,7 +309,7 @@ export function AugmentedStudioV2() {
   function buildCurrentProject(): AugmentedProjectState | null {
     if (!result) return null;
     return {
-      id: projectId ?? crypto.randomUUID(),
+      id: projectId ?? createUniqueId(),
       name: projectName === "Sans titre" ? result.title : projectName,
       createdAt,
       updatedAt: new Date().toISOString(),
@@ -384,7 +385,7 @@ export function AugmentedStudioV2() {
   function createBrandProfile() {
     const next: BrandProfile = {
       ...brand,
-      id: crypto.randomUUID(),
+      id: createUniqueId(),
       name: `${brand.name} personnalisé`,
       logoDataUrl: brand.logoDataUrl,
     };

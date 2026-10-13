@@ -198,3 +198,31 @@ test("le wrapping reste borné et signale la troncature", () => {
   assert.ok(wrapped.lines.every((line) => line.trim().length > 0));
   assert.equal(wrapped.truncated, true);
 });
+
+test("un processus à quatre étapes détaillées privilégie une roadmap lisible", () => {
+  const value = {
+    title: "Gestion des demandes clients",
+    layout: "process",
+    items: [
+      item(0, { description: "Les entreprises reçoivent les requêtes de leurs clients via l'intermédiaire d'e-mails." }),
+      item(1, { description: "Les e-mails sont regroupés dans un formulaire unique, où une classification automatique attribue une priorité à chaque demande." }),
+      item(2, { description: "Chaque demande triée est ensuite affectée à une équipe spécifique pour traitement." }),
+      item(3, { description: "Un tableau de bord centralisé permet de suivre l'avancement et le statut de chaque demande tout au long du processus." }),
+    ],
+    appearance: { orientation: "landscape" },
+  };
+  const variants = buildVariantCatalog(value);
+  assert.equal(variants[0]?.template, "sequence-roadmap-vertical-simple");
+  assert.ok(variants.some((variant) => variant.template === "sequence-steps-simple"), "la version horizontale reste accessible");
+  assert.equal(variants.length >= 4, true);
+});
+
+test("un processus court conserve la présentation horizontale habituelle", () => {
+  const value = {
+    title: "Trois étapes",
+    layout: "process",
+    items: [item(0), item(1), item(2)].map((entry) => ({ ...entry, description: "Une étape courte." })),
+    appearance: { orientation: "landscape" },
+  };
+  assert.equal(buildVariantCatalog(value)[0]?.template, "sequence-steps-simple");
+});
