@@ -27,6 +27,9 @@ jobs:
       - name: Build frontend
         run: npm run build
 
+      - name: Test Ollama provider gateway
+        run: node --test tests/ollama-provider.test.mjs
+
       - name: Audit every visual layout
         run: npm run test:visual
 
