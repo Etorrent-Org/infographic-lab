@@ -218,7 +218,7 @@ async function callProvider(id, prompt, schema, timeoutMs = 120000) {
         keep_alive: "1m",
         options: { temperature: 0, num_ctx: 4096, num_predict: 1600 },
       }),
-      signal: AbortSignal.timeout(timeoutMs + 5000),
+      signal: AbortSignal.timeout(Math.max(timeoutMs + 5000, 360000)),
     });
     const body = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(body.error ?? `Ollama a répondu HTTP ${response.status}.`);
