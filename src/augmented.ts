@@ -1,4 +1,4 @@
-import { createUniqueId } from "./unique-id";
+import { createUniqueId } from "./unique-id.ts";
 import type {
   AIProvider,
   BlockKind,
