@@ -27,6 +27,9 @@ jobs:
       - name: Build frontend
         run: npm run build
 
+      - name: Test UUID on HTTP LAN origin
+        run: node --experimental-strip-types --test tests/unique-id.test.mjs
+
       - name: Test Ollama provider gateway
         run: node --test tests/ollama-provider.test.mjs
 
