@@ -22,7 +22,7 @@ Visual Campaign Studio n'est pas inclus dans Augmented. Son chantier reste isol�
 
 ## Studio Structure
 
-- Provider Gateway Vibe / Codex / Automatique ;
+- Provider Ollama / Automatique, avec Qwen local sur TatouneServer ;
 - Infographie, Mermaid, Mindmap et Markdown ;
 - brief, modèle d'idée, blocs intelligents, preuves et sources ;
 - profils de marque locaux ;
@@ -73,10 +73,10 @@ Les variantes KPI et graphiques chiffrés ne sont affichées que lorsqu'au moins
 Créer `.env.augmented` depuis `.env.augmented.example`, puis :
 
 ```powershell
-docker compose -f docker-compose.augmented.yml up -d --build
+docker compose -f docker-compose.augmented.yml up -d --build app
 ```
 
-Le compose peut utiliser des images construites localement ou configurées via les variables Augmented. Le navigateur ne reçoit aucun secret provider.
+Le compose ne démarre que l'application : Ollama reste dans son propre conteneur, connecté par le réseau privé Docker `ollama_default`. Les anciens runners Vibe et Codex ne sont plus requis ; leurs anciens volumes ne sont pas supprimés automatiquement. Le navigateur ne reçoit aucun secret provider.
 
 ## Visual Campaign Studio
 
