@@ -13,9 +13,14 @@ services:
       VIBE_RUNNER_URL: http://vibe-runner:7020
       CODEX_RUNNER_URL: http://codex-runner:7030
       RUNNER_SHARED_TOKEN: ${RUNNER_SHARED_TOKEN:-infographic-augmented-local-change-me}
-      AI_PROVIDER_ORDER: ${AI_PROVIDER_ORDER:-vibe,codex}
+      AI_PROVIDER_ORDER: ${AI_PROVIDER_ORDER:-ollama,vibe,codex}
+      OLLAMA_URL: ${OLLAMA_URL:-http://ollama:11434}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen3.5:4b-q4_K_M}
     ports:
       - "${AUGMENTED_BIND:-127.0.0.1}:${AUGMENTED_PORT:-3092}:3092"
+    networks:
+      - default
+      - ollama_internal
     depends_on:
       vibe-runner:
         condition: service_started
@@ -94,3 +99,8 @@ volumes:
     name: ${VIBE_HOME_VOLUME:-infographic-lab_vibe_home}
   codex_home:
     name: ${CODEX_HOME_VOLUME:-infographic-lab_codex_home}
+
+networks:
+  ollama_internal:
+    external: true
+    name: ollama_default
