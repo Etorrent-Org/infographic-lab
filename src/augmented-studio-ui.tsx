@@ -235,11 +235,13 @@ export function InfographicPreview({
 }
 
 export function ProviderPicker({ value, onChange, providers }: { value: AIProvider; onChange: (value: AIProvider) => void; providers: ProviderStatus[] }) {
+  // Keep a legacy provider visible only while opening an older saved project.
+  // New projects use Ollama without exposing inactive runner choices.
   const options: { value: AIProvider; label: string }[] = [
     { value: "auto", label: "Auto" },
     { value: "ollama", label: "Ollama" },
-    { value: "vibe", label: "Vibe" },
-    { value: "codex", label: "Codex" },
+    ...(value === "vibe" ? [{ value: "vibe" as const, label: "Vibe (ancien)" }] : []),
+    ...(value === "codex" ? [{ value: "codex" as const, label: "Codex (ancien)" }] : []),
   ];
   return (
     <div className="studio-provider-picker">
