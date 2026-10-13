@@ -83,7 +83,7 @@ export type GenerationPreferences = {
 };
 
 export type UsageIntent = "explain" | "decide" | "convince" | "train" | "summarize";
-export type AIProvider = "auto" | "vibe" | "codex";
+export type AIProvider = "auto" | "ollama" | "vibe" | "codex";
 export type RepresentationKind = "infographic" | "mermaid" | "mindmap" | "markdown";
 export type BlockKind =
   | "process"
