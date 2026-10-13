@@ -1,4 +1,4 @@
-import { createUniqueId } from "./unique-id";
+import { createUniqueId } from "./unique-id.ts";
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { generateInfographic, getProviders, regenerateInfographicItem, reviewInfographic } from "./api";
 import {
