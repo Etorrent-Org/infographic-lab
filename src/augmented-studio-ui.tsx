@@ -237,6 +237,7 @@ export function InfographicPreview({
 export function ProviderPicker({ value, onChange, providers }: { value: AIProvider; onChange: (value: AIProvider) => void; providers: ProviderStatus[] }) {
   const options: { value: AIProvider; label: string }[] = [
     { value: "auto", label: "Auto" },
+    { value: "ollama", label: "Ollama" },
     { value: "vibe", label: "Vibe" },
     { value: "codex", label: "Codex" },
   ];
