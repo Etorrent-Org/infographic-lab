@@ -22,6 +22,7 @@ import {
   type AugmentedProjectState,
   type LocalProjectRecord,
 } from "./augmented";
+import { LifeEditorEmbed, lifeEditorUrl } from "./LifeEditorEmbed";
 import { MarkdownView } from "./MarkdownView";
 import { MermaidView } from "./MermaidView";
 import { ProjectLibraryModal } from "./ProjectLibraryModal";
@@ -92,6 +93,7 @@ export function AugmentedStudioV2() {
   const [projectName, setProjectName] = useState("Sans titre");
   const [createdAt, setCreatedAt] = useState(() => new Date().toISOString());
   const [libraryOpen, setLibraryOpen] = useState(false);
+  const [lifeEditorOpen, setLifeEditorOpen] = useState(false);
   const [libraryVersion, setLibraryVersion] = useState(0);
   const [exporting, setExporting] = useState(false);
   const [mermaidSvg, setMermaidSvg] = useState<string | null>(null);
@@ -540,6 +542,10 @@ export function AugmentedStudioV2() {
                   <textarea value={sourceText} onChange={(event) => setSourceText(event.target.value)} maxLength={12000} placeholder="Collez votre texte, vos notes ou votre raisonnement…" />
                   <small>{sourceText.length.toLocaleString("fr-FR")} / 12 000</small>
                 </label>
+                {lifeEditorUrl && <div className="studio-life-editor-launch">
+                  <button type="button" onClick={() => setLifeEditorOpen(true)}>✎ Ouvrir Life Editor</button>
+                  <small>Rédiger et mettre en forme le texte, puis appliquer au brief.</small>
+                </div>}
 
                 <div className="studio-field-group">
                   <span className="studio-field-label">Objectif</span>
@@ -707,6 +713,13 @@ export function AugmentedStudioV2() {
         </section>
       </div>
 
+      {lifeEditorOpen && <LifeEditorEmbed
+        documentId={projectId ?? "brouillon"}
+        title={projectName}
+        markdown={sourceText}
+        onApply={(value) => { setSourceText(value); setLifeEditorOpen(false); }}
+        onClose={() => setLifeEditorOpen(false)}
+      />}
       {libraryOpen && (
         <ProjectLibraryModal
           records={library}
